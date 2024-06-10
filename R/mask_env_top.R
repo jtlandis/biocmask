@@ -1,13 +1,28 @@
 
+`skip!` <- structure(list(), class = "skip")
+skip <- function() {
+  `skip!`
+}
+print.skip <- function(x, ...) cat("<skip>\n")
+is_skip <- function(x) inherits(x, "skip")
+
+
 ctx_env <- new.env(parent = emptyenv())
 
 peek_ctx <- function(name) {
   ctx_env[[name]]
 }
+
+poke_ctx <- function(name, value) {
+  old <- ctx_env[[name]]
+  ctx_env[[name]] <- value
+  invisible(old)
+}
+
 poke_ctx_local <- function(name, value) {
   old <- ctx_env[[name]]
   ctx_env[[name]] <- value
-  quo <- expr(ctx_env[[name]] <- !!old)
+  quo <- rlang::expr(ctx_env[[name]] <- !!old)
   do.call(
     on.exit,
     list(quo, add = TRUE),
@@ -17,8 +32,14 @@ poke_ctx_local <- function(name, value) {
 }
 
 
-top_env <- new_environment(
+
+
+top_env <- rlang::new_environment(
   data = list(
+    vec_rep = vctrs::vec_rep,
+    vec_rep_each = vctrs::vec_rep_each,
+    vec_c = vctrs::vec_c,
+    skip = skip,
     poke_ctx = poke_ctx,
     poke_ctx_local = poke_ctx_local,
     peek_ctx = peek_ctx,
@@ -36,7 +57,7 @@ top_env <- new_environment(
         name <- nms[i]
         eval_fun(quo, name)
       }
-      
+      skip()
     },
     cols = function(...) {
       mask_manager <- peek_ctx("SE:::mask_manager")
@@ -53,10 +74,13 @@ top_env <- new_environment(
         name <- nms[i]
         eval_fun(quo, name)
       }
-      
+      skip()
     }
-  )
+  ), 
+  parent = baseenv()
 )
+
+bot_env <- new.env(parent = top_env)
 
 
 # base_minimal <- new_environment(
