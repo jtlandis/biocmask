@@ -1,7 +1,7 @@
 
 
-TidySEMask <- R6::R6Class(
-  "TidySEMask",
+TidySEMaskManager <- R6::R6Class(
+  "TidySEMaskManager",
   cloneable = F,
   public = list(
     poke_ctx = function(ctx) {
@@ -18,11 +18,11 @@ TidySEMask <- R6::R6Class(
       private$.ncol <- .ncol <- ncol(.data)
       private$.len <- .nrow * .ncol
       assay_mask <- assays(.data) |>
-        TidyBiocMask$new(.env = .env)
+        TidyBiocMaskAbstraction$new(.env = bot_env, .env_top = top_env)
       rows_mask <- rowData(.data) |>
-        TidyBiocMask$new(.env = .env)
+        TidyBiocMaskAbstraction$new(.env = bot_env, .env_top = top_env)
       cols_mask <- colData(.data) |>
-        TidyBiocMask$new(.env = .env)
+        TidyBiocMaskAbstraction$new(.env = bot_env, .env_top = top_env)
       env_bind(assay_mask$lazy_data,
                .rows = as_data_pronoun(rows_mask$lazy_data),
                .cols = as_data_pronoun(cols_mask$lazy_data),
