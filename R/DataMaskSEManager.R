@@ -1,4 +1,7 @@
 
+#' @importFrom vctrs vec_rep vec_rep_each
+#' @importFrom rlang as_data_pronoun
+#' @importFrom SummarizedExperiment assays rowData colData
 
 TidySEMaskManager <- R6::R6Class(
   "TidySEMaskManager",
@@ -51,18 +54,21 @@ TidySEMaskManager <- R6::R6Class(
     eval_mutate_assays = function(quo, name) {
       mask <- private$.mask_assay
       result <- eval_tidy(quo, data = mask$data_mask)
+      if (is_skip(result)) return()
       self$env_bind_assay(result, name)
       mask$push(name)
     },
     eval_mutate_rows = function(quo, name) {
       mask <- private$.mask_rows
       result <- eval_tidy(quo, data = mask$data_mask)
+      if (is_skip(result)) return()
       self$env_bind_rows(result, name)
       mask$push(name)
     },
     eval_mutate_cols = function(quo, name) {
       mask <- private$.mask_cols
       result <- eval_tidy(quo, data = mask$data_mask)
+      if (is_skip(result)) return()
       self$env_bind_cols(result, name)
       mask$push(name)
     },

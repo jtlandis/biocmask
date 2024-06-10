@@ -22,7 +22,7 @@ poke_ctx <- function(name, value) {
 poke_ctx_local <- function(name, value) {
   old <- ctx_env[[name]]
   ctx_env[[name]] <- value
-  quo <- rlang::expr(ctx_env[[name]] <- !!old)
+  quo <- rlang::expr(ctx_env[[!!name]] <- !!old)
   do.call(
     on.exit,
     list(quo, add = TRUE),
@@ -45,15 +45,17 @@ top_env <- rlang::new_environment(
     peek_ctx = peek_ctx,
     .mask_manager = NULL,
     rows = function(...) {
+      # browser()
       mask_manager <- peek_ctx("SE:::mask_manager")
       fn <- peek_ctx("SE:::dplyr_function")
+      env <- peek_ctx("SE:::caller_env")
       eval_fun <- switch(fn,
                          mutate = mask_manager$eval_mutate_rows,
                          stop(sprintf("`%s` is not yet implemented", fn)))
       quos <- enquos(...)
       nms <- names(quos)
       for (i in seq_along(quos)) {
-        quo <- quos[[i]]
+        quo <- rlang::quo_set_env(quos[[i]], env)
         name <- nms[i]
         eval_fun(quo, name)
       }
@@ -62,15 +64,14 @@ top_env <- rlang::new_environment(
     cols = function(...) {
       mask_manager <- peek_ctx("SE:::mask_manager")
       fn <- peek_ctx("SE:::dplyr_function")
+      env <- peek_ctx("SE:::caller_env")
       eval_fun <- switch(fn,
                          mutate = mask_manager$eval_mutate_cols,
                          stop(sprintf("`%s` is not yet implemented", fn)))
-      # eval_mask <- peek_ctx("rowData_mask")
-      # call_env <- peek_ctx("caller_env")
       quos <- enquos(...)
       nms <- names(quos)
       for (i in seq_along(quos)) {
-        quo <- quos[[i]]
+        quo <- rlang::quo_set_env(quos[[i]], env)
         name <- nms[i]
         eval_fun(quo, name)
       }

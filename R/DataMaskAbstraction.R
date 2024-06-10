@@ -37,7 +37,7 @@ TidyBiocMaskAbstraction <- R6::R6Class(
                     ...)
       private$.lazy_mold <- new.env(parent = private$.lazy_data)
       private$.actv_data <- new.env(parent = private$.lazy_mold)
-      private$.data_mask <- new_data_mask(private$.actv_data, private$.lazy_data)
+      private$.data_mask <- new_data_mask(private$.actv_data, .env_top)
     },
     eval_expr = function(quo, name) {
       eval_tidy(quo, data = private$.data_mask)
