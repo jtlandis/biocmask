@@ -1,22 +1,31 @@
-# 
-# #' @importFrom dplyr mutate
-# 
-# mutate_SummarizedExperiment <- function(.data, ...) {
-#   
-#    # browser()
-#   .env <- caller_env()
-#   .mask <- TidySEMask$new(.data, .env, "mutate")
-#   quos <- rlang::enquos(...)
-#   nms <- names(quos)
-#   for (k in seq_along(quos)) {
-#     quo <- quos[[k]]
-#     name <- nms[k]
-#     mutate_SE_expr(quo, name, .mask)
-#   }
-#   .mask$finalize_mutate_data(.data)
-#   
-# }
-# 
+
+#' @importFrom dplyr mutate
+
+#' Mutate a SummarizedExperiment object under an data mask
+#' @param .data a SummarizedExperiment object
+#' @param ... expressions
+#' @value SummarizedExperiment object
+#' @export
+mutate.SummarizedExperiment <- function(.data, ...) {
+  
+  # browser()
+  
+  .env <- rlang::caller_env()
+  .mask <- TidySEMaskManager$new(.data, .env, "mutate")
+  poke_ctx_local("SE:::mask_manager", .mask)
+  poke_ctx_local("SE:::dplyr_function", "mutate")
+  poke_ctx_local("SE:::caller_env", .env)
+  quos <- rlang::enquos(...)
+  nms <- names(quos)
+  for (k in seq_along(quos)) {
+    quo <- quos[[k]]
+    name <- nms[k]
+    .mask$eval_mutate_assays(quo, name)
+  }
+  .mask$finalize_mutate_data(.data)
+  
+}
+
 # mutate_SE_expr <- function(dot, name, mask) {
 #   
 #   quos <- expand_SE_context(dot)

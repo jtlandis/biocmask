@@ -1,6 +1,6 @@
 
 #' @importFrom vctrs vec_rep vec_rep_each
-#' @importFrom rlang as_data_pronoun
+#' @importFrom rlang as_data_pronoun env_bind new_quosure
 #' @importFrom SummarizedExperiment assays rowData colData
 
 TidySEMaskManager <- R6::R6Class(
