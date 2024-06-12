@@ -18,6 +18,8 @@ I will be using the following example data throughout this document:
 #| message: false
 
 library(SummarizedExperiment)
+library(tidySEabstraction)
+library(dplyr)
 library(rlang)
 library(tibble)
 set.seed(1234)
@@ -34,6 +36,41 @@ colnames(se) <- sprintf("col_%s", LETTERS[1:4])
 assay(se, 'logcounts') <- log(assay(se, 'counts'))
 se
 ```
+
+Below shows the profiling of performing a simple operation on a dataset with the following dimensional (14599 x 7).
+
+```{r}
+se_example <- tidySummarizedExperiment::pasilla
+
+native_example <- function(se) {
+  assay(se, "logcounts") <- log1p(assay(se, "counts"))
+  se
+}
+new_example <- function(se) {
+  tidySEabstraction:::mutate.SummarizedExperiment(
+    se,
+    logcounts = log1p(counts)
+    )
+}
+old_example <- function(se) {
+  tidySummarizedExperiment:::mutate.SummarizedExperiment(
+    se,
+    logcounts = log1p(counts)
+    )
+}
+
+# underlying data is a data.frame and not a matrix
+assay(se_example, "counts") <- as.matrix(assay(se_example, "counts"))
+
+
+bench::mark(
+  native = native_example(se_example),
+  new = new_example(se_example),
+  old = old_example(se_example)
+)
+
+```
+
 
 ## The abstraction
 

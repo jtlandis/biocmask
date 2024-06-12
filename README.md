@@ -14,6 +14,8 @@ translate well to the structure of the `SummarizedExperiment` class.
 I will be using the following example data throughout this document:
 
     library(SummarizedExperiment)
+    library(tidySEabstraction)
+    library(dplyr)
     library(rlang)
     library(tibble)
     set.seed(1234)
@@ -38,6 +40,56 @@ I will be using the following example data throughout this document:
     rowData names(3): gene length direction
     colnames(4): col_A col_B col_C col_D
     colData names(2): sample condition
+
+Below shows the profiling of performing a simple operation on a dataset
+with the following dimensional (14599 x 7).
+
+``` r
+se_example <- tidySummarizedExperiment::pasilla
+```
+
+    Registered S3 method overwritten by 'tidySummarizedExperiment':
+      method                      from             
+      mutate.SummarizedExperiment tidySEabstraction
+
+``` r
+native_example <- function(se) {
+  assay(se, "logcounts") <- log1p(assay(se, "counts"))
+  se
+}
+new_example <- function(se) {
+  tidySEabstraction:::mutate.SummarizedExperiment(
+    se,
+    logcounts = log1p(counts)
+    )
+}
+old_example <- function(se) {
+  tidySummarizedExperiment:::mutate.SummarizedExperiment(
+    se,
+    logcounts = log1p(counts)
+    )
+}
+
+# underlying data is a data.frame and not a matrix
+assay(se_example, "counts") <- as.matrix(assay(se_example, "counts"))
+
+
+bench::mark(
+  native = native_example(se_example),
+  new = new_example(se_example),
+  old = old_example(se_example)
+)
+```
+
+    Warning: Some expressions had a GC in every iteration; so filtering is
+    disabled.
+
+    # A tibble: 3 × 6
+      expression      min   median `itr/sec` mem_alloc `gc/sec`
+      <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+    1 native      13.41ms  14.62ms    65.3    804.77KB     1.98
+    2 new         13.81ms  15.14ms    64.9      2.54MB     1.97
+    3 old           1.17s    1.17s     0.857   88.27MB     1.71
 
 ## The abstraction
 
@@ -454,14 +506,14 @@ the closest equivalent for `se` would be:
 se[c(1,5), c(1, 4)]
 ```
 
-    class: SummarizedExperiment 
-    dim: 2 2 
-    metadata(0):
-    assays(2): counts logcounts
-    rownames(2): row_a row_e
-    rowData names(3): gene length direction
-    colnames(2): col_A col_D
-    colData names(2): sample condition
+    # A SummarizedExperiment-tibble abstraction: 4 × 9
+    # [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m
+      .feature .sample counts logcounts sample condition gene  length direction
+      <chr>    <chr>    <int>     <dbl> <chr>  <chr>     <chr>  <int> <chr>    
+    1 row_a    col_A       16      2.77 s1     cntrl     g1         3 -        
+    2 row_e    col_A        9      2.20 s1     cntrl     g5        49 +        
+    3 row_a    col_D        8      2.08 s4     drug      g1         3 -        
+    4 row_e    col_D        3      1.10 s4     drug      g5        49 +        
 
 Thus I think it would make sense to error if the user attempts to filter
 in the assay context and inform them that a valid `SummarizedExperiment`
