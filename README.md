@@ -379,16 +379,161 @@ abstractions and provide methods to evaluate in the desired contexts.
 This approach is similar to how `dplyr` has gone about structuring their
 data masks, wrapping it in their own R6 class (see `dplyr:::DataMask`).
 
+### contextual helpers
+
+To make this feel more natural, we can optionally include contextual
+helper functions. I propose that the defaul mask everything may be
+evaluated in is the `assay_mask`. We can provide “helper” functions
+(similar to `dplyr::across`) that modifies the behavior of the dplyr
+verb within its context.
+
+We can provide two functions `rows(...)` and `cols(...)` (names TBD)
+that will evaluate the named expressions of `...` in `rowData_mask` and
+`colData_mask` respectively. Results for these masks will also expect
+output lengths of `.nrow` and `.ncol` respectively and will be assigned
+back to the respective mask’s top level environment (lazy re-bindings
+across the other masks will be handled by the `DataMaskSEManager` if
+appropriate).
+
+We can copy `dplyr`’s approach with caching contextual information by
+using an internal environment (`dplyr:::context_peek`,
+`dplyr:::context_poke`).
+
+The downside of this proposal is that we will need to make our own
+methods for the helper functions that dplyr provides. Examples would be
+`n()`, `cur_group_id()`, etc (see `?dplyr::context`)
+
 ## `dplyr` verbs
+
+This section is to discuss how the various dplyr verbs would work under
+these abstractions
+
+``` r
+library(dplyr)
+```
+
+
+    Attaching package: 'dplyr'
+
+    The following object is masked from 'package:Biobase':
+
+        combine
+
+    The following objects are masked from 'package:GenomicRanges':
+
+        intersect, setdiff, union
+
+    The following object is masked from 'package:GenomeInfoDb':
+
+        intersect
+
+    The following objects are masked from 'package:IRanges':
+
+        collapse, desc, intersect, setdiff, slice, union
+
+    The following objects are masked from 'package:S4Vectors':
+
+        first, intersect, rename, setdiff, setequal, union
+
+    The following objects are masked from 'package:BiocGenerics':
+
+        combine, intersect, setdiff, union
+
+    The following object is masked from 'package:matrixStats':
+
+        count
+
+    The following objects are masked from 'package:stats':
+
+        filter, lag
+
+    The following objects are masked from 'package:base':
+
+        intersect, setdiff, setequal, union
+
+``` r
+tibble_expr <- expr(
+    tibble(
+      counts = counts,
+      logcounts = logcounts,
+      gene = gene,
+      length = length,
+      direction = direction,
+      sample = sample,
+      condition = condition
+    )
+  )
+assay_ctx <- eval_tidy(tibble_expr, assay_mask)
+rowData_ctx <- eval_tidy(tibble_expr, rowData_mask)
+colData_ctx <- eval_tidy(tibble_expr, colData_mask)
+```
 
 ### `mutate`
 
 `mutate` is one of the more common `dplyr` verbs used and is likely the
 most compatible.
 
-<figure class=''>
+### `filter`
 
-<img src="README_files/figure-markdown_strict/mermaid-figure-1.png"
-style="width:9.5in;height:5.33in" />
+`filter` is easy in theory to implement, but certain filters of a tidy
+dataset cannot recover a valid `SummarizedExperiment` object.
 
-</figure>
+For example, consider this `mutate.data.frame` call:
+
+``` r
+filter(assay_ctx, 1:n() %in% c(1, n()))
+```
+
+    # A tibble: 2 × 7
+      counts logcounts gene  length direction sample condition
+       <int>     <dbl> <chr>  <int> <chr>     <chr>  <chr>    
+    1     16      2.77 g1         3 -         s1     cntrl    
+    2      3      1.10 g5        49 +         s4     drug     
+
+the closest equivalent for `se` would be:
+
+``` r
+se[c(1,5), c(1, 4)]
+```
+
+    class: SummarizedExperiment 
+    dim: 2 2 
+    metadata(0):
+    assays(2): counts logcounts
+    rownames(2): row_a row_e
+    rowData names(3): gene length direction
+    colnames(2): col_A col_D
+    colData names(2): sample condition
+
+Thus I think it would make sense to error if the user attempts to filter
+in the assay context and inform them that a valid `SummarizedExperiment`
+object cannot be returned. To perform such filters, the user should
+convert to a tibble explicitly first.
+
+### `group_by`
+
+This will likely be more difficult to implement. I will need to look
+more into how `dplyr` manages this. Most fo the methods in
+`dplyr::DataMask` are external calls to cpp code, but it seems that they
+cache the “chops” and possibly make a mask per data chop.
+
+### `summarize/summarise`
+
+I personally think the use case for these would be extremely limited.
+The `summarize` functions have the side effect of only retaining the
+grouped variables as well as newly evaluated expressions. We **could**
+make this functionality, but I wonder how often it would be useful. It
+is usually more useful to store summaries of each row or column in
+`rowData` and `colData` respectively, which is already doable through
+`mutate`.
+
+I suppose that there would be a world in which a user may use
+`summarize` to make a model for each group, but the output would not fit
+the `SummarizedExperiment` framework (i think) and should probably
+return a tibble.
+
+### `distinct`
+
+Probably should not implement this method for similar reasons to
+`filter`. If it is implemented, it cannot return a
+`SummarizedExperiment` object.

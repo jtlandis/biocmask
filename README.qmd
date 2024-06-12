@@ -306,6 +306,7 @@ The downside of this proposal is that we will need to make our own methods for t
 This section is to discuss how the various dplyr verbs would work under these abstractions
 
 ```{r}
+library(dplyr)
 tibble_expr <- expr(
     tibble(
       counts = counts,
