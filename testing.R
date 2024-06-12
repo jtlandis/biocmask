@@ -2,6 +2,7 @@
 
 library(rlang)
 library(SummarizedExperiment)
+library(tidySummarizedExperiment)
 
 sys.source("R/mask_env_top.R", envir = attach(NULL, name = "SE:envir"))
 sys.source("R/DataMaskAbstraction.R", envir = attach(NULL, name = "SE:abstraction"))
@@ -17,12 +18,13 @@ se <- SummarizedExperiment(
   colData = data.frame(sample = sprintf("s%i", 1:4),
                        condition = rep(c("cntrl","drug"), each =2))
 )
-rownames(se) <- letters[1:5]
-colnames(se) <- LETTERS[1:4]
+rownames(se) <- sprintf("row_%s", letters[1:5])
+colnames(se) <- sprintf("col_%s", LETTERS[1:4])
 assay(se, 'logcounts') <- log(assay(se, 'counts'))
 se
 
-
+# locally named this so that I can compare
+# speed-up improvements against old mutate.SummarizedExperiment methods
 mutate_SummarizedExperiment <- function(.data, ...) {
   
   # browser()
@@ -50,4 +52,10 @@ mutate_SummarizedExperiment(
     rowSum = rowSums(.assay$counts)
   )
 )
+
+dplyr::group_by(se, gene) |>
+  dplyr::mutate(
+    new_counts = counts + 1,
+    rowSum = sum(counts)
+  )
 
