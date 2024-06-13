@@ -87,9 +87,9 @@ bench::mark(
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 native      13.41ms  14.62ms    65.3    804.77KB     1.98
-    2 new         13.81ms  15.14ms    64.9      2.54MB     1.97
-    3 old           1.17s    1.17s     0.857   88.27MB     1.71
+    1 native       12.3ms   13.5ms     71.2   804.77KB     1.98
+    2 new          12.5ms   13.8ms     71.2     2.54MB     1.98
+    3 old         746.6ms  746.6ms      1.34   88.27MB     4.02
 
 ## The abstraction
 
@@ -110,6 +110,9 @@ To quote the documentation of `?rlang::new_data_mask`:
 In <a href="#sec-proposal" class="quarto-xref">Section 1.2.2</a> below,
 I will be constructing several environments to mask the structure of the
 `SummarizedExperiment` object.
+
+We will be using the `!!` operator from the `rlang` package as well. For
+more information on what this does, please see `` ?rlang::`bang-bang` ``
 
 ### The proposal
 

@@ -84,6 +84,10 @@ To quote the documentation of `?rlang::new_data_mask`:
 
 In @sec-proposal below, I will be constructing several environments to mask the structure of the `SummarizedExperiment` object.
 
+::: calout-note
+We will be using the `!!` operator from the `rlang` package as well. For more information on what this does, please see `` ?rlang::`bang-bang` ``
+:::
+
 ### The proposal {#sec-proposal}
 
 ![Figure created with BioRender.com](./data-mask-abstraction.png){#fig-abstraction}
