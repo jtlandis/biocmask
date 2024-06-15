@@ -11,7 +11,7 @@ mutate.SummarizedExperiment <- function(.data, ...) {
   # browser()
   
   .env <- rlang::caller_env()
-  .mask <- TidySEMaskManager$new(.data, .env, "mutate")
+  .mask <- TidySEMaskManager$new(.data)
   poke_ctx_local("SE:::mask_manager", .mask)
   poke_ctx_local("SE:::dplyr_function", "mutate")
   poke_ctx_local("SE:::caller_env", .env)
