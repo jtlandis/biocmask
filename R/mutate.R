@@ -15,7 +15,7 @@ mutate.SummarizedExperiment <- function(.data, ...) {
   poke_ctx_local("SE:::mask_manager", .mask)
   poke_ctx_local("SE:::dplyr_function", "mutate")
   poke_ctx_local("SE:::caller_env", .env)
-  quos <- rlang::enquos(...)
+  quos <- rlang::enquos(..., .named = TRUE)
   nms <- names(quos)
   for (k in seq_along(quos)) {
     quo <- quos[[k]]

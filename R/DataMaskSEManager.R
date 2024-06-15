@@ -7,37 +7,37 @@ TidySEMaskManager <- R6::R6Class(
   "TidySEMaskManager",
   cloneable = F,
   public = list(
-    poke_ctx = function(ctx) {
-      old_ctx <- private$.ctx
-      if (length(old_ctx) > 0 && length(ctx) > 0) {
-        cli::cli_abort("attempting to evaluate within {.fn {ctx}} when already within {.fn {old_ctx}}")
-      }
-      private$.ctx <- ctx
-      old_ctx
-    },
-    initialize = function(.data, .env = NULL, .fn = NULL, ...) {
-      private$.caller_env <- .env <- .env %||% parent.frame()
+    initialize = function(.data, ...) {
       private$.nrow <- .nrow <- nrow(.data)
       private$.ncol <- .ncol <- ncol(.data)
       private$.len <- .nrow * .ncol
+      pronoun_env <- new.env(parent = bot_env)
       assay_mask <- assays(.data) |>
-        TidyBiocMaskAbstraction$new(.env = bot_env, .env_top = top_env)
+        TidyBiocMaskAbstraction$new(.env = pronoun_env, .env_top = top_env)
       rows_mask <- rowData(.data) |>
-        TidyBiocMaskAbstraction$new(.env = bot_env, .env_top = top_env)
+        TidyBiocMaskAbstraction$new(.env = pronoun_env, .env_top = top_env)
       cols_mask <- colData(.data) |>
-        TidyBiocMaskAbstraction$new(.env = bot_env, .env_top = top_env)
-      env_bind(assay_mask$lazy_data,
-               .rows = as_data_pronoun(rows_mask$lazy_data),
-               .cols = as_data_pronoun(cols_mask$lazy_data),
-               .nrow = .nrow, .ncol = .ncol)
-      env_bind(rows_mask$lazy_data,
-               .assay = as_data_pronoun(assay_mask$lazy_data),
-               .cols = as_data_pronoun(cols_mask$lazy_data),
-               .nrow = .nrow, .ncol = .ncol)
-      env_bind(cols_mask$lazy_data,
-               .assay = as_data_pronoun(assay_mask$lazy_data),
-               .rows = as_data_pronoun(rows_mask$lazy_data),
-               .nrow = .nrow, .ncol = .ncol)
+        TidyBiocMaskAbstraction$new(.env = pronoun_env, .env_top = top_env)
+      env_bind(
+        pronoun_env,
+        .assay = as_data_pronoun(assay_mask$lazy_data),
+        .rows = as_data_pronoun(rows_mask$lazy_data),
+        .cols = as_data_pronoun(cols_mask$lazy_data),
+        .nrow = .nrow,
+        .ncol = .ncol
+      )
+      # env_bind(assay_mask$lazy_data,
+      #          .rows = as_data_pronoun(rows_mask$lazy_data),
+      #          .cols = as_data_pronoun(cols_mask$lazy_data),
+      #          .nrow = .nrow, .ncol = .ncol)
+      # env_bind(rows_mask$lazy_data,
+      #          .assay = as_data_pronoun(assay_mask$lazy_data),
+      #          .cols = as_data_pronoun(cols_mask$lazy_data),
+      #          .nrow = .nrow, .ncol = .ncol)
+      # env_bind(cols_mask$lazy_data,
+      #          .assay = as_data_pronoun(assay_mask$lazy_data),
+      #          .rows = as_data_pronoun(rows_mask$lazy_data),
+      #          .nrow = .nrow, .ncol = .ncol)
       private$.mask_assay <- assay_mask
       private$.mask_rows <- rows_mask
       private$.mask_cols <- cols_mask
@@ -72,10 +72,58 @@ TidySEMaskManager <- R6::R6Class(
       self$env_bind_cols(result, name)
       mask$push(name)
     },
+    eval_group_by_assays = function(quo, name) {
+      mask <- private$.mask_assay
+      result <- eval_tidy(quo, data = mask$data_mask)
+      if (!is_skip(result)) {
+        cli::cli_abort(
+          "grouping on an assay context is not advised. consider wrapping in either `rows(...)` or `cols(...)`"
+        )
+      } else {
+        return()
+      }
+    },
+    # eval_group_by_rows = function(quo, name) {
+    #   mask <- private$.mask_rows
+    #   result <- eval_tidy(quo, data = mask$data_mask)
+    #   if (is_skip(result)) return()
+    #   
+    # }
     finalize_mutate_data = function(.data) {
       private$finalize_mutate_assays(.data) |>
         private$finalize_mutate_rows() |>
         private$finalize_mutate_cols()
+    },
+    finalize_group_by_data = function(.data) {
+      .data <- private$finalze_mutate_rows(.data) |>
+        private$finalize_mutate_cols()
+      row_groups <- col_groups <- NULL
+      expand <- NULL
+      added_rows <- private$.mask_rows$modified
+      if (length(added_rows)) {
+        row_groups <- rowData(.data)[added_rows] |>
+          vctrs::vec_group_loc() |>
+          tidyr::unnest(key) |>
+          dplyr::rename(.rows = loc)
+        expand <- "row"
+      }
+      added_cols <- private$.mask_cols$modified
+      if (length(added_cols)) {
+        col_groups <- colData(.data)[added_cols] |>
+          vctrs::vec_group_loc() |>
+          tidyr::unnest(key) |>
+          dplyr::rename(.cols = loc)
+        expand <- paste0(expand, "col")
+      }
+      
+      group_dat <- switch(
+        expand,
+        row = row_groups,
+        col = col_groups,
+        rowcol = expand_groups(row_groups, col_groups)
+      )
+      metadata(.data)[["group_data"]] <- group_dat
+      .data
     },
     # expected to be called from mutate context
     # in which data should be available immediately

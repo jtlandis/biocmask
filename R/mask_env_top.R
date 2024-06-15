@@ -51,6 +51,7 @@ top_env <- rlang::new_environment(
       env <- peek_ctx("SE:::caller_env")
       eval_fun <- switch(fn,
                          mutate = mask_manager$eval_mutate_rows,
+                         group_by = mask_manager$eval_mutate_rows,
                          stop(sprintf("`%s` is not yet implemented", fn)))
       quos <- enquos(...)
       nms <- names(quos)
@@ -67,6 +68,7 @@ top_env <- rlang::new_environment(
       env <- peek_ctx("SE:::caller_env")
       eval_fun <- switch(fn,
                          mutate = mask_manager$eval_mutate_cols,
+                         group_by = mask_manager$eval_mutate_cols,
                          stop(sprintf("`%s` is not yet implemented", fn)))
       quos <- enquos(...)
       nms <- names(quos)
