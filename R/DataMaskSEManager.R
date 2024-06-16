@@ -95,13 +95,14 @@ TidySEMaskManager <- R6::R6Class(
         private$finalize_mutate_cols()
     },
     finalize_group_by_data = function(.data) {
-      .data <- private$finalze_mutate_rows(.data) |>
+      .data <- private$finalize_mutate_rows(.data) |>
         private$finalize_mutate_cols()
       row_groups <- col_groups <- NULL
       expand <- NULL
       added_rows <- private$.mask_rows$modified
       if (length(added_rows)) {
         row_groups <- rowData(.data)[added_rows] |>
+          tibble::as_tibble() |>
           vctrs::vec_group_loc() |>
           tidyr::unnest(key) |>
           dplyr::rename(.rows = loc)
@@ -110,6 +111,7 @@ TidySEMaskManager <- R6::R6Class(
       added_cols <- private$.mask_cols$modified
       if (length(added_cols)) {
         col_groups <- colData(.data)[added_cols] |>
+          tibble::as_tibble() |>
           vctrs::vec_group_loc() |>
           tidyr::unnest(key) |>
           dplyr::rename(.cols = loc)
@@ -189,16 +191,16 @@ TidySEMaskManager <- R6::R6Class(
     }
   ),
   private = list(
-    .eval_mask = NULL,
-    .caller_env = NULL,
+    # .eval_mask = NULL,
+    # .caller_env = NULL,
     .mask_assay = NULL,
     .mask_rows = NULL,
     .mask_cols = NULL,
     .nrow = integer(),
     .ncol = integer(),
     .len = integer(),
-    .ctx = character(),
-    .fn = character(),
+    # .ctx = character(),
+    # .fn = character(),
     
     complete_lazy_bind_assay = function(name) {
       # browser()
@@ -210,12 +212,12 @@ TidySEMaskManager <- R6::R6Class(
       # in rows and columns masks, create lazy
       # bindings that mold data
       quo_row <- new_quosure(
-        expr(lapply(1:.nrow, function(i) (!!name_sym)[i,, drop = FALSE])),
+        expr(lapply(1:.nrow, function(i) (!!name_sym)[i,, drop = TRUE])),
         assay_lazy_env
       )
       private$.mask_rows$bind_mold(quo_row, name)
       quo_col <- new_quosure(
-        expr(lapply(1:.ncol, function(i) (!!name_sym)[, i, drop = FALSE])),
+        expr(lapply(1:.ncol, function(i) (!!name_sym)[, i, drop = TRUE])),
         assay_lazy_env
       )
       private$.mask_cols$bind_mold(quo_col, name)
@@ -238,7 +240,7 @@ TidySEMaskManager <- R6::R6Class(
         expr(vec_rep(!!name_sym, times = .ncol)),
         row_lazy_env
       )
-      private$.mask_cols$bind_mold(quo_col, name)
+      private$.mask_assay$bind_mold(quo_assay, name)
       # in rows and columns masks, 
       # create active bindings that force mold eval
       private$.mask_assay$bind_actv(name)
