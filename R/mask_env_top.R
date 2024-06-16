@@ -53,7 +53,7 @@ top_env <- rlang::new_environment(
                          mutate = mask_manager$eval_mutate_rows,
                          group_by = mask_manager$eval_mutate_rows,
                          stop(sprintf("`%s` is not yet implemented", fn)))
-      quos <- enquos(...)
+      quos <- enquos(..., .named = TRUE)
       nms <- names(quos)
       for (i in seq_along(quos)) {
         quo <- rlang::quo_set_env(quos[[i]], env)
@@ -70,7 +70,7 @@ top_env <- rlang::new_environment(
                          mutate = mask_manager$eval_mutate_cols,
                          group_by = mask_manager$eval_mutate_cols,
                          stop(sprintf("`%s` is not yet implemented", fn)))
-      quos <- enquos(...)
+      quos <- enquos(..., .named = TRUE)
       nms <- names(quos)
       for (i in seq_along(quos)) {
         quo <- rlang::quo_set_env(quos[[i]], env)
