@@ -3,11 +3,11 @@
 library(rlang)
 library(SummarizedExperiment)
 library(tidySummarizedExperiment)
-
+# 
 sys.source("R/mask_env_top.R", envir = attach(NULL, name = "SE:envir"))
 sys.source("R/DataMaskAbstraction.R", envir = attach(NULL, name = "SE:abstraction"))
 sys.source("R/DataMaskSEManager.R", envir = attach(NULL, name = "SE:Manager"))
-
+devtools::load_all()
 
 set.seed(1234)
 se <- SummarizedExperiment(
@@ -45,6 +45,18 @@ mutate_SummarizedExperiment <- function(.data, ...) {
   
 }
 
+
+
+mutate_SummarizedExperiment(
+  se,
+  rows(
+    length_sqrt = sqrt(length),
+    rowCounts = rowSums(.assay$counts),
+    rowCounts2 = purrr::map_dbl(counts, sum)
+  )
+) -> .se
+
+
 mutate_SummarizedExperiment(
   se,
   new_counts = counts + 1,
@@ -52,6 +64,8 @@ mutate_SummarizedExperiment(
     rowSum = rowSums(.assay$counts)
   )
 )
+
+
 
 dplyr::group_by(se, gene) |>
   dplyr::mutate(
