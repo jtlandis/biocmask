@@ -30,8 +30,7 @@ TidyBiocMaskAbstraction <- R6::R6Class(
     #' @param .env_top top level environment.
     initialize = function(.data, .env = NULL, .env_top = NULL, .ngroups = 1L, ...) {
       # delete this
-      .env <- new_environment(list(.current_group_id = 1L),
-                              .env)
+      .env <- new_environment(list(.current_group_id = 1L), .env)
       private$.names <- .names <- names(.data)
       .names <- setNames(nm = .names)
       .size <- length(.names) + 20L
@@ -89,6 +88,11 @@ TidyBiocMaskAbstraction <- R6::R6Class(
         stop("`$lazy_data` is read only")
       private$.lazy_data
     },
+    actv_chop = function(value) {
+      if (!missing(value))
+        stop("`$actv_chop` is read only")
+      private$.actv_chop
+    }
     lazy_mold = function(value) {
       if (!missing(value)) 
         stop("`$lazy_mold` is read only")

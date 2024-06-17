@@ -20,10 +20,13 @@ TidySEMaskManager <- R6::R6Class(
         TidyBiocMaskAbstraction$new(.env = pronoun_env, .env_top = top_env)
       env_bind(
         pronoun_env,
-        .assay = as_data_pronoun(assay_mask$lazy_data),
-        .rows = as_data_pronoun(rows_mask$lazy_data),
-        .cols = as_data_pronoun(cols_mask$lazy_data),
-        .nrow = .nrow,
+        .assay = as_data_pronoun(assay_mask$actv_chop),
+        .rows = as_data_pronoun(rows_mask$actv_chop),
+        .cols = as_data_pronoun(cols_mask$actv_chop)
+      )
+      env_bind_active(
+        pronoun_env,
+        .nrow = new_function(pairlist(), quote(.rows$.obs), pronoun_env),
         .ncol = .ncol
       )
       # env_bind(assay_mask$lazy_data,
