@@ -36,6 +36,10 @@ poke_ctx_local <- function(name, value) {
 
 top_env <- rlang::new_environment(
   data = list(
+    vec_chop = vctrs::vec_chop,
+    vec_chop_assays = vec_chop_assays,
+    vec_chop_assays_row = vec_chop_assays_row,
+    vec_chop_assays_col = vec_chop_assays_col,
     vec_rep = vctrs::vec_rep,
     vec_rep_each = vctrs::vec_rep_each,
     vec_c = vctrs::vec_c,
@@ -43,7 +47,7 @@ top_env <- rlang::new_environment(
     poke_ctx = poke_ctx,
     poke_ctx_local = poke_ctx_local,
     peek_ctx = peek_ctx,
-    .current_group_id = NULL,
+    .current_group_id = 0L,
     .mask_manager = NULL,
     rows = function(...) {
       # browser()

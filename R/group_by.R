@@ -55,3 +55,23 @@ mat_index <- function(rows_ind, cols_ind, nrows) {
     vctrs::vec_rep_each(shift,
                         length(rows_ind))
 }
+
+# vec_chop_assays <- function(.data, row_indices, col_indices) {
+#   chops <- vctrs::vec_chop(as.vector(.data), indices = mat_index(row_indices, col_indices, nrow(.data)))
+#   nrows <- purrr::map_int(row_indices, length)
+#   ncols <- purrr::map_int(col_indices, length)
+#   purrr::pmap(list(chops, nrows, ncols), ~ matrix(..1, ..2, ..3))
+# }
+
+vec_chop_assays <- function(.data, row_indices, col_indices) {
+  purrr::map2(row_indices, col_indices, 
+              function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
+}
+
+vec_chop_assays_row <- function(.data, row_indices) {
+  purrr::map(row_indices, function(.i, .matrix) .matrix[.i, ], .matrix = .data)
+}
+
+vec_chop_assays_col <- function(.data, col_indices) {
+  purrr::map(col_indices, function(.i, .matrix) .matrix[, .i], .matrix = .data)
+}
