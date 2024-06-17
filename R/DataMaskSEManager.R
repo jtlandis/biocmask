@@ -162,12 +162,12 @@ TidySEMaskManager <- R6::R6Class(
       # in rows and columns masks, create lazy
       # bindings that mold data
       quo_row <- new_quosure(
-        expr(lapply(1:.nrow, function(i) (!!name_sym)[i,, drop = FALSE])),
+        expr(lapply(1:.nrow, function(i) (!!name_sym)[i,, drop = TRUE])),
         assay_lazy_env
       )
       private$.mask_rows$bind_mold(quo_row, name)
       quo_col <- new_quosure(
-        expr(lapply(1:.ncol, function(i) (!!name_sym)[, i, drop = FALSE])),
+        expr(lapply(1:.ncol, function(i) (!!name_sym)[, i, drop = TRUE])),
         assay_lazy_env
       )
       private$.mask_cols$bind_mold(quo_col, name)
@@ -190,7 +190,7 @@ TidySEMaskManager <- R6::R6Class(
         expr(vec_rep(!!name_sym, times = .ncol)),
         row_lazy_env
       )
-      private$.mask_cols$bind_mold(quo_col, name)
+      private$.mask_assay$bind_mold(quo_assay, name)
       # in rows and columns masks, 
       # create active bindings that force mold eval
       private$.mask_assay$bind_actv(name)
