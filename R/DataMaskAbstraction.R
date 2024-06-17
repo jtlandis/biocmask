@@ -28,15 +28,23 @@ TidyBiocMaskAbstraction <- R6::R6Class(
     #' @param .data a data object with names
     #' @param .env environment that mask should enherit from
     #' @param .env_top top level environment.
-    initialize = function(.data, .env = NULL, .env_top = NULL, ...) {
+    initialize = function(.data, .chop_fn = NULL, .env = NULL, .env_top = NULL, ...) {
       private$.names <- .names <- names(.data)
+      .names <- setNames(nm = .names)
+      .size <- length(.names) + 20L
+      private$.chop_fn <- .chop_fn
       private$.lazy_data <- new.env(parent = .env)
       env_bind_lazy(private$.lazy_data,
-                    !!! lapply(setNames(nm = .names),
-                               function(x) quo(.data[[!!x]])),
-                    ...)
-      private$.lazy_mold <- new.env(parent = private$.lazy_data)
-      private$.actv_data <- new.env(parent = private$.lazy_mold)
+                    !!! lapply(.names,
+                               function(x) quo(.data[[!!x]])))
+      private$.chops <- new.env(parent = private$.lazy_data, size = .size)
+      env_bind_lazy(
+        private$.chops,
+        !!! lapply(.names,
+                   as.name) |>
+          lapply(.chop_fn, ...))
+      private$.lazy_mold <- new.env(parent = private$.chops,  size = .size)
+      private$.actv_data <- new.env(parent = private$.lazy_mold, size = .size)
       private$.data_mask <- new_data_mask(private$.actv_data, .env_top)
     },
     eval_expr = function(quo, name) {

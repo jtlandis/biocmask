@@ -43,6 +43,7 @@ top_env <- rlang::new_environment(
     poke_ctx = poke_ctx,
     poke_ctx_local = poke_ctx_local,
     peek_ctx = peek_ctx,
+    .current_group_id = NULL,
     .mask_manager = NULL,
     rows = function(...) {
       # browser()

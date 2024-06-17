@@ -47,3 +47,11 @@ expand_groups <- function(.rows, .cols) {
       )
     )
 }
+
+mat_index <- function(rows_ind, cols_ind, nrows) {
+  shift <- (cols_ind - 1L) * nrows
+  vctrs::vec_rep(rows_ind,
+                 length(cols_ind)) +
+    vctrs::vec_rep_each(shift,
+                        length(rows_ind))
+}
