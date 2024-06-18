@@ -1,0 +1,11 @@
+[package]
+name = 'tidySEabstraction'
+version = '0.1.0'
+edition = '2021'
+
+[lib]
+crate-type = [ 'staticlib' ]
+name = 'tidySEabstraction'
+
+[dependencies]
+extendr-api = '*'
