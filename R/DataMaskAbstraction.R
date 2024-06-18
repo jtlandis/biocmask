@@ -30,8 +30,12 @@ TidyBiocMaskAbstraction <- R6::R6Class(
     #' @param .env_top top level environment.
     initialize = function(.data, .env = NULL, .env_top = NULL, .ngroups = 1L, ...) {
       # delete this
-      .env <- new_environment(list(.current_group_id = 1L), .env)
+      .env <- new.env(parent = .env)
+      rlang::env_bind_active(
+        .env,
+        .current_group_id = new_function(pairlist(), quote(.current_group_id), private))
       private$.names <- .names <- names(.data)
+      private$.ngroups <- .ngroups
       .names <- setNames(nm = .names)
       .size <- length(.names) + 20L
       private$.lazy_data <- new.env(parent = .env)
@@ -57,7 +61,14 @@ TidyBiocMaskAbstraction <- R6::R6Class(
     bind_chop = function(quo, name) {
       nm <- as.name(name)
       env_bind_lazy(private$.chops, !!name := !!private$chop(!!quo), .eval_env = private$.lazy_data)
-      fun <- new_function(pairlist(), body = expr(.subset2(!!nm, .current_group_id)), env = private$.chops)
+      fun <- new_function(
+        pairlist(),
+        body = expr({
+          if (is.null(.current_group_id)) 
+            !!nm
+          else
+            .subset2(!!nm, .current_group_id)
+          }), env = private$.chops)
       env_bind_active(private$.actv_chop, !!name := fun)
     },
     bind_mold = function(quo, name) {
@@ -77,11 +88,24 @@ TidyBiocMaskAbstraction <- R6::R6Class(
         private$.names <- c(cur_names, name)
       }
       invisible(self)
+    },
+    set_group = function(i) {
+      if (i > private$.ngroups)
+        private$.current_group_id <- NULL
+      else 
+        private$.current_group_id <- i
+      invisible(self)
+    },
+    inc_group = function() {
+      curr_id <- private$.current_group_id
+      if (is.null(curr_id))
+        curr_id <- 0L
+      self$set_group(curr_id + 1L)
     }
   ),
   active = list(
     cur_group_id = function(value) {
-      eval(quote(.current_group_id), private$.lazy_data)
+      private$.current_group_id
     },
     lazy_data = function(value) {
       if (!missing(value)) 
@@ -92,7 +116,7 @@ TidyBiocMaskAbstraction <- R6::R6Class(
       if (!missing(value))
         stop("`$actv_chop` is read only")
       private$.actv_chop
-    }
+    },
     lazy_mold = function(value) {
       if (!missing(value)) 
         stop("`$lazy_mold` is read only")
@@ -124,6 +148,8 @@ TidyBiocMaskAbstraction <- R6::R6Class(
   private = list(
     .names = character(),
     .new_names = character(),
+    .current_group_id = NULL,
+    .ngroups = NULL,
     # shared environments
     
     #' lazily bound data that
@@ -160,7 +186,6 @@ GroupedTidyBiocMaskAbstraction <- R6::R6Class(
     initialize = function(.data, ..., .indices) {
       super$initialize(.data, ...)
       private$.lazy_data$.indices <- .indices
-      private$chop <- identity
     }
   ),
   private = list(
