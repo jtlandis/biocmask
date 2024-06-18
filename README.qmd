@@ -15,8 +15,6 @@ The goal of this repo is to design efficient abstractions to the `SummarizedExpe
 I will be using the following example data throughout this document:
 
 ```{r}
-#| lst-label: lst-dummy
-#| lst-cap: reproducible example data
 #| message: false
 
 library(SummarizedExperiment)
@@ -100,7 +98,7 @@ In @fig-abstraction, we an abstract a `SummarizedExperiment` object (top portion
 
 Data will be lazily bound to the top level of each mask "as is" from the `SummarizedExperiment` object's data context.
 
-For example, for `se` from @lst-dummy bindings in the top level may look like this:
+For example, the `se` bindings in the top level may look like this:
 
 ```{r}
 library(rlang)
