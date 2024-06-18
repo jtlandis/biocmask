@@ -8,6 +8,8 @@ format:
 
 The goal of this repo is to design efficient abstractions to the `SummarizedExperiment` class such that using common dplyr functions feels as natural to operating on a `data.frame` or `tibble`. While the overall goal is for it to **feel** like a tibble operation, it would be smart to emphasize that certain data wrangling pipelines do not translate well to the structure of the `SummarizedExperiment` class.
 
+***Note:***  This repository is still under active development. Internal structure of classes and code organization is likely to change.
+
 ## Example Data
 
 I will be using the following example data throughout this document:

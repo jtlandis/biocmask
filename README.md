@@ -9,6 +9,9 @@ overall goal is for it to **feel** like a tibble operation, it would be
 smart to emphasize that certain data wrangling pipelines do not
 translate well to the structure of the `SummarizedExperiment` class.
 
+***Note:*** This repository is still under active development. Internal
+structure of classes and code organization is likely to change.
+
 ## Example Data
 
 I will be using the following example data throughout this document:
@@ -87,9 +90,9 @@ bench::mark(
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 native       12.3ms   13.5ms     71.2   804.77KB     1.98
-    2 new          12.5ms   13.8ms     71.2     2.54MB     1.98
-    3 old         746.6ms  746.6ms      1.34   88.27MB     4.02
+    1 native       12.8ms   16.3ms     60.8   804.77KB     1.96
+    2 new          15.1ms   16.9ms     57.2     2.54MB     1.97
+    3 old         826.8ms  826.8ms      1.21   88.27MB     3.63
 
 ## The abstraction
 
