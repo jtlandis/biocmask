@@ -9,28 +9,33 @@ overall goal is for it to **feel** like a tibble operation, it would be
 smart to emphasize that certain data wrangling pipelines do not
 translate well to the structure of the `SummarizedExperiment` class.
 
+***Note:*** This repository is still under active development. Internal
+structure of classes and code organization is likely to change.
+
 ## Example Data
 
 I will be using the following example data throughout this document:
 
-    library(SummarizedExperiment)
-    library(tidySEabstraction)
-    library(dplyr)
-    library(rlang)
-    library(tibble)
-    set.seed(1234)
-    se <- SummarizedExperiment(
-      list(counts = matrix(sample(1:20, 20), nrow = 5, ncol = 4)),
-      rowData = data.frame(gene = sprintf("g%i", 1:5),
-                           length = rbinom(5, 100, runif(5)),
-                           direction = sample(c("-","+"), 5, T)),
-      colData = data.frame(sample = sprintf("s%i", 1:4),
-                           condition = rep(c("cntrl","drug"), each =2))
-    )
-    rownames(se) <- sprintf("row_%s", letters[1:5])
-    colnames(se) <- sprintf("col_%s", LETTERS[1:4])
-    assay(se, 'logcounts') <- log(assay(se, 'counts'))
-    se
+``` r
+library(SummarizedExperiment)
+library(tidySEabstraction)
+library(dplyr)
+library(rlang)
+library(tibble)
+set.seed(1234)
+se <- SummarizedExperiment(
+  list(counts = matrix(sample(1:20, 20), nrow = 5, ncol = 4)),
+  rowData = data.frame(gene = sprintf("g%i", 1:5),
+                       length = rbinom(5, 100, runif(5)),
+                       direction = sample(c("-","+"), 5, T)),
+  colData = data.frame(sample = sprintf("s%i", 1:4),
+                       condition = rep(c("cntrl","drug"), each =2))
+)
+rownames(se) <- sprintf("row_%s", letters[1:5])
+colnames(se) <- sprintf("col_%s", LETTERS[1:4])
+assay(se, 'logcounts') <- log(assay(se, 'counts'))
+se
+```
 
     class: SummarizedExperiment 
     dim: 5 4 
@@ -87,9 +92,9 @@ bench::mark(
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 native       12.3ms   13.5ms     71.2   804.77KB     1.98
-    2 new          12.5ms   13.8ms     71.2     2.54MB     1.98
-    3 old         746.6ms  746.6ms      1.34   88.27MB     4.02
+    1 native       13.3ms   14.3ms     66.8   804.77KB     1.97
+    2 new          13.5ms   15.2ms     64.6     2.54MB     1.96
+    3 old         846.4ms  846.4ms      1.18   88.27MB     2.36
 
 ## The abstraction
 
@@ -129,9 +134,7 @@ evaluation contexts for our object. We are either evaluating on the
 Data will be lazily bound to the top level of each mask “as is” from the
 `SummarizedExperiment` object’s data context.
 
-For example, for `se` from
-<a href="#lst-dummy" class="quarto-xref">Listing 1</a> bindings in the
-top level may look like this:
+For example, the `se` bindings in the top level may look like this:
 
 ``` r
 library(rlang)

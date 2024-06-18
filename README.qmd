@@ -8,13 +8,13 @@ format:
 
 The goal of this repo is to design efficient abstractions to the `SummarizedExperiment` class such that using common dplyr functions feels as natural to operating on a `data.frame` or `tibble`. While the overall goal is for it to **feel** like a tibble operation, it would be smart to emphasize that certain data wrangling pipelines do not translate well to the structure of the `SummarizedExperiment` class.
 
+***Note:***  This repository is still under active development. Internal structure of classes and code organization is likely to change.
+
 ## Example Data
 
 I will be using the following example data throughout this document:
 
 ```{r}
-#| lst-label: lst-dummy
-#| lst-cap: reproducible example data
 #| message: false
 
 library(SummarizedExperiment)
@@ -98,7 +98,7 @@ In @fig-abstraction, we an abstract a `SummarizedExperiment` object (top portion
 
 Data will be lazily bound to the top level of each mask "as is" from the `SummarizedExperiment` object's data context.
 
-For example, for `se` from @lst-dummy bindings in the top level may look like this:
+For example, the `se` bindings in the top level may look like this:
 
 ```{r}
 library(rlang)
