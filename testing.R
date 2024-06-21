@@ -2,9 +2,11 @@
 
 library(rlang)
 library(vctrs)
+library(dplyr)
 library(SummarizedExperiment)
 
-devtools::load_all()
+# devtools::load_all()
+sys.source("R/group_by.R", envir = attach(NULL, name = "group_by_funs"))
 
 # library(tidySummarizedExperiment)
 
@@ -23,25 +25,7 @@ assay(se, 'logcounts') <- log(assay(se, 'counts'))
 se
 
 
-
-
-biocmask:::mutate.SummarizedExperiment(
-  se,
-  new_counts = counts + 1,
-  rows(
-    rowSum = rowSums(.assay$counts),
-    peek_counts = counts
-  ),
-  cols(
-    colSum = colSums(.assay$counts)
-  )
-) -> result
-
-
-
-dplyr::group_by(se, gene) |>
-  dplyr::mutate(
-    new_counts = counts + 1,
-    rowSum = sum(counts)
-  )
+groups_data <- biocmask_groups(
+  rowData(se)["direction"],
+  colData(se)["condition"])
 

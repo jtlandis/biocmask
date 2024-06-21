@@ -105,19 +105,13 @@ TidySEMaskManager <- R6::R6Class(
       added_rows <- private$.mask_rows$modified
       if (length(added_rows)) {
         row_groups <- rowData(.data)[added_rows] |>
-          tibble::as_tibble() |>
-          vctrs::vec_group_loc() |>
-          tidyr::unnest(key) |>
-          dplyr::rename(.rows = loc)
+          get_groups(".rows")
         expand <- "row"
       }
       added_cols <- private$.mask_cols$modified
       if (length(added_cols)) {
         col_groups <- colData(.data)[added_cols] |>
-          tibble::as_tibble() |>
-          vctrs::vec_group_loc() |>
-          tidyr::unnest(key) |>
-          dplyr::rename(.cols = loc)
+          get_groups(".cols")
         expand <- paste0(expand, "col")
       }
       

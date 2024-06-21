@@ -57,36 +57,18 @@ biocmask <- R6::R6Class(
   "biocmask",
   public = list(
     initialize = function(.data, .indices = NULL) {
+      private$.data <- .data
+      private$.indices <- .indices
+      private$make_current_group_info()
       
-      private$env_current_group_info <- new_environment(
-        list(
-          `biocmask:::current_group_id` = 1L,
-          `biocmask:::current_group_size` = 0L
-        ),
-        private
-      )
+      private$.names <- setNames(nm = names(.data))
+      private$.env_size <- length(.names) + 20L
       
-      .names <- setNames(nm = names(.data))
-      .size <- length(.names) + 20L
+      private$make_foreign_data()
       
-      private$env_foreign_data <- new.env(parent = private$env_current_group_info)
+      private$make_data_lazy()
       
-      # normal data ... do we need it to be lazy??
-      private$env_data_lazy <- new.env(parent = private$env_foreign_data, size = .size)
-      env_bind_lazy(
-        private$env_data_lazy,
-        !!! lapply(.names, function(x) quo(.data[[!!x]])))
-      
-      # chops
-      private$env_data_chop <- new.env(parent = private$env_data_lazy, size = .size)
-      private$handle_chops(.indices)
-      env_bind_lazy(
-        private$env_data_chop,
-        !!! lapply(.names, as.name) |>
-          lapply(private$chop_data) |>
-          lapply(new_quosure,
-                 env = private$env_data_lazy)
-      )
+      private$make_chop_data()
       
       # get current chop
       private$env_mask_bind <- new.env(parent = private$env_data_chop, size = .size)
@@ -126,11 +108,46 @@ biocmask <- R6::R6Class(
   ),
   active = list(
     environments = function() {
-      env_parents(private$env_mask_bind)
+      env_parents(private$env_mask_bind, private)
     }
   ),
   private = list(
-    # extending function
+    make_current_group_info = function() {
+      private$env_current_group_info <- new_environment(
+        list(
+          `biocmask:::current_group_id` = 1L,
+          `biocmask:::current_group_size` = 0L
+        ),
+        private
+      )
+    },
+    make_foreign_data = function() {
+      private$env_foreign_data <- new.env(parent = private$env_current_group_info)
+    },
+    make_data_lazy = function() {
+      .data <- private$.data
+      # normal data ... do we need it to be lazy??
+      private$env_data_lazy <- new.env(
+        parent = private$env_foreign_data,
+        size = private$.env_size)
+      env_bind_lazy(
+        private$env_data_lazy,
+        !!! lapply(private$.names, function(x) quo(.data[[!!x]])))
+    },
+    make_data_chop = function(.indices) {
+      # chops
+      private$env_data_chop <- new.env(
+        parent = private$env_data_lazy,
+        size = private$.env_size)
+      private$handle_chops(.indices)
+      env_bind_lazy(
+        private$env_data_chop,
+        !!! lapply(.names, as.name) |>
+          lapply(private$chop_data) |>
+          lapply(new_quosure,
+                 env = private$env_data_lazy)
+      )
+    },
     handle_chops = function(indices) {
       private$.indices <- indices
       private$.ngroups <- if (is.null(indices)) 1L else length(indices)
@@ -141,6 +158,7 @@ biocmask <- R6::R6Class(
       private$chop_data <- fun
       invisible(self)
     },
+    # extending function
     get_chop_fun = function() {
       if (is.null(private$.indices)) {
         function(name) {
@@ -180,12 +198,20 @@ biocmask <- R6::R6Class(
     },
     .on_bind = list(),
     
-    
+    # data input
+    .data = NULL,
     # list of indices
     .indices = NULL,
     # type of grouping, "none", "group"
     .grouped = NULL,
     .ngroups = NULL,
+    
+    #inital names of `.data`
+    .names = NULL,
+    # initial size of environments
+    # number of elements of `.data` + 20L
+    .env_size = NULL,
+    
     
     #' holds grouping information
     #' for this object
@@ -195,17 +221,140 @@ biocmask <- R6::R6Class(
     env_data_lazy = NULL,
     env_data_chop = NULL,
     env_mask_bind = NULL
-    
-    #minimal envir variables
-    # `{` = base::`{`,
-    # `(` = base::`(`,
-    # list = base::list,
-    # .subset2 = base::.subset2,
-    # `<-` = base::`<-`,
-    # vec_chop = vctrs::vec_chop,
-    # enexpr = rlang::enexpr
   )
 )
 
 im <- biocmask$new(iris, list(1:50, 51:100, 101:150))
 im$eval(quote(Sepal.Width))
+
+biocmask_assay <- R6::R6Class(
+  "biocmask_assay",
+  inherit = biocmask,
+  public = list(
+    initialize = function(.data, .indices, .nrow, .ncol) {
+      super$initialize(.data, .indices)
+      env_bind(
+        private$env_current_group_info,
+        .nrow = .nrow,
+        .ncol = .ncol
+      )
+      assay_group_type <- group_type(.indices)
+      current_names <- private$.names
+      #finalize bindings
+      switch(
+        assay_group_type,
+        none = {
+          # no groupings, row and col contexts should
+          # return the same environment bindings
+          private$.env_row_ctx <- private$.env_col_ctx <- private$env_mask_bind
+        },
+        rowcol = {
+          # row and col groupings exist, but row & col
+          # contexts cannot be evaluated at the same time
+          # setup empty environments
+          row_ctx_chop <- new_environment()
+          col_ctx_chop <- new_environment()
+          
+          
+          
+          # self$on_bind(
+          #   add_bind(
+          #     quote(vec_chop_assays_row(!!name), private$.row_indices),
+          #     .env_expr = private$lazy_data,
+          #     .env_bind = row_ctx_chop,
+          #     type = "lazy"
+          #   )
+          # )
+          # self$on_bind(
+          #   add_bind(
+          #     quote(vec_chop_assays_col(!!name), private$.col_indices),
+          #     .env_expr = private$lazy_data,
+          #     .env_bind = col_ctx_chop,
+          #     type = "lazy"
+          #   )
+          # )
+          # private$.env_row_ctx <- new.
+          
+        },
+        row = {
+          
+        },
+        col = {
+          
+        })
+      if (!is.null(.indices$.rows)) {
+        env_bind_active(
+          private$env_current_group_info,
+          .nrow = function() length(.subset2(.indices$.rows, `biocmask:::current_group_id`))
+        )
+      }
+      if (!is.null(.indices$.cols)) {
+        env_bind_active(
+          private$env_current_group_info,
+          .ncol = function() length(.subset2(.indices$.cols, `biocmask:::current_group_id`))
+        )
+      }
+      
+    }
+  ),
+  private = list(
+    get_chop_fun = function() {
+      .indices <- private$.indices
+      if (is.null(.indices)) {
+        private$.env_row_chop <- private$.env_col_chop <- private$env_data_chop
+        return(function(name) {
+          name <- enexpr(name)
+          expr(list(!!name))
+        })
+      } else {
+        type <- attr(.indices, "type")
+        private$.ngroups <- nrow(.indices)
+        fun <- switch(
+          type,
+          rowcol = {
+            # row and col contexts are available
+            private$.env_row_chop <- new_environment()
+            private$.env_col_chop <- new_environment()
+            self$on_bind(
+              add_bind(
+                quote(vec_chop_assays_row(!!name), private$.row_indices),
+                .env_expr = private$lazy_data,
+                .env_bind = private$.env_row_chop,
+                type = "lazy"
+              )
+            )
+            self$on_bind(
+              add_bind(
+                quote(vec_chop_assays_col(!!name), private$.col_indices),
+                .env_expr = private$lazy_data,
+                .env_bind = private$.env_col_chop,
+                type = "lazy"
+              )
+            )
+            function(name) {
+              name <- enexpr(name)
+              expr(vec_chop_assays(!!name, private$.indices))
+            }
+          },
+          row = {
+            private$.env_row_ctx <- new_environment()
+            private$.env_col_ctx <- new_environment()
+            function(name) {
+              name <- enexpr(name)
+              expr(vec_chop_assays_row(!!name, private$.indices))
+            }
+          },
+          col = function(name) {
+            name <- enexpr(name)
+            expr(vec_chop_assays_col(!!name, private$.indices))
+          }
+        )
+        return(fun) 
+      }
+    },
+    .row_indices = NULL,
+    .env_row_ctx = NULL,
+    .col_indices = NULL,
+    .env_col_ctx = NULL
+  )
+)

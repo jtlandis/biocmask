@@ -23,29 +23,37 @@ expand_groups <- function(.rows, .cols) {
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
   dplyr::bind_cols(
-    dplyr::reframe(
+    tidyr::nest(
       .rows,
-      dplyr::across(
-        dplyr::everything(),
-        vec_rep,
-        times = .env$.ncol
-      )
-    ),
+      .row_keys = -c(.indices, .indices_group_id)
+    ) |>
     dplyr::reframe(
-      .cols,
       dplyr::across(
         dplyr::everything(),
-        vec_rep_each,
-        times = .env$.nrow
-      )
+        ~vec_rep(.x, times = .env$.ncol)
+      ) |>
+        dplyr::rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
+    ),
+    tidyr::nest(
+      .cols,
+      .col_keys = -c(.indices, .indices_group_id)
+    ) |>
+    dplyr::reframe(
+      dplyr::across(
+        dplyr::everything(),
+        ~vec_rep_each(.x, times = .env$.nrow)
+      ) |>
+        dplyr::rename_with(.fn = \(x) gsub(".indices", ".cols", x = x))
     ),
     .name_repair = "minimal"
   ) |>
     dplyr::arrange(
-      dplyr::pick(
-        -c(.rows:(dplyr::last_col()))
-      )
-    )
+      .rows_group_id,
+      .cols_group_id
+    ) |>
+    dplyr::mutate(
+      .group_id = 1:n()
+    ) 
 }
 
 mat_index <- function(rows_ind, cols_ind, nrows) {
@@ -63,15 +71,143 @@ mat_index <- function(rows_ind, cols_ind, nrows) {
 #   purrr::pmap(list(chops, nrows, ncols), ~ matrix(..1, ..2, ..3))
 # }
 
-vec_chop_assays <- function(.data, row_indices, col_indices) {
-  purrr::map2(row_indices, col_indices, 
-              function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
+# vec_chop_assays <- function(.data, row_indices, col_indices) {
+#   purrr::map2(row_indices, col_indices, 
+#               function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
+# }
+
+vec_chop_assays <- function(.data, nest_indices) {
+  nest_indices <- nest_indices |>
+    tibble(x = _) |>
+    tidyr::unnest(cols = x)
+  purrr::map2(
+    nest_indices$.rows, nest_indices$.cols,
+    function(.x, .y, .data) .data[.x, .y], .data = .data
+  )
 }
 
-vec_chop_assays_row <- function(.data, row_indices) {
-  purrr::map(row_indices, function(.i, .matrix) .matrix[.i, ], .matrix = .data)
+vec_chop_assays_row <- function(.data, indices) UseMethod("vec_chop_assays_row")
+
+vec_chop_assays_row.matrix <- function(.data, indices) {
+  purrr::map(indices,
+             function(.i, .data) .data[.i,,drop = TRUE],
+             .data = .data)
 }
 
-vec_chop_assays_col <- function(.data, col_indices) {
-  purrr::map(col_indices, function(.i, .matrix) .matrix[, .i], .matrix = .data)
+split_groups_by_rows <- function(.data, indices) {
+  if (length(.data)!=1) stop("reshaping by row expects a single")
+  key <- attr(.data, ".keys")
+  .data <- .data[[1]]
+  purrr::map(
+    indices,
+    \(x) purrr::map(.data, ~ .x[x,,drop = T])
+  ) |>
+  new_grouped_lst(keys = key)
 }
+
+vec_chop_assays_row.vctrs_grouped_list <- function(.data, indices) {
+  
+  purrr::map2(
+    .data,
+    indices,
+    function(glst, index, key) {
+      purrr::map(
+        index,
+        function(i, glst) {
+          purrr::map(
+            glst,
+            vec_chop_assays_row.matrix,
+            indices = i
+          )
+        },
+        glst = glst
+      ) |> new_grouped_lst(keys = key)
+    },
+    key = attr(.data, ".keys")
+  )
+
+}
+
+vec_chop_assays_col <- function(.data, indices) UseMethod("vec_chop_assays_col")
+
+vec_chop_assays_col.matrix <- function(.data, indices) {
+  purrr::map(indices,
+             function(.i, .data) .data[,.i,drop = TRUE],
+             .data = .data)
+}
+
+vec_chop_assays_col.vctrs_grouped_list <- function(.data, indices) {
+  purrr::map(
+    .data,
+    vec_chop_assays_col.matrix,
+    indices = indices
+  )
+}
+
+
+
+create_groups <- function(.data, .rename = ".indices") {
+  if (is.null(.data)) return(NULL)
+  .data |>
+    tibble::as_tibble() |>
+    vctrs::vec_group_loc() |>
+    tidyr::unnest(key) |>
+    dplyr::rename("{.rename}" := loc) |>
+    dplyr::mutate("{.rename}_group_id" := 1:n())
+}
+
+biocmask_groups <- function(row_groups = NULL, col_groups = NULL) {
+  out <- list(
+    row_groups = create_groups(row_groups),
+    col_groups = create_groups(col_groups)
+  )
+  type <- ""
+  if (!is.null(row_groups)) {
+    type <- "row"
+  }
+  if (!is.null(col_groups)) {
+    type <- paste0(type, "col")
+  }
+  class(out) <- "biocmask_groups"
+  attr(out, "type") <- type
+  out
+}
+
+get_group_indices <- function(
+    .groups,
+    type = c("assays", "rowData", "colData")) {
+  if (is.null(.groups)) return(NULL)
+  type <- match.arg(type, c("assays", "rowData", "colData"))
+  switch(
+    type,
+    assays = {
+      out <- dplyr::select(pull_group_indices(.groups), .rows, .cols)
+      attr(out, "type") <- attr(.groups, "type")
+      out},
+    rowData = .groups$row_groups$.indices,
+    colData = .groups$col_groups$.indices
+  )
+}
+
+pull_group_indices <- function(.groups) {
+  switch(
+    group_type(.groups),
+    rowcol = expand_groups(.groups$row_groups, .groups$col_groups),
+    row = .groups$row_groups,
+    col = .groups$col_groups
+  )
+}
+
+group_type <- function(obj) {
+  result <- attr(obj, "type")
+  if (is.null(result)) return("none")
+  result
+}
+
+`group_type<-` <- function(obj, value) {
+  value <- match.arg(value, choices = c("rowcol", "row", "col"))
+  attr(obj, "type") <- value
+  obj
+}
+
+
