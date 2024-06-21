@@ -30,13 +30,13 @@ biocmask_SummarizedExperiment <- function(se) {
   ## b
   mask_assay$on_bind(
     add_bind(
-      quote(lapply(1:.nrow, function(i, x) x[i,,drop=TRUE], x = .assays[[!!name]])), 
+      quote(lapply(1:.nrow, function(i, x) x[i,,drop=TRUE], x = .assays[[!!name]])),
       .env_expr = mask_rows$environments[[3]]
       .env_bind = mask_assay$environments[[4]],
       type = "lazy"
   )
     )
-  
+
 }
 
 # library(bench)
@@ -57,4 +57,4 @@ biocmask_SummarizedExperiment <- function(se) {
 # mat <- matrix(rnorm(1e7), ncol=1e4)
 # # all.equal(force_rep(), double_trans())
 # mark(double_trans(), force_rep(), force_rep_vctrs())
-# 
+#

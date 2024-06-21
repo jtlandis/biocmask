@@ -53,7 +53,7 @@ expand_groups <- function(.rows, .cols) {
     ) |>
     dplyr::mutate(
       .group_id = 1:n()
-    ) 
+    )
 }
 
 mat_index <- function(rows_ind, cols_ind, nrows) {
@@ -72,7 +72,7 @@ mat_index <- function(rows_ind, cols_ind, nrows) {
 # }
 
 # vec_chop_assays <- function(.data, row_indices, col_indices) {
-#   purrr::map2(row_indices, col_indices, 
+#   purrr::map2(row_indices, col_indices,
 #               function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
 # }
 
@@ -106,7 +106,7 @@ split_groups_by_rows <- function(.data, indices) {
 }
 
 vec_chop_assays_row.vctrs_grouped_list <- function(.data, indices) {
-  
+
   purrr::map2(
     .data,
     indices,
@@ -181,7 +181,7 @@ get_group_indices <- function(
   switch(
     type,
     assays = {
-      out <- dplyr::select(pull_group_indices(.groups), .rows, .cols)
+      out <- pull_group_indices(.groups)
       attr(out, "type") <- attr(.groups, "type")
       out},
     rowData = .groups$row_groups$.indices,

@@ -7,6 +7,7 @@ library(SummarizedExperiment)
 
 # devtools::load_all()
 sys.source("R/group_by.R", envir = attach(NULL, name = "group_by_funs"))
+sys.source("R/grouped_list.R", envir = attach(NULL, name = "grouped_list"))
 
 # library(tidySummarizedExperiment)
 
@@ -29,3 +30,17 @@ groups_data <- biocmask_groups(
   rowData(se)["direction"],
   colData(se)["condition"])
 
+ind <- pull_group_indices(groups_data)
+
+chop_data <- vec_chop_assays(assay(se,"counts"), ind)
+id <- 1L
+filter(ind, .rows_group_id == .env$id) |>
+  select(.group_id, .col_keys) |>
+  unnest(.col_keys) |> {
+  \(x, chop_data) {
+    new_grouped_lst(
+      list(chop_data[x[[1L]]]),
+      keys = x[-1L]
+    )
+  }
+}(chop_data)
