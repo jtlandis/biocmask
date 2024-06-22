@@ -94,7 +94,7 @@ vec_chop_assays_row.matrix <- function(.data, indices) {
              .data = .data)
 }
 
-split_groups_by_rows <- function(.data, indices) {
+vec_chop_assays_row.vctrs_grouped_list <- function(.data, indices) {
   if (length(.data)!=1) stop("reshaping by row expects a single")
   key <- attr(.data, ".keys")
   .data <- .data[[1]]
@@ -102,30 +102,7 @@ split_groups_by_rows <- function(.data, indices) {
     indices,
     \(x) purrr::map(.data, ~ .x[x,,drop = T])
   ) |>
-  new_grouped_lst(keys = key)
-}
-
-vec_chop_assays_row.vctrs_grouped_list <- function(.data, indices) {
-
-  purrr::map2(
-    .data,
-    indices,
-    function(glst, index, key) {
-      purrr::map(
-        index,
-        function(i, glst) {
-          purrr::map(
-            glst,
-            vec_chop_assays_row.matrix,
-            indices = i
-          )
-        },
-        glst = glst
-      ) |> new_grouped_lst(keys = key)
-    },
-    key = attr(.data, ".keys")
-  )
-
+    new_grouped_lst(keys = key)
 }
 
 vec_chop_assays_col <- function(.data, indices) UseMethod("vec_chop_assays_col")
@@ -137,11 +114,14 @@ vec_chop_assays_col.matrix <- function(.data, indices) {
 }
 
 vec_chop_assays_col.vctrs_grouped_list <- function(.data, indices) {
+  if (length(.data)!=1) stop("reshaping by row expects a single")
+  key <- attr(.data, ".keys")
+  .data <- .data[[1]]
   purrr::map(
-    .data,
-    vec_chop_assays_col.matrix,
-    indices = indices
-  )
+    indices,
+    \(x) purrr::map(.data, ~ .x[,x,drop = T])
+  ) |>
+    new_grouped_lst(keys = key)
 }
 
 

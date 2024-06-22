@@ -39,7 +39,12 @@ top_env <- rlang::new_environment(
     vec_chop = vctrs::vec_chop,
     vec_chop_assays = vec_chop_assays,
     vec_chop_assays_row = vec_chop_assays_row,
+    vec_chop_assays_row.matrix = vec_chop_assays_row.matrix,
+    vec_chop_assays_row.vctrs_grouped_list = vec_chop_assays_row.vctrs_grouped_list,
     vec_chop_assays_col = vec_chop_assays_col,
+    vec_chop_assays_col.matrix = vec_chop_assays_col.matrix,
+    vec_chop_assays_col.vctrs_grouped_list = vec_chop_assays_col.vctrs_grouped_list,
+    new_grouped_lst = new_grouped_lst,
     vec_rep = vctrs::vec_rep,
     vec_rep_each = vctrs::vec_rep_each,
     vec_c = vctrs::vec_c,
@@ -84,7 +89,7 @@ top_env <- rlang::new_environment(
       }
       skip()
     }
-  ), 
+  ),
   parent = baseenv()
 )
 
@@ -116,6 +121,6 @@ bot_env <- new.env(parent = top_env)
 #     `*` = base::`*`,
 #     `^` = base::`^`,
 #     `sqrt` = base::sqrt,
-#     
+#
 #   )
 # )

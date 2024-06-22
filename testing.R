@@ -1,13 +1,14 @@
 #test
 
 library(rlang)
+library(tidyr)
 library(vctrs)
 library(dplyr)
 library(SummarizedExperiment)
 
 # devtools::load_all()
-sys.source("R/group_by.R", envir = attach(NULL, name = "group_by_funs"))
 sys.source("R/grouped_list.R", envir = attach(NULL, name = "grouped_list"))
+sys.source("R/group_by.R", envir = attach(NULL, name = "group_by_funs"))
 
 # library(tidySummarizedExperiment)
 
@@ -29,7 +30,7 @@ se
 groups_data <- biocmask_groups(
   rowData(se)["direction"],
   colData(se)["condition"])
-
+metadata(se)[["group_data"]] <- groups_data
 ind <- pull_group_indices(groups_data)
 
 chop_data <- vec_chop_assays(assay(se,"counts"), ind)

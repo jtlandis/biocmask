@@ -1,5 +1,23 @@
 
 
+.AtNames.biocmask_envs <- function(obj, pattern = "") {
+  options <- setdiff(names(attributes(obj)), c("class", "names"))
+  if (identical(pattern, "")) {
+    options
+  } else {
+    grep(pattern, options, value = TRUE)
+  }
+}
+
+`@.biocmask_envs` <- function(obj, name) {
+  attr(obj, name, exact = TRUE)
+}
+
+`@<-.biocmask_envs` <- function(obj, name, value) {
+  attr(obj, name) <- value
+  invisible(obj)
+}
+
 #' @param .expr an expression that will be evaluated and bound in `.env_expr`.
 #' It is recommened to use `base::quote()` so that `.expr` can contain diffusion
 #' operators such as `!!`
@@ -117,14 +135,25 @@ biocmask <- R6::R6Class(
       }
       invisible(self)
     },
-    eval = function(quo) {
-      mask <- new_data_mask(private$env_mask_bind, top = private)
-      eval_tidy(quo, data = mask)
+    eval = function(quo, env = caller_env()) {
+      mask <- new_data_mask(private$env_mask_bind, top = top_env)
+      eval_tidy(quo, data = mask, env = env)
     }
   ),
   active = list(
     environments = function() {
-      env_parents(private$env_mask_bind, private)
+
+      out  <- env_parents(private$env_mask_bind, private)
+      class(out) <- c("biocmask_envs", "rlang_envs")
+      attr(out, "env_mask_bind") <- private$env_mask_bind
+      attr(out, "env_data_chop") <- private$env_data_chop
+      attr(out, "env_data_lazy") <- private$env_data_lazy
+      attr(out, "env_foreign_data") <- private$env_foreign_data
+      attr(out, "env_current_group_info") <- private$env_current_group_info
+      out
+    },
+    names = function() {
+      private$.names
     }
   ),
   private = list(
@@ -132,9 +161,10 @@ biocmask <- R6::R6Class(
       private$env_current_group_info <- new_environment(
         list(
           `biocmask:::current_group_id` = 1L,
-          `biocmask:::current_group_size` = 0L
+          `biocmask:::current_group_size` = 0L,
+          .indices = private$.indices
         ),
-        private
+        private$.shared_env
       )
     },
     make_foreign_data = function() {
@@ -228,7 +258,7 @@ biocmask <- R6::R6Class(
     # number of elements of `.data` + 20L
     .env_size = NULL,
 
-
+    .shared_env = bot_env,
     #' holds grouping information
     #' for this object
     env_current_group_info = NULL,
@@ -248,7 +278,6 @@ biocmask_assay <- R6::R6Class(
   inherit = biocmask,
   public = list(
     initialize = function(.data, .indices, .nrow, .ncol) {
-      browser()
       super$initialize(.data, .indices)
       env_bind(
         private$env_current_group_info,
@@ -269,19 +298,22 @@ biocmask_assay <- R6::R6Class(
           # row and col groupings exist, but row & col
           # contexts cannot be evaluated at the same time
           # setup empty environments
-          env_bind_active(
-            private$env_current_group_info,
-            `biocmask:::row_group_id` = new_function(
-              pairlist(),
-              body = quote(.subset2(.indices$.rows_group_id, `biocmask:::current_group_id`)),
-              private$env_current_group_info
-            ),
-            `biocmask:::col_group_id` = new_function(
-              pairlist(),
-              body = quote(.subset2(.indices$.cols_group_id, `biocmask:::current_group_id`)),
-              private$env_current_group_info
-            ),
-          )
+          # env_bind_active(
+          #   private$env_current_group_info,
+          #   `biocmask:::row_group_id` = function() {
+          #     .subset2(private$.rows_group_id, private$env_current_group_info$`biocmask:::current_group_id`)
+          #   },
+          #   #   new_function(
+          #   #   pairlist(),
+          #   #   body = quote(.subset2(.indices$.rows_group_id, `biocmask:::current_group_id`)),
+          #   #   private$env_current_group_info
+          #   # ),
+          #   `biocmask:::col_group_id` = new_function(
+          #     pairlist(),
+          #     body = quote(.subset2(.indices$.cols_group_id, `biocmask:::current_group_id`)),
+          #     private$env_current_group_info
+          #   ),
+          # )
           private$.env_row_ctx <- new.env(parent = private$env_data_chop,
                                           size = private$.env_size)
           row_fn <- add_bind(
@@ -322,37 +354,95 @@ biocmask_assay <- R6::R6Class(
           )
 
           # make initial binds for "names"
-          # name_syms <- lapply(private$.names, as.name)
           lapply(private$.names, row_fn)
-          # eval_tidy(quote(counts), new_data_mask(private$.env_row_ctx, private),caller_env())
           lapply(private$.names, col_fn)
-          self$on_bind(
-            row_fn
-          )
-          self$on_bind(
-            col_fn
-          )
+          self$
+            on_bind(row_fn)$
+            on_bind(col_fn)
 
         },
         row = {
+          # rows are grouped but columns are not
+          # row groups are equal to `biocmask:::current_group_id`
+          # env_bind_active(
+          #   private$env_current_group_info,
+          #   `biocmask:::row_group_id` = new_function(
+          #     pairlist(),
+          #     body = quote(`biocmask:::current_group_id`),
+          #     private$env_current_group_info
+          #   ),
+          #   `biocmask:::col_group_id` = 0L,
+          # )
 
+          private$.env_row_ctx <- private$env_mask_bind
+
+          private$.env_col_ctx <- new.env(parent = private$env_data_chop,
+                                          size = private$.env_size)
+          # columns will ALWAYS be a grouped_list
+          # no need to be an active binding, we can lazily bind here
+          col_fn <- add_bind(
+            .expr = quote(new_grouped_lst(!!name_sym, unnest(.indices[".row_keys"], .row_keys))),
+            .env_expr = private$env_data_chop,
+            .env_bind = private$.env_col_ctx,
+            type = "lazy"
+          )
+          self$on_bind(col_fn)
         },
         col = {
+          # cols are grouped but rows are not
+          # column groups are equal to `biocmask:::current_group_id`
+          # env_bind_active(
+          #   private$env_current_group_info,
+          #   `biocmask:::col_group_id` = new_function(
+          #     pairlist(),
+          #     body = quote(`biocmask:::current_group_id`),
+          #     private$env_current_group_info
+          #   ),
+          #   `biocmask:::row_group_id` = 0L,
+          # )
+
+          private$.env_col_ctx <- private$env_mask_bind
+
+          private$.env_row_ctx <- new.env(parent = private$env_data_chop,
+                                          size = private$.env_size)
+          # rows will ALWAYS be a grouped_list
+          # no need to be an active binding, we can lazily bind here
+          row_fn <- add_bind(
+            .expr = quote(new_grouped_lst(!!name_sym, unnest(.indices[".col_keys"], .col_keys))),
+            .env_expr = private$env_data_chop,
+            .env_bind = private$.env_row_ctx,
+            type = "lazy"
+          )
+          self$on_bind(row_fn)
 
         })
       if (!is.null(.indices$.rows)) {
         env_bind_active(
           private$env_current_group_info,
-          .nrow = function() length(.subset2(.indices$.rows, `biocmask:::current_group_id`))
+          .nrow = new_function(
+            pairlist(),
+            quote(length(.subset2(.indices$.rows, `biocmask:::current_group_id`))),
+            private$env_current_group_info
+            )
         )
       }
       if (!is.null(.indices$.cols)) {
         env_bind_active(
           private$env_current_group_info,
-          .ncol = function() length(.subset2(.indices$.cols, `biocmask:::current_group_id`))
+          .ncol = new_function(
+            pairlist(),
+            quote(length(.subset2(.indices$.cols, `biocmask:::current_group_id`))),
+            private$env_current_group_info)
         )
       }
-
+    }
+  ),
+  active = list(
+    environments = function() {
+      out <- super$environments
+      out@env_row_ctx <- private$.env_row_ctx
+      out@env_col_ctx <- private$.env_col_ctx
+      out
     }
   ),
   private = list(
