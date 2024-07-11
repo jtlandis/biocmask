@@ -191,3 +191,6 @@ group_type <- function(obj) {
 }
 
 
+wrap <- function(obj) UseMethod("wrap")
+wrap.vctrs_grouped_list <- function(obj) obj
+wrap.default <- function(obj) list(obj)
