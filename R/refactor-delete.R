@@ -1,11 +1,246 @@
+# whenever new row binding is a
+connect_assays_to_rows <- function(mask_assays, mask_rows) {
+  assay_names <- mask_assays$names
+  size <- length(assay_names) + 20L
+  env_mask_bind <- mask_rows$environments[[1]] #last level
+  env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
+  env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
+  fun_asis <- add_bind(
+    quote(do.call("cbind", .subset(!!name_sym, `biocmask:::assays:::current_chops`))),
+    # should be evaluated within the chopped context, cannot guarantee groupings
+    .env_expr = mask_assays$environments@env_data_chops,
+    .env_bind = env_asis,
+    type = "active"
+  )
+  fun_mold <- add_bind(
+    quote(lapply(1:.nrow, function(i,x) x[i,,drop=TRUE], x = !!name_sym)),
+    .env_expr = env_asis,
+    .env_bind = env_pronoun,
+    type = "active"
+  )
+  purrr::walk(assay_names, fun_asis) |>
+    purrr::walk(fun_mold)
+  # whenever a new assay binding is made,
+  # execute the prior functions
+  mask_assays$on_bind(fun_asis)$on_bind(fun_mold)
+  # allow assay data to be seen from rowData context
+  mask_rows$environments@env_foreign_data |>
+    env_bind(
+      .assays_asis = as_data_pronoun(env_asis),
+      .assays = as_data_pronoun(env_pronoun)
+    )
+  invisible(env_pronoun)
+}
+connect_assays_to_cols <- function(mask_assays, mask_cols) {
+  assay_names <- mask_assays$names
+  size <- length(assay_names) + 20L
+  env_mask_bind <- mask_cols$environments[[1]] #last level
+  env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
+  env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
+  fun_asis <- add_bind(
+    quote(do.call("rbind", .subset(!!name_sym, `biocmask:::assays:::current_chops`))),
+    # should be evaluated within the chopped context, cannot guarantee groupings
+    .env_expr = mask_assays$environments@env_data_chop,
+    .env_bind = env_asis,
+    type = "active"
+  )
+  fun_mold <- add_bind(
+    quote(lapply(1:.ncol, function(i,x) x[,i,drop=TRUE], x = !!name_sym)),
+    .env_expr = env_asis,
+    .env_bind = env_pronoun,
+    type = "active"
+  )
+  purrr::walk(assay_names, fun_asis) |>
+    purrr::walk(fun_mold)
+  # whenever a new assay binding is made,
+  # execute the prior functions
+  mask_assays$on_bind(fun_asis)$on_bind(fun_mold)
+  # allow assay data to be seen from rowData context
+  mask_cols$environments@env_foreign_data |>
+    env_bind(
+      .assays_asis = as_data_pronoun(env_asis),
+      .assays = as_data_pronoun(env_pronoun)
+    )
+  invisible(env_pronoun)
+}
 
+connect_rows_to_assays <- function(mask_rows, mask_assays) {
+  row_names <- mask_rows$names
+  size <- length(row_names) + 20L
+  env_mask_bind <- mask_assays$environments[[1]] #last level
+  env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
+  env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
+  # assays is always the "richer" grouping, we can guarantee
+  # that the current_chops scope has a scalar value
+  fun_asis <- add_bind(
+    quote(.subset2(!!name_sym, `biocmask:::rows:::current_chops`)),
+    # should be evaluated within the chopped context, cannot guarantee groupings
+    .env_expr = mask_rows$environments@env_data_chops,
+    .env_bind = env_asis,
+    type = "active"
+  )
+  fun_mold <- add_bind(
+    quote(vec_rep(!!name_sym, times = .ncol)),
+    .env_expr = env_asis,
+    .env_bind = env_pronoun,
+    type = "active"
+  )
+  purrr::walk(row_names, fun_asis) |>
+    purrr::walk(fun_mold)
+  # whenever a new row binding is made,
+  # execute the prior functions
+  mask_rows$on_bind(fun_asis)$on_bind(fun_mold)
+  # allow row data to be seen from assay context
+  mask_assays$environments@env_foreign_data |>
+    env_bind(
+      .rows_asis = as_data_pronoun(env_asis),
+      .rows = as_data_pronoun(env_pronoun)
+    )
+  invisible(env_pronoun)
+}
+
+connect_cols_to_assays <- function(mask_cols, mask_assays) {
+  col_names <- mask_cols$names
+  size <- length(col_names) + 20L
+  env_mask_bind <- mask_assays$environments[[1]] #last level
+  env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
+  env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
+  # assays is always the "richer" grouping, we can guarantee
+  # that the current_chops scope has a scalar value
+  fun_asis <- add_bind(
+    quote(.subset2(!!name_sym, `biocmask:::cols:::current_chops`)),
+    .env_expr = mask_cols$environments@env_data_chops,
+    .env_bind = env_asis,
+    type = "active"
+  )
+  fun_mold <- add_bind(
+    quote(vec_rep_each(!!name_sym, times = .nrow)),
+    .env_expr = env_asis,
+    .env_bind = env_pronoun,
+    type = "active"
+  )
+  purrr::walk(col_names, fun_asis) |>
+    purrr::walk(fun_mold)
+  # whenever a new col binding is made,
+  # execute the prior functions
+  mask_cols$on_bind(fun_asis)$on_bind(fun_mold)
+  # allow col data to be seen from assay context
+  mask_assays$environments@env_foreign_data |>
+    env_bind(
+      .cols_asis = as_data_pronoun(env_asis),
+      .cols = as_data_pronoun(env_pronoun)
+    )
+  invisible(env_pronoun)
+}
+
+connect_rows_to_cols <- function(mask_rows, mask_cols) {
+  row_names <- mask_rows$names
+  size <- length(row_names) + 20L
+  env_mask_bind <- mask_cols$environments[[1]] #last level
+  env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
+  env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
+  # bind
+  fun_asis <- add_bind(
+    # row data may be grouped. use vctrs::vec_c to concatenate vectors
+    quote(vec_c(splice(.subset(!!name_sym, `biocmask:::rows:::current_chops`)))),
+    .env_expr = mask_rows$environments@env_data_chops,
+    .env_bind = env_asis,
+    type = "active"
+  )
+  fun_mold <- add_bind(
+    quote(vec_rep(list(!!name_sym), times = .ncol)),
+    .env_expr = env_asis,
+    .env_bind = env_pronoun,
+    type = "active"
+  )
+  purrr::walk(row_names, fun_asis) |>
+    purrr::walk(fun_mold)
+  # whenever a new row binding is made,
+  # execute the prior functions
+  mask_rows$on_bind(fun_asis)$on_bind(fun_mold)
+  # allow row data to be seen from colData context
+  mask_cols$environments@env_foreign_data |>
+    env_bind(
+      .rows_asis = as_data_pronoun(env_asis),
+      .rows = as_data_pronoun(env_pronoun)
+    )
+  invisible(env_pronoun)
+}
+
+connect_cols_to_rows <- function(mask_rows, mask_cols) {
+  col_names <- mask_cols$names
+  size <- length(row_names) + 20L
+  env_mask_bind <- mask_rows$environments[[1]] #last level
+  env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
+  env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
+  # bind
+  fun_asis <- add_bind(
+    # col data may be grouped. use vctrs::vec_c to concatenate vectors
+    quote(vec_c(splice(.subset(!!name_sym, `biocmask:::cols:::current_chops`)))),
+    .env_expr = mask_cols$environments@env_data_chops,
+    .env_bind = env_asis,
+    type = "active"
+  )
+  fun_mold <- add_bind(
+    quote(vec_rep(list(!!name_sym), times = .nrow)),
+    .env_expr = env_asis,
+    .env_bind = env_pronoun,
+    type = "active"
+  )
+  purrr::walk(col_names, fun_asis) |>
+    purrr::walk(fun_mold)
+  # whenever a new col binding is made,
+  # execute the prior functions
+  mask_cols$on_bind(fun_asis)$on_bind(fun_mold)
+  # allow col data to be seen from rowData context
+  mask_rows$environments@env_foreign_data |>
+    env_bind(
+      .cols_asis = as_data_pronoun(env_asis),
+      .cols = as_data_pronoun(env_pronoun)
+    )
+  invisible(env_pronoun)
+}
+
+connect_masks <- function(mask_assays, mask_rows, mask_cols) {
+
+  # lst <- list(assays = mask_assays, rows = mask_rows, cols = mask_cols)
+  # env_mask_top <- lst |>
+  #   lapply(`[[`, "environments") |>
+  #   lapply(`[[`, 1L)
+  # mask_names <- lst |>
+  #   lapply(`[[`, "names") |>
+  #   lapply(function(obj) lapply(obj, as.name))
+  # mask_sizes <- mask_names |> lapply(function(x) length(x) + 20L)
+  col2row <- connect_cols_to_rows(mask_cols = mask_cols, mask_rows = mask_rows)
+  row2col <- connect_rows_to_cols(mask_rows = mask_rows, mask_cols = mask_cols)
+  col2assay <- connect_cols_to_assays(mask_cols = mask_cols, mask_assays = mask_assays)
+  row2assay <- connect_rows_to_assays(mask_rows = mask_rows, mask_assays = mask_assays)
+  assay2row <- connect_assays_to_rows(mask_assays = mask_assays, mask_rows = mask_rows)
+  assay2col <- connect_assays_to_cols(mask_assays = mask_assays, mask_cols = mask_cols)
+  list(
+    assays = list(
+      cols = col2assay,
+      rows = row2assay
+    ),
+    rows = list(
+      assays = assay2row,
+      cols = col2row
+    ),
+    cols = list(
+      assays = assay2col,
+      rows = row2col
+    )
+  )
+
+}
 
 biocmask_SummarizedExperiment <- function(se) {
   groups <- metadata(se)[["group_data"]]
-  mask_assay <- biocmask_assay$new(assays(se), get_group_indices(groups, "assay"),
+  shared_ctx_env <- prepare_shared_ctx_env(group_details(se))
+  mask_assay <- biocmask_assay$new(assays(se), get_group_indices(groups, "assay"), .env = shared_ctx_env,
                                    .nrow = nrow(se), .ncol = ncol(se))
-  mask_rows <- biocmask$new(rowData(se), get_group_indices(groups, "rowData"))
-  mask_cols <- biocmask$new(colData(se), get_group_indices(groups, "colData"))
+  mask_rows <- biocmask$new(rowData(se), get_group_indices(groups, "rowData"), .env = shared_ctx_env)
+  mask_cols <- biocmask$new(colData(se), get_group_indices(groups, "colData"), .env = shared_ctx_env)
   assay_envs <- mask_assay$environments
   rows_envs <- mask_rows$environments
   cols_envs <- mask_cols$environments
