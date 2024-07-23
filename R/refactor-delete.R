@@ -80,7 +80,7 @@ connect_rows_to_assays <- function(mask_rows, mask_assays) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(!!name_sym, times = .ncol)),
+    quote(vec_rep(!!name_sym, times = `biocmask:::ctx::ncol`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -114,7 +114,7 @@ connect_cols_to_assays <- function(mask_cols, mask_assays) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep_each(!!name_sym, times = .nrow)),
+    quote(vec_rep_each(!!name_sym, times = `biocmask:::ctx:::nrow`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -148,7 +148,7 @@ connect_rows_to_cols <- function(mask_rows, mask_cols) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(list(!!name_sym), times = .ncol)),
+    quote(vec_rep(list(!!name_sym), times = `biocmask:::ctx:::n`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -182,7 +182,7 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(list(!!name_sym), times = .nrow)),
+    quote(vec_rep(list(!!name_sym), times = `biocmask:::ctx:::n`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
