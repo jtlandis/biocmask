@@ -13,7 +13,7 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(lapply(1:.nrow, function(i,x) x[i,,drop=TRUE], x = !!name_sym)),
+    quote(lapply(1:`biocmask:::ctx:::n`, function(i,x) x[i,,drop=TRUE], x = !!name_sym)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -45,7 +45,7 @@ connect_assays_to_cols <- function(mask_assays, mask_cols) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(lapply(1:.ncol, function(i,x) x[,i,drop=TRUE], x = !!name_sym)),
+    quote(lapply(1:`biocmask:::ctx:::n`, function(i,x) x[,i,drop=TRUE], x = !!name_sym)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -80,7 +80,7 @@ connect_rows_to_assays <- function(mask_rows, mask_assays) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(!!name_sym, times = `biocmask:::ctx::ncol`)),
+    quote(vec_rep(!!name_sym, times = `biocmask:::ctx:::ncol`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -235,7 +235,6 @@ connect_masks <- function(mask_assays, mask_rows, mask_cols) {
 }
 
 biocmask_SummarizedExperiment <- function(se) {
-  browser()
   groups <- metadata(se)[["group_data"]]
   shared_ctx_env <- prepare_shared_ctx_env(group_details(se))
   mask_assay <- biocmask_assay$new(assays(se), get_group_indices(groups, "assay"), .env = shared_ctx_env,

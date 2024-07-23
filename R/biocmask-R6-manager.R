@@ -11,6 +11,10 @@ biocmask_manager <- R6::R6Class(
     },
     along_ctx = function() {
       seq_len(private$.ctx_env[["biocmask:::n_groups"]])
+    },
+    eval = function(quo, env = caller_env()) {
+      mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
+      mask$eval(quo, env = env)
     }
   ),
   active = list(
