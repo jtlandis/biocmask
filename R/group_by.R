@@ -190,6 +190,12 @@ group_type <- function(obj) {
   obj
 }
 
+group_details <- function(obj) {
+  group_data <- metadata(obj)[["group_data"]]
+  row_groups <- group_data$row_groups %||% tibble(.indices = list(NULL), .indices_group_id = 1L)
+  col_groups <- group_data$col_groups %||% tibble(.indices = list(NULL), .indices_group_id = 1L)
+  expand_groups(row_groups, col_groups)
+}
 
 wrap <- function(obj) UseMethod("wrap")
 wrap.vctrs_grouped_list <- function(obj) obj
