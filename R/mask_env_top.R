@@ -100,9 +100,14 @@ bot_env <- new.env(parent = top_env)
 
 biocmask_group_ids <- function(.data, var) {
   group_by(.data, {{ var }}) |>
-    summarise(assays = list(unique(.group_id)),
-              rows = list(unique(.rows_group_id)),
-              cols = list(unique(.cols_group_id))) |>
+    mutate(rows_keep = !duplicated(.rows_group_id),
+           cols_keep = !duplicated(.cols_group_id)) |>
+    summarise(assays = list(.group_id[rows_keep | cols_keep]),
+              rows = list(.rows_group_id[rows_keep]),
+              cols = list(.cols_group_id[cols_keep]),
+              .nrow = list(sum(.nrows[rows_keep])),
+              .ncol = list(sum(.ncols[cols_keep])),
+              .nsize = list(.nrow[[1]]*.ncol[[1]])) |>
     select(- {{ var }}) |>
     as.list()
 }
@@ -116,6 +121,16 @@ env_group_id <- function(env) {
 }
 
 prepare_shared_ctx_env <- function(ind) {
+  ind_d <- attr(ind, "obj_dim")
+  ind <- mutate(
+    ind,
+    .nrows = vapply(.rows, length, integer(1)),
+    .ncols = vapply(.cols, length, integer(1)),
+    .nrows = case_when(.nrows==0 ~ .env$ind_d[[1]],
+                       TRUE ~ .nrows),
+    .ncols = case_when(.ncols==0 ~ .env$ind_d[[2]],
+                       TRUE ~ .ncols)
+  )
   inf_assay <- biocmask_group_ids(ind, .group_id)
   inf_rows <- biocmask_group_ids(ind, .rows_group_id)
   inf_cols <- biocmask_group_ids(ind, .cols_group_id)
@@ -141,6 +156,27 @@ prepare_shared_ctx_env <- function(ind) {
     cols = inf_cols[["cols"]]
   )
 
+  nrow_info = list(
+    assays = inf_assay[[".nrow"]],
+    rows = inf_rows[[".nrow"]],
+    cols = inf_cols[[".nrow"]]
+  )
+  ncol_info = list(
+    assays = inf_assay[[".ncol"]],
+    rows = inf_rows[[".ncol"]],
+    cols = inf_cols[[".ncol"]]
+  )
+  nsize_info = list(
+    assays = inf_assay[[".nsize"]],
+    rows = inf_rows[[".nsize"]],
+    cols = inf_cols[[".nsize"]]
+  )
+  nsize_ctx = list(
+    assays = inf_assay[[".nsize"]],
+    rows = inf_rows[[".nrow"]],
+    cols = inf_cols[[".ncol"]]
+  )
+
   shared_ctx_env <- new_environment(
     data = list(
       `biocmask:::ctx` = "assays",
@@ -149,7 +185,11 @@ prepare_shared_ctx_env <- function(ind) {
       `biocmask:::rows:::group_chop_ids` =   rows_group_id,
       `biocmask:::cols:::group_chop_ids` =   cols_group_id,
       `biocmask:::ctx:::group_chop_ids`  =   ctx_group_id,
-      `biocmask:::ctx:::group_size` = ind |>
+      `biocmask:::dim:::nrow` = nrow_info,
+      `biocmask:::dim:::ncol` = ncol_info,
+      `biocmask:::dim:::size` = nsize_info,
+      `biocmask:::dim:::n` =    nsize_ctx,
+      `biocmask:::ctx:::n_groups` = ind |>
         summarise(assays = max(.group_id),
                   rows = max(.rows_group_id),
                   cols = max(.cols_group_id)) |>
@@ -162,7 +202,7 @@ prepare_shared_ctx_env <- function(ind) {
     shared_ctx_env,
     `biocmask:::n_groups` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::ctx:::group_size`, `biocmask:::ctx`)),
+      expr(.subset2(`biocmask:::ctx:::n_groups`, `biocmask:::ctx`)),
       env = shared_ctx_env),
     `biocmask:::ctx:::current_chops` = new_function(
       pairlist(),
@@ -191,20 +231,46 @@ prepare_shared_ctx_env <- function(ind) {
       expr(.subset2(`biocmask:::cols:::group_chop_ids`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
+    ),
+    `biocmask:::ctx:::nrow` = new_function(
+      pairlist(),
+      expr(.subset2(`biocmask:::dim:::nrow`, `biocmask:::ctx`) |>
+             .subset2(`biocmask:::ctx:::group_id`)),
+      env = shared_ctx_env
+    ),
+    `biocmask:::ctx:::ncol` = new_function(
+      pairlist(),
+      expr(.subset2(`biocmask:::dim:::ncol`, `biocmask:::ctx`) |>
+             .subset2(`biocmask:::ctx:::group_id`)),
+      env = shared_ctx_env
+    ),
+    `biocmask:::ctx:::size` = new_function(
+      pairlist(),
+      expr(.subset2(`biocmask:::dim:::size`, `biocmask:::ctx`) |>
+             .subset2(`biocmask:::ctx:::group_id`)),
+      env = shared_ctx_env
+    ),
+    `biocmask:::ctx:::n` = new_function(
+      pairlist(),
+      expr(.subset2(`biocmask:::dim:::n`, `biocmask:::ctx`) |>
+             .subset2(`biocmask:::ctx:::group_id`)),
+      env = shared_ctx_env
     )
   )
   shared_ctx_env$set_group_id <- env_group_id(shared_ctx_env)
   shared_ctx_env
 }
 
-shared_ctx_env <- prepare_shared_ctx_env(ind)
+# shared_ctx_env <- prepare_shared_ctx_env(ind)
+#
+# shared_ctx_env$`biocmask:::ctx` <- "rows"
+# set_group_id(1L)
+# shared_ctx_env$`biocmask:::ctx:::current_chops`
+# shared_ctx_env$`biocmask:::assays:::current_chops`
+# shared_ctx_env$`biocmask:::cols:::current_chops`
+# shared_ctx_env$`biocmask:::rows:::current_chops`
 
-shared_ctx_env$`biocmask:::ctx` <- "rows"
-set_group_id(1L)
-shared_ctx_env$`biocmask:::ctx:::current_chops`
-shared_ctx_env$`biocmask:::assays:::current_chops`
-shared_ctx_env$`biocmask:::cols:::current_chops`
-shared_ctx_env$`biocmask:::rows:::current_chops`
+
 # base_minimal <- new_environment(
 #   data = list(
 #     ## Syntax
