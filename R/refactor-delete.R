@@ -8,7 +8,7 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
   fun_asis <- add_bind(
     quote(do.call("cbind", .subset(!!name_sym, `biocmask:::assays:::current_chops`))),
     # should be evaluated within the chopped context, cannot guarantee groupings
-    .env_expr = mask_assays$environments@env_data_chops,
+    .env_expr = mask_assays$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
@@ -75,7 +75,7 @@ connect_rows_to_assays <- function(mask_rows, mask_assays) {
   fun_asis <- add_bind(
     quote(.subset2(!!name_sym, `biocmask:::rows:::current_chops`)),
     # should be evaluated within the chopped context, cannot guarantee groupings
-    .env_expr = mask_rows$environments@env_data_chops,
+    .env_expr = mask_rows$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
@@ -109,7 +109,7 @@ connect_cols_to_assays <- function(mask_cols, mask_assays) {
   # that the current_chops scope has a scalar value
   fun_asis <- add_bind(
     quote(.subset2(!!name_sym, `biocmask:::cols:::current_chops`)),
-    .env_expr = mask_cols$environments@env_data_chops,
+    .env_expr = mask_cols$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
@@ -143,7 +143,7 @@ connect_rows_to_cols <- function(mask_rows, mask_cols) {
   fun_asis <- add_bind(
     # row data may be grouped. use vctrs::vec_c to concatenate vectors
     quote(vec_c(splice(.subset(!!name_sym, `biocmask:::rows:::current_chops`)))),
-    .env_expr = mask_rows$environments@env_data_chops,
+    .env_expr = mask_rows$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
@@ -177,7 +177,7 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
   fun_asis <- add_bind(
     # col data may be grouped. use vctrs::vec_c to concatenate vectors
     quote(vec_c(splice(.subset(!!name_sym, `biocmask:::cols:::current_chops`)))),
-    .env_expr = mask_cols$environments@env_data_chops,
+    .env_expr = mask_cols$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
