@@ -1,20 +1,20 @@
 
 
-group_by_SE <- function(.data, ...) {
-  .env <- rlang::caller_env()
-  .mask <- TidySEMaskManager$new(.data, .env, "group_by")
-  poke_ctx_local("SE:::mask_manager", .mask)
-  poke_ctx_local("SE:::dplyr_function", "group_by")
-  poke_ctx_local("SE:::caller_env", .env)
-  quos <- rlang::enquos(..., .named = TRUE)
-  nms <- names(quos)
-  for (k in seq_along(quos)) {
-    quo <- quos[[k]]
-    name <- nms[k]
-    .mask$eval_group_by_assays(quo, name)
-  }
-  .mask$finalize_group_by_data(.data)
-}
+# group_by_SE <- function(.data, ...) {
+#   .env <- rlang::caller_env()
+#   .mask <- TidySEMaskManager$new(.data, .env, "group_by")
+#   poke_ctx_local("SE:::mask_manager", .mask)
+#   poke_ctx_local("SE:::dplyr_function", "group_by")
+#   poke_ctx_local("SE:::caller_env", .env)
+#   quos <- rlang::enquos(..., .named = TRUE)
+#   nms <- names(quos)
+#   for (k in seq_along(quos)) {
+#     quo <- quos[[k]]
+#     name <- nms[k]
+#     .mask$eval_group_by_assays(quo, name)
+#   }
+#   .mask$finalize_group_by_data(.data)
+# }
 
 
 #' @importFrom dplyr bind_cols reframe across everything
