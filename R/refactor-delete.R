@@ -254,6 +254,8 @@ biocmask_SummarizedExperiment <- function(se) {
                        .extended_env = extended_environments)
 }
 
+library(dplyr)
+summarise(iris, .groups = "keep")
 biocmask_SummarizedExperiment(se) -> out
 
   ## size bindings
