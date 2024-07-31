@@ -2,3 +2,4 @@
 *.Rproj
 .Rhistory
 *.DS_Store
+src
