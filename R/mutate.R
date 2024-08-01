@@ -8,9 +8,19 @@
 #' @export
 mutate.SummarizedExperiment <- function(.data, ...) {
   
-  # browser()
-  
+  browser()
   .env <- rlang::caller_env()
+  mask <- new_biocmask(obj = .data)
+  quos <- biocmask_quos(..., env = .env)
+  n_quo <- length(quos)
+  ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
+  nms  <- names(quos)
+  results <- vector("list", n_quo)
+  for(i in seq_len(n_quo)) {
+    quo <- quos[[i]]
+    mask$ctx <- ctxs[[i]]
+    results[[i]] <- mask$eval(quo, env = .env)
+  }
   .mask <- TidySEMaskManager$new(.data)
   poke_ctx_local("SE:::mask_manager", .mask)
   poke_ctx_local("SE:::dplyr_function", "mutate")
