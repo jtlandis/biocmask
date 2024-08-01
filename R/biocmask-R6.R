@@ -302,13 +302,45 @@ biocmask_assay <- R6::R6Class(
         .nrow = .nrow,
         .ncol = .ncol
       )
+      
+      private$.cached_unchop_ind <- switch(
+        attr(.indices, "type"),
+        rowcol = {
+          purrr::map2(
+            .indices$.rows,
+            .indices$.cols,
+            mat_index,
+            nrows = .nrow
+          )
+        },
+        row = {
+          purrr::map(
+            .indices$.rows,
+            mat_index,
+            cols_ind = seq_len(.ncol),
+            nrows = .nrow
+          )
+        },
+        col = {
+          n <- nrow(.data)
+          purrr::map(
+            .indices$.cols,
+            mat_index,
+            cols_ind = seq_len(.ncol),
+            nrows = .nrow
+          )
+        })
 
     },
     unchop = function(name) {
       vctrs::list_unchop(
-        private$env_data_chop[[name]],
-        indices = private$.indices
-      )
+        lapply(private$env_data_chop[[name]], as.vector),
+        indices = private$.cached_unchop_ind
+      ) |>
+        matrix(
+          nrow = private$env_current_group_info$.nrow,
+          ncol = private$env_current_group_info$.ncol
+        )
     }
   ),
   # active = list(
@@ -374,6 +406,7 @@ biocmask_assay <- R6::R6Class(
         return(fun)
       }
     },
+    .cached_unchop_ind = NULL,
     .row_indices = NULL,
     .env_row_ctx = NULL,
     .col_indices = NULL,

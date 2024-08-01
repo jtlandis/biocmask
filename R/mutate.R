@@ -10,30 +10,31 @@ mutate.SummarizedExperiment <- function(.data, ...) {
   
   browser()
   .env <- rlang::caller_env()
-  mask <- new_biocmask(obj = .data)
-  quos <- biocmask_quos(..., env = .env)
+  mask <- new_biocmask.SummarizedExperiment(obj = .data)
+  quos <- biocmask_quos(...)
   n_quo <- length(quos)
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   nms  <- names(quos)
   results <- vector("list", n_quo)
   for(i in seq_len(n_quo)) {
     quo <- quos[[i]]
+    nm <- nms[i]
     mask$ctx <- ctxs[[i]]
-    results[[i]] <- mask$eval(quo, env = .env)
+    mask$eval(quo, name = nm, env = .env)
   }
-  .mask <- TidySEMaskManager$new(.data)
-  poke_ctx_local("SE:::mask_manager", .mask)
-  poke_ctx_local("SE:::dplyr_function", "mutate")
-  poke_ctx_local("SE:::caller_env", .env)
-  quos <- rlang::enquos(..., .named = TRUE)
-  nms <- names(quos)
-  for (k in seq_along(quos)) {
-    quo <- quos[[k]]
-    name <- nms[k]
-    .mask$eval_mutate_assays(quo, name)
-  }
-  .mask$finalize_mutate_data(.data)
-  
+  # .mask <- TidySEMaskManager$new(.data)
+  # poke_ctx_local("SE:::mask_manager", .mask)
+  # poke_ctx_local("SE:::dplyr_function", "mutate")
+  # poke_ctx_local("SE:::caller_env", .env)
+  # quos <- rlang::enquos(..., .named = TRUE)
+  # nms <- names(quos)
+  # for (k in seq_along(quos)) {
+  #   quo <- quos[[k]]
+  #   name <- nms[k]
+  #   .mask$eval_mutate_assays(quo, name)
+  # }
+  # .mask$finalize_mutate_data(.data)
+  mask
 }
 
 # mutate_SE_expr <- function(dot, name, mask) {

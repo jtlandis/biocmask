@@ -47,7 +47,7 @@ top_env <- rlang::new_environment(
     wrap = wrap,
     wrap.default = wrap.default,
     wrap.vctrs_grouped_list = wrap.vctrs_grouped_list,
-    new_grouped_lst = new_grouped_lst,
+    # new_grouped_lst = new_grouped_lst,
     vec_rep = vctrs::vec_rep,
     vec_rep_each = vctrs::vec_rep_each,
     vec_c = vctrs::vec_c,

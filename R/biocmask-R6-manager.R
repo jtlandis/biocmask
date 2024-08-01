@@ -20,6 +20,7 @@ biocmask_manager <- R6::R6Class(
       n_groups <- self$n_groups
       chop_out <- vector("list", n_groups)
       for (i in seq_len(n_groups)) {
+        private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
         chop_out[[i]] <- mask$eval(quo, env = env)
       }
       mask$bind(name = name, value = chop_out)
