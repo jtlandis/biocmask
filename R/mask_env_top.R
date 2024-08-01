@@ -197,6 +197,8 @@ prepare_shared_ctx_env <- function(ind) {
     ),
     parent = bot_env
   )
+  
+  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), shared_ctx_env)
 
   env_bind_active(
     shared_ctx_env,

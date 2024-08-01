@@ -7,6 +7,7 @@
 #' @value SummarizedExperiment object
 #' @export
 mutate.SummarizedExperiment <- function(.data, ...) {
+  # browser()
   .env <- rlang::caller_env()
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
   quos <- biocmask_quos(...)

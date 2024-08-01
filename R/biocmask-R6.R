@@ -363,6 +363,7 @@ biocmask_assay <- R6::R6Class(
       unchopped <- if (is.null(private$.indices)) {
         .subset2(private$env_data_chop[[name]], 1L)
       } else {
+        # browser()
         vctrs::list_unchop(
           lapply(private$env_data_chop[[name]], as.vector),
           indices = private$.indices

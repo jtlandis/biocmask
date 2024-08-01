@@ -207,7 +207,7 @@ group_details <- function(obj) {
   row_groups <- group_data$row_groups %||% tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
   col_groups <- group_data$col_groups %||% tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
   out <- expand_groups(row_groups, col_groups)
-  # attr(out, "obj_dim") <- dim(obj)
+  attr(out, "obj_dim") <- dim(obj)
   out |>
     mutate(
       .nrows = purrr::map_int(.rows, length),
@@ -226,7 +226,7 @@ wrap.default <- function(obj) list(obj)
 #' @value SummarizedExperiment object
 #' @export
 group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
-  browser()
+  # browser()
   .env <- rlang::caller_env()
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
   quos <- biocmask_quos(...)
