@@ -209,7 +209,7 @@ wrap.default <- function(obj) list(obj)
 #' @param ... expressions
 #' @value SummarizedExperiment object
 #' @export
-group_by.SummarizedExperiment <- function(.data, ...) {
+group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   .env <- rlang::caller_env()
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
   quos <- biocmask_quos(...)
@@ -238,18 +238,38 @@ group_by.SummarizedExperiment <- function(.data, ...) {
   # for (i in seq_along(results$assays)) {
   #   assays(.data, withDimnames = FALSE)[[nms[i]]] <- results$assays[[i]]
   # }
+  if (.add) {
+    curr_groups <- metadata(.data)[["group_data"]]
+    if (rlang::is_empty(curr_groups)) break # do nothing
+    if (!rlang::is_empty(curr_groups$row_groups)) {
+      curr <- select(curr_groups$row_groups, - starts_with(".indices")) |>
+        names()
+      curr <- rowData(.data)[curr]
+      curr[names(results$rows)] <- results$rows
+      results$rows <- curr
+    }
+    if (!rlang::is_empty(curr_groups$col_groups)) {
+      curr <- select(curr_groups$col_groups, - starts_with(".indices")) |>
+        names()
+      curr <- colData(.data)[curr]
+      curr[names(results$cols)] <- results$cols
+      results$rows <- curr
+    }
+  }
   groups <- biocmask_groups(
     row_groups = results$rows,
     col_groups = results$cols
   )
   metadata(.data)[["group_data"]] <- groups
   nms <- names(results$rows)
-  for (i in seq_along(results$rows)) {
-    rowData(.data)[[nms[i]]] <- results$rows[[i]]
-  }
+  rowData(.data)[nms] <- results$rows
+  # for (i in seq_along(results$rows)) {
+  #   rowData(.data)[[nms[i]]] <- results$rows[[i]]
+  # }
   nms <- names(results$cols)
-  for (i in seq_along(results$cols)) {
-    colData(.data)[[nms[i]]] <- results$cols[[i]]
-  }
+  colData(.data)[nms] <- results$cols
+  # for (i in seq_along(results$cols)) {
+  #   colData(.data)[[nms[i]]] <- results$cols[[i]]
+  # }
   .data
 }
