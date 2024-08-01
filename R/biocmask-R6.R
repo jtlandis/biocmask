@@ -121,7 +121,8 @@ biocmask <- R6::R6Class(
       for (func in private$.on_bind) {
         func(name)
       }
-      invisible(self)
+      private$push(name)
+      invisible(value)
     },
     eval = function(quo, env = caller_env()) {
       mask <- new_data_mask(private$env_mask_bind, top = top_env)
@@ -258,6 +259,13 @@ biocmask <- R6::R6Class(
 
     #inital names of `.data`
     .names = NULL,
+    # newly added names
+    .added = character(),
+    push = function(name) {
+      private$.names <- union(private$.names, name)
+      private$.added <- union(private$.added, name)
+      invisible(self)
+    },
     # initial size of environments
     # number of elements of `.data` + 20L
     .env_size = NULL,

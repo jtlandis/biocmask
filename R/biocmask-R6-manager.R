@@ -13,20 +13,16 @@ biocmask_manager <- R6::R6Class(
     #' @description
     #' eval an expression in the current context 
     #' @param quo a quosure or quoted expression
+    #' @param name the resulting name to bind
     #' @param env an environment
-    eval = function(quo, env = caller_env()) {
+    eval = function(quo, name, env = caller_env()) {
       mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
-      mask$eval(quo, env = env)
-    },
-    #' @description
-    #' eval an expression in a contextual mask provided
-    #' by the user.
-    #' @param quo a quosure or quoted expression
-    #' @param env an environment
-    #' @param mask a biocmask, ideally something returned
-    #' by self$ctx_mask.
-    eval_ctx_mask = function(quo, env = caller_env(), mask = self$ctx_mask) {
-      mask$eval(quo, env = env)
+      n_groups <- self$n_groups
+      chop_out <- vector("list", n_groups)
+      for (i in seq_len(n_groups)) {
+        chop_out[[i]] <- mask$eval(quo, env = env)
+      }
+      mask$bind(name = name, value = chop_out)
     }
   ),
   active = list(
