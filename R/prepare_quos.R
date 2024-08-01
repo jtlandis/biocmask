@@ -19,8 +19,7 @@ enforce_named <- function(exprs) {
   exprs
 }
 
-biocmask_quos <- function(...) {
-  # browser()
+biocmask_quos <- function(..., .named = TRUE) {
   dots <- rlang::enquos(...) |>
     as.list()
   ctx_opt <- c("cols", "rows")
@@ -39,6 +38,12 @@ biocmask_quos <- function(...) {
     }
     dots[[i]] <- ctx_quo(.expr, env = .env, ctx = "assays")
   } 
-  out <- do.call(rlang::list2, dots)
-  enforce_named(out)
+  out <- do.call(rlang::dots_list, c(dots, list(.named = .named)))
+  if (.named) {
+    # in case the prior expansion
+    # of rows(...) and cols(...) need
+    # a named argument
+    out <- enforce_named(out)
+  }
+  out
 }

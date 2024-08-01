@@ -11,7 +11,8 @@ new_biocmask <- function(obj, ...) {
 
 new_biocmask.SummarizedExperiment <- function(obj, ...) {
   groups <- metadata(obj)[["group_data"]]
-  shared_ctx_env <- prepare_shared_ctx_env(group_details(obj))
+  expanded_groups <- group_details(obj)
+  shared_ctx_env <- prepare_shared_ctx_env(expanded_groups)
   mask_assay <- biocmask_assay$new(assays(obj), get_group_indices(groups, "assay"), .env = shared_ctx_env,
                                    .nrow = nrow(obj), .ncol = ncol(obj))
   mask_rows <- biocmask$new(rowData(obj), get_group_indices(groups, "rowData"), .env = shared_ctx_env)

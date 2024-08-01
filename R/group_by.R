@@ -20,6 +20,7 @@
 #' @importFrom dplyr bind_cols reframe across everything
 
 expand_groups <- function(.rows, .cols) {
+  browser()
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
   dplyr::bind_cols(
@@ -142,14 +143,15 @@ biocmask_groups <- function(row_groups = NULL, col_groups = NULL) {
     col_groups = create_groups(col_groups)
   )
   type <- ""
-  if (!is.null(row_groups)) {
+  if (!is.null(out$row_groups)) {
     type <- "row"
   }
-  if (!is.null(col_groups)) {
+  if (!is.null(out$col_groups)) {
     type <- paste0(type, "col")
   }
   class(out) <- "biocmask_groups"
   attr(out, "type") <- type
+  if (type=="") return(NULL)
   out
 }
 
@@ -210,6 +212,7 @@ wrap.default <- function(obj) list(obj)
 #' @value SummarizedExperiment object
 #' @export
 group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
+  browser()
   .env <- rlang::caller_env()
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
   quos <- biocmask_quos(...)
@@ -218,10 +221,10 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   if (any(err <- ctxs %in% "assays")) {
     rlang::abort(
       message = c(
-       "x"="Cannot group in `assays` context",
-        "*" = "grouping by assays is unsupported for SummarizedExperiment objects",
-       "!" = sprintf("consider wrapping indices %s in rows(...) or cols(...)", 
-                     paste0(err, collapse = ", "))
+       "Cannot group in `assays` context",
+       "x" = sprintf("review expression indices %s in dots",
+                     paste0(which(err), collapse = ", ")),
+       "i" = "consider wrapping expressions in rows(...) or cols(...)"
       )
     )
   }
@@ -272,4 +275,60 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   #   colData(.data)[[nms[i]]] <- results$cols[[i]]
   # }
   .data
+}
+
+
+ungroup.SummarizedExperiment <- function(x, ...) {
+  quos <- biocmask_quos(..., .named = FALSE)
+  curr_groups <- metadata(x)[["group_data"]]
+  if (rlang::is_empty(curr_groups)) return(x)
+  n_quo <- length(quos)
+  if (n_quo==0L) {
+    metadata(x)[["group_data"]] <- NULL
+    return(x)
+  }
+  ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
+  if (any(err <- ctxs %in% "assays")) {
+    rlang::abort(
+      message = c(
+        "Cannot ungroup in `assays` context",
+        "x" = sprintf("review expression indices %s in dots",
+                      paste0(which(err), collapse = ", ")),
+        "i" = "consider wrapping expressions in rows(...) or cols(...)"
+      )
+    )
+  }
+  by_ctx <- split(quos, ctxs)
+  update_cols <- update_rows <- NULL
+  update_ <- ""
+  if (!rlang::is_empty(by_ctx$rows)) {
+    select(curr_groups$row_groups, - starts_with(".indices")) |>
+      names()
+    select_expr <- rlang::call2("c", splice(by_ctx$rows))
+    to_remove <- tidyselect::eval_select(
+      select_expr, 
+      data = as.list(colData(x)),
+      allow_rename = FALSE)
+    to_remove <- names(to_remove)
+    new_groups <- setdiff(old_groups, to_remove)
+    update_rows <- rlang::call2("rows", splice(syms(new_groups)))
+    update_ <- "row"
+  }
+  if (!rlang::is_empty(by_ctx$cols)) {
+    old_groups <- select(curr_groups$col_groups, - starts_with(".indices")) |>
+      names()
+    select_expr <- rlang::call2("c", splice(by_ctx$cols))
+    to_remove <- tidyselect::eval_select(
+      select_expr, 
+      data = as.list(colData(x)),
+      allow_rename = FALSE)
+    to_remove <- names(to_remove)
+    new_groups <- setdiff(old_groups, to_remove)
+    update_cols <- rlang::call2("cols", splice(syms(new_groups)))
+    update_ <- paste0(update_, "col")
+  }
+  switch(update_,
+         rowcol = group_by(x, !!update_rows, !!update_cols),
+         row = group_by(x, !!update_rows),
+         col = group_by(x, !!update_cols))
 }
