@@ -118,10 +118,19 @@ biocmask <- R6::R6Class(
     },
     bind = function(name, value) {
       private$.bind_self(name, value)
-      for (func in private$.on_bind) {
-        func(name)
+      needs_unbind <- private$push(name)
+      binding_funcs <- private$.on_bind
+      if (needs_unbind) {
+        for (i in seq_along(binding_funcs)) {
+          func <- binding_funcs[[i]]
+          env_unbind(environment(func)$.env_bind, name)
+          func(name)
+        }
+      } else {
+        for (func in binding_funcs) {
+          func(name)
+        }
       }
-      private$push(name)
       invisible(value)
     },
     unchop = function(name) {
@@ -277,9 +286,10 @@ biocmask <- R6::R6Class(
     # newly added names
     .added = character(),
     push = function(name) {
+      needs_unbind <- name %in% private$.names
       private$.names <- union(private$.names, name)
       private$.added <- union(private$.added, name)
-      invisible(self)
+      invisible(needs_unbind)
     },
     # initial size of environments
     # number of elements of `.data` + 20L
