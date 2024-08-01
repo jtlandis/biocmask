@@ -127,7 +127,7 @@ vec_chop_assays_col.vctrs_grouped_list <- function(.data, indices) {
 
 
 create_groups <- function(.data, .rename = ".indices") {
-  if (is.null(.data)) return(NULL)
+  if (rlang::is_empty(.data)) return(NULL)
   .data |>
     tibble::as_tibble() |>
     vctrs::vec_group_loc() |>
