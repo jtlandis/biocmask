@@ -202,3 +202,54 @@ group_details <- function(obj) {
 wrap <- function(obj) UseMethod("wrap")
 wrap.vctrs_grouped_list <- function(obj) obj
 wrap.default <- function(obj) list(obj)
+
+
+#' Mutate a SummarizedExperiment object under an data mask
+#' @param .data a SummarizedExperiment object
+#' @param ... expressions
+#' @value SummarizedExperiment object
+#' @export
+group_by.SummarizedExperiment <- function(.data, ...) {
+  .env <- rlang::caller_env()
+  mask <- new_biocmask.SummarizedExperiment(obj = .data)
+  quos <- biocmask_quos(...)
+  n_quo <- length(quos)
+  ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
+  if (any(err <- ctxs %in% "assays")) {
+    rlang::abort(
+      message = c(
+       "x"="Cannot group in `assays` context",
+        "*" = "grouping by assays is unsupported for SummarizedExperiment objects",
+       "!" = sprintf("consider wrapping indices %s in rows(...) or cols(...)", 
+                     paste0(err, collapse = ", "))
+      )
+    )
+  }
+  nms  <- names(quos)
+  results <- vector("list", n_quo)
+  for(i in seq_len(n_quo)) {
+    quo <- quos[[i]]
+    nm <- nms[i]
+    mask$ctx <- ctxs[[i]]
+    mask$eval(quo, name = nm, env = .env)
+  }
+  results <- mask$results()
+  # nms <- names(results$assays)
+  # for (i in seq_along(results$assays)) {
+  #   assays(.data, withDimnames = FALSE)[[nms[i]]] <- results$assays[[i]]
+  # }
+  groups <- biocmask_groups(
+    row_groups = results$rows,
+    col_groups = results$cols
+  )
+  metadata(.data)[["group_data"]] <- groups
+  nms <- names(results$rows)
+  for (i in seq_along(results$rows)) {
+    rowData(.data)[[nms[i]]] <- results$rows[[i]]
+  }
+  nms <- names(results$cols)
+  for (i in seq_along(results$cols)) {
+    colData(.data)[[nms[i]]] <- results$cols[[i]]
+  }
+  .data
+}
