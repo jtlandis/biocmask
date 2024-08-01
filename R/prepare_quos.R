@@ -21,7 +21,8 @@ enforce_named <- function(exprs) {
 
 biocmask_quos <- function(...) {
   # browser()
-  dots <- rlang::enquos(...)
+  dots <- rlang::enquos(...) |>
+    as.list()
   ctx_opt <- c("cols", "rows")
   for (i in seq_along(dots)) {
     quo <- dots[[i]]
@@ -31,7 +32,7 @@ biocmask_quos <- function(...) {
       ctx <- as_label(.expr[[1]])
       dots[[i]] <- lapply(.expr[-1],
                           ctx_quo,
-                          env = env,
+                          env = .env,
                           ctx = ctx) |>
         rlang::splice()
       next

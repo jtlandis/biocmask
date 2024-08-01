@@ -125,10 +125,19 @@ biocmask <- R6::R6Class(
       invisible(value)
     },
     unchop = function(name) {
-      vctrs::list_unchop(
-        private$env_data_chop[[name]],
-        indices = private$.indices
-      )
+      if (is.null(private$.indices)) {
+        .subset2(private$env_data_chop[[name]], 1L)
+      } else {
+        vctrs::list_unchop(
+          private$env_data_chop[[name]],
+          indices = private$.indices
+        )
+      }
+    },
+    results = function() {
+      added <- private$.added
+      names(added) <- added
+      lapply(added, self$unchop)
     },
     eval = function(quo, env = caller_env()) {
       mask <- new_data_mask(private$env_mask_bind, top = top_env)
@@ -304,7 +313,7 @@ biocmask_assay <- R6::R6Class(
       )
       
       private$.cached_unchop_ind <- switch(
-        attr(.indices, "type"),
+        attr(.indices, "type") %||% "none",
         rowcol = {
           purrr::map2(
             .indices$.rows,
@@ -332,15 +341,26 @@ biocmask_assay <- R6::R6Class(
         })
 
     },
+    eval = function(quo, env = caller_env()) {
+      quo <- quo_set_expr(quo, expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`, ncol = `biocmask:::ctx:::ncol`)))
+      super$eval(quo, env = env)
+      # mask <- new_data_mask(private$env_mask_bind, top = top_env)
+      # eval_tidy(quo, data = mask, env = env)
+    },
     unchop = function(name) {
-      vctrs::list_unchop(
-        lapply(private$env_data_chop[[name]], as.vector),
-        indices = private$.cached_unchop_ind
-      ) |>
-        matrix(
-          nrow = private$env_current_group_info$.nrow,
-          ncol = private$env_current_group_info$.ncol
+      unchopped <- if (is.null(private$.indices)) {
+        .subset2(private$env_data_chop[[name]], 1L)
+      } else {
+        vctrs::list_unchop(
+          lapply(private$env_data_chop[[name]], as.vector),
+          indices = private$.cached_unchop_ind
         )
+      }
+      matrix(
+        unchopped,
+        nrow = private$env_current_group_info$.nrow,
+        ncol = private$env_current_group_info$.ncol
+      )
     }
   ),
   # active = list(

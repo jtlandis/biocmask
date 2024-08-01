@@ -24,6 +24,9 @@ biocmask_manager <- R6::R6Class(
         chop_out[[i]] <- mask$eval(quo, env = env)
       }
       mask$bind(name = name, value = chop_out)
+    },
+    results = function() {
+      lapply(private$.masks, function(m) m$results())
     }
   ),
   active = list(
