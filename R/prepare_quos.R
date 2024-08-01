@@ -19,31 +19,25 @@ enforce_named <- function(exprs) {
   exprs
 }
 
-biocmask_quos <- function(..., env = parent.frame()) {
+biocmask_quos <- function(...) {
   # browser()
-  dots <- rlang::enexprs(...)
+  dots <- rlang::enquos(...)
   ctx_opt <- c("cols", "rows")
-  dots
   for (i in seq_along(dots)) {
-    if (rlang::is_call(dots[[i]], c("cols","rows"))) {
-      ctx <- rlang::as_label(dots[[i]][[1]])
-      
-      dots[[i]] <- lapply(dots[[i]][-1],
+    quo <- dots[[i]]
+    .env <- quo_get_env(quo)
+    .expr <- quo_get_expr(quo)
+    if (is_call(.expr, ctx_opt)) {
+      ctx <- as_label(.expr[[1]])
+      dots[[i]] <- lapply(.expr[-1],
                           ctx_quo,
                           env = env,
                           ctx = ctx) |>
         rlang::splice()
       next
     }
-    dots[[i]] <- ctx_quo(dots[[i]], env = env, ctx = "assays")
+    dots[[i]] <- ctx_quo(.expr, env = .env, ctx = "assays")
   } 
   out <- do.call(rlang::list2, dots)
   enforce_named(out)
-}
-
-list3 <- function(...) {
-  .Call("ffi_dots_list", frame_env = environment(), named = NULL, 
-        ignore_empty = "trailing", preserve_empty = FALSE, unquote_names = TRUE, 
-        homonyms = "keep", check_assign = FALSE,
-        PACKAGE = "dplyr")
 }
