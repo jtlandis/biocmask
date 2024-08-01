@@ -20,7 +20,7 @@
 #' @importFrom dplyr bind_cols reframe across everything
 
 expand_groups <- function(.rows, .cols) {
-  browser()
+  # browser()
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
   dplyr::bind_cols(
@@ -77,12 +77,14 @@ mat_index <- function(rows_ind, cols_ind, nrows) {
 #               function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
 # }
 
-vec_chop_assays <- function(.data, nest_indices) {
-  nest_indices <- nest_indices |>
-    tibble(x = _) |>
-    tidyr::unnest(cols = x)
+vec_chop_assays <- function(.data, .indices) {
+  # nest_indices <- nest_indices |>
+  #   tibble(x = _) |>
+  #   tidyr::unnest(cols = x)
+  
   purrr::map2(
-    nest_indices$.rows, nest_indices$.cols,
+    attr(.indices, "biocmask:::row_chop_ind"),
+    attr(.indices, "biocmask:::col_chop_ind"),
     function(.x, .y, .data) .data[.x, .y], .data = .data
   )
 }
@@ -157,13 +159,21 @@ biocmask_groups <- function(row_groups = NULL, col_groups = NULL) {
 
 get_group_indices <- function(
     .groups,
+    .details,
     type = c("assays", "rowData", "colData")) {
   if (is.null(.groups)) return(NULL)
   type <- match.arg(type, c("assays", "rowData", "colData"))
   switch(
     type,
     assays = {
-      out <- pull_group_indices(.groups)
+      out <- purrr::map2(
+        .details$.rows,
+        .details$.cols,
+        .f = function(row, col, n) {
+          mat_index(row, col, nrows = n)
+        }, n = attr(.details, "obj_dim")[1])
+      attr(out, "biocmask:::row_chop_ind") <- .details$.rows
+      attr(out, "biocmask:::col_chop_ind") <- .details$.cols
       attr(out, "type") <- attr(.groups, "type")
       out},
     rowData = .groups$row_groups$.indices,
@@ -194,11 +204,15 @@ group_type <- function(obj) {
 
 group_details <- function(obj) {
   group_data <- metadata(obj)[["group_data"]]
-  row_groups <- group_data$row_groups %||% tibble(.indices = list(NULL), .indices_group_id = 1L)
-  col_groups <- group_data$col_groups %||% tibble(.indices = list(NULL), .indices_group_id = 1L)
+  row_groups <- group_data$row_groups %||% tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
+  col_groups <- group_data$col_groups %||% tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
   out <- expand_groups(row_groups, col_groups)
-  attr(out, "obj_dim") <- dim(obj)
-  out
+  # attr(out, "obj_dim") <- dim(obj)
+  out |>
+    mutate(
+      .nrows = purrr::map_int(.rows, length),
+      .ncols = purrr::map_int(.cols, length)
+    )
 }
 
 wrap <- function(obj) UseMethod("wrap")

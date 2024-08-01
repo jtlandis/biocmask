@@ -311,34 +311,36 @@ biocmask_assay <- R6::R6Class(
         .nrow = .nrow,
         .ncol = .ncol
       )
+      private$.nrow <- .nrow
+      private$.ncol <- .ncol
       
-      private$.cached_unchop_ind <- switch(
-        attr(.indices, "type") %||% "none",
-        rowcol = {
-          purrr::map2(
-            .indices$.rows,
-            .indices$.cols,
-            mat_index,
-            nrows = .nrow
-          )
-        },
-        row = {
-          purrr::map(
-            .indices$.rows,
-            mat_index,
-            cols_ind = seq_len(.ncol),
-            nrows = .nrow
-          )
-        },
-        col = {
-          n <- nrow(.data)
-          purrr::map(
-            .indices$.cols,
-            mat_index,
-            cols_ind = seq_len(.ncol),
-            nrows = .nrow
-          )
-        })
+      # private$.cached_unchop_ind <- switch(
+      #   attr(.indices, "type") %||% "none",
+      #   rowcol = {
+      #     purrr::map2(
+      #       .indices$.rows,
+      #       .indices$.cols,
+      #       mat_index,
+      #       nrows = .nrow
+      #     )
+      #   },
+      #   row = {
+      #     purrr::map(
+      #       .indices$.rows,
+      #       mat_index,
+      #       cols_ind = seq_len(.ncol),
+      #       nrows = .nrow
+      #     )
+      #   },
+      #   col = {
+      #     n <- nrow(.data)
+      #     purrr::map(
+      #       .indices$.cols,
+      #       mat_index,
+      #       cols_ind = seq_len(.ncol),
+      #       nrows = .nrow
+      #     )
+      #   })
 
     },
     eval = function(quo, env = caller_env()) {
@@ -353,13 +355,13 @@ biocmask_assay <- R6::R6Class(
       } else {
         vctrs::list_unchop(
           lapply(private$env_data_chop[[name]], as.vector),
-          indices = private$.cached_unchop_ind
+          indices = private$.indices
         )
       }
       matrix(
         unchopped,
-        nrow = private$env_current_group_info$.nrow,
-        ncol = private$env_current_group_info$.ncol
+        nrow = private$.nrow,
+        ncol = private$.ncol
       )
     }
   ),
@@ -426,7 +428,8 @@ biocmask_assay <- R6::R6Class(
         return(fun)
       }
     },
-    .cached_unchop_ind = NULL,
+    .nrow = NULL,
+    .ncol = NULL,
     .row_indices = NULL,
     .env_row_ctx = NULL,
     .col_indices = NULL,

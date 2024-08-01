@@ -122,15 +122,15 @@ env_group_id <- function(env) {
 
 prepare_shared_ctx_env <- function(ind) {
   ind_d <- attr(ind, "obj_dim")
-  ind <- mutate(
-    ind,
-    .nrows = vapply(.rows, length, integer(1)),
-    .ncols = vapply(.cols, length, integer(1)),
-    .nrows = case_when(.nrows==0 ~ .env$ind_d[[1]],
-                       TRUE ~ .nrows),
-    .ncols = case_when(.ncols==0 ~ .env$ind_d[[2]],
-                       TRUE ~ .ncols)
-  )
+  # ind <- mutate(
+  #   ind,
+  #   .nrows = vapply(.rows, length, integer(1)),
+  #   .ncols = vapply(.cols, length, integer(1)),
+  #   .nrows = case_when(.nrows==0 ~ .env$ind_d[[1]],
+  #                      TRUE ~ .nrows),
+  #   .ncols = case_when(.ncols==0 ~ .env$ind_d[[2]],
+  #                      TRUE ~ .ncols)
+  # )
   inf_assay <- biocmask_group_ids(ind, .group_id)
   inf_rows <- biocmask_group_ids(ind, .rows_group_id)
   inf_cols <- biocmask_group_ids(ind, .cols_group_id)
