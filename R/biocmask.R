@@ -13,19 +13,19 @@ new_biocmask <- function(obj, ...) {
 #' @rdname biocmask
 #' @export
 new_biocmask.SummarizedExperiment <- function(obj, ...) {
-  groups <- metadata(obj)[["group_data"]]
-  details <- group_details(obj)
-  shared_ctx_env <- prepare_shared_ctx_env(details)
+  groups <- group_details(obj)
+  expanded <- expand_groups2(groups$row_groups, groups$col_groups)
+  shared_ctx_env <- prepare_shared_ctx_env(groups, expanded)
   mask_assay <- biocmask_assay$new(assays(obj),
-                                   get_group_indices(groups, details, "assay"),
+                                   get_group_indices(groups, expanded, "assay"),
                                    .env = shared_ctx_env,
                                    .nrow = nrow(obj),
                                    .ncol = ncol(obj))
   mask_rows <- biocmask$new(rowData(obj),
-                            get_group_indices(groups, details, "rowData"),
+                            get_group_indices(groups, expanded, "rowData"),
                             .env = shared_ctx_env)
   mask_cols <- biocmask$new(colData(obj),
-                            get_group_indices(groups, details, "colData"),
+                            get_group_indices(groups, expanded, "colData"),
                             .env = shared_ctx_env)
   
   extended_environments <- connect_masks(mask_assays = mask_assay,

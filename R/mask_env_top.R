@@ -63,6 +63,61 @@ top_env <- rlang::new_environment(
 
 bot_env <- new.env(parent = top_env)
 
+biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows","cols")) {
+  # browser()
+  relative_to <- match.arg(relative_to, c("assays","rows","cols"))
+  Nr <- nrow(groups$row_groups)
+  Nc <- nrow(groups$col_groups)
+  switch (
+    relative_to,
+    assays = {
+      out <- expanded
+      list(
+        assays = as.list(out[[".group_id"]]),
+        rows = as.list(out[[".rows::.indices_group_id"]]),
+        cols = as.list(out[[".cols::.indices_group_id"]]),
+        .nrow = as.list(out[[".nrows"]]),
+        .ncol = as.list(out[[".ncols"]]),
+        .nsize = as.list(out[[".nrows"]] * out[[".ncols"]])
+      )
+    },
+    rows = {
+      g_row <- groups$row_groups
+      g_ind <- as.list(g_row[[".indices_group_id"]])
+      c_ind <- groups$col_groups[[".indices_group_id"]]
+      r_nrow <- vapply(g_row[[".indices"]], length, 1L)
+      r_ncol <- vapply(groups$col_groups[[".indices"]], length, 1L)
+      r_ncol <- vec_rep(sum(r_ncol), Nr)
+      r_nsiz <- r_nrow * r_ncol
+      list(
+        assays = lapply(g_ind, function(i) Nr*(i-1L) + c_ind),
+        rows = g_ind,
+        cols = vec_rep(list(c_ind), Nr),
+        .nrow = as.list(r_nrow),
+        .ncol = as.list(r_ncol),
+        .nsize = as.list(r_nsiz)
+      )
+    },
+    cols = {
+      g_col <- groups$col_groups
+      g_ind <- as.list(g_col[[".indices_group_id"]])
+      r_ind <- groups$row_groups[[".indices_group_id"]]
+      c_ncol <- vapply(g_col[[".indices"]], length, 1L)
+      c_nrow <- vapply(groups$row_groups[[".indices"]], length, 1L)
+      c_nrow <- vec_rep(sum(c_nrow), Nc) #?
+      c_nsiz <- c_nrow * c_ncol
+      list(
+        assays = lapply(g_ind, function(i) Nr*(r_ind-1L) + i),
+        rows = vec_rep(list(r_ind), Nc),
+        cols = g_ind,
+        .nrow = as.list(c_nrow),
+        .ncol = as.list(c_ncol),
+        .nsize = as.list(c_nsiz)
+      )
+    }
+  )
+}
+
 biocmask_group_ids <- function(.data, var) {
   group_by(.data, {{ var }}) |>
     mutate(rows_keep = !duplicated(.rows_group_id),
@@ -85,20 +140,12 @@ env_group_id <- function(env) {
   }
 }
 
-prepare_shared_ctx_env <- function(ind) {
-  ind_d <- attr(ind, "obj_dim")
-  # ind <- mutate(
-  #   ind,
-  #   .nrows = vapply(.rows, length, integer(1)),
-  #   .ncols = vapply(.cols, length, integer(1)),
-  #   .nrows = case_when(.nrows==0 ~ .env$ind_d[[1]],
-  #                      TRUE ~ .nrows),
-  #   .ncols = case_when(.ncols==0 ~ .env$ind_d[[2]],
-  #                      TRUE ~ .ncols)
-  # )
-  inf_assay <- biocmask_group_ids(ind, .group_id)
-  inf_rows <- biocmask_group_ids(ind, .rows_group_id)
-  inf_cols <- biocmask_group_ids(ind, .cols_group_id)
+prepare_shared_ctx_env <- function(groups, expanded) {
+  ind_d <- attr(expanded, "obj_dim")
+  
+  inf_assay <- biocmask_group_ids2(groups, expanded, "assays")
+  inf_rows <- biocmask_group_ids2(groups, expanded, "rows")
+  inf_cols <- biocmask_group_ids2(groups, expanded, "cols")
 
   assay_group_id = list(
     assays = inf_assay[["assays"]],

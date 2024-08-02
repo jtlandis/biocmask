@@ -1,6 +1,30 @@
 
 #' @importFrom dplyr bind_cols reframe across everything
 
+expand_groups2 <- function(.rows, .cols) {
+  names(.rows) <- sprintf(".rows::%s", names(.rows))
+  names(.cols) <- sprintf(".cols::%s", names(.cols))
+  .nrow <- nrow(.rows)
+  .ncol <- nrow(.cols)
+  .rows <- base::lapply(.rows, vctrs::vec_rep, times = .ncol)
+  .cols <- base::lapply(.cols, vctrs::vec_rep_each, times = .nrow)
+  out <- c(.rows, .cols)
+  n <- .nrow*.ncol
+  out[[".nrows"]] <- purrr::map_int(out[[".rows::.indices"]], length)
+  out[[".ncols"]] <- purrr::map_int(out[[".cols::.indices"]], length)
+  attr(out, "row.names") <- c(NA_integer_, -n)
+  class(out) <- c("tbl_df", "tbl", "data.frame")
+  
+  
+  o <- order(
+    out[[".rows::.indices_group_id"]],
+    out[[".cols::.indices_group_id"]]
+  )
+  out <- out[o,]
+  out$.group_id <- 1:n
+  out
+}
+
 expand_groups <- function(.rows, .cols) {
   # browser()
   .nrow <- nrow(.rows)
@@ -163,15 +187,6 @@ get_group_indices <- function(
   )
 }
 
-pull_group_indices <- function(.groups) {
-  switch(
-    group_type(.groups),
-    rowcol = expand_groups(.groups$row_groups, .groups$col_groups),
-    row = .groups$row_groups,
-    col = .groups$col_groups
-  )
-}
-
 group_type <- function(obj) {
   result <- attr(obj, "type")
   if (is.null(result)) return("none")
@@ -188,11 +203,16 @@ group_details <- function(obj) {
   group_data <- metadata(obj)[["group_data"]]
   row_groups <- group_data$row_groups %||% tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
   col_groups <- group_data$col_groups %||% tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
-  out <- expand_groups(row_groups, col_groups)
+  out <- list(
+    row_groups = row_groups,
+    col_groups = col_groups
+  )
+  # out <- expand_groups2(row_groups, col_groups)
   attr(out, "obj_dim") <- dim(obj)
-  out |>
-    mutate(
-      .nrows = purrr::map_int(.rows, length),
-      .ncols = purrr::map_int(.cols, length)
-    )
+  # out |>
+  #   mutate(
+  #     .nrows = purrr::map_int(`.rows::.indices`, length),
+  #     .ncols = purrr::map_int(`.cols::.indices`, length)
+  #   )
+  out
 }
