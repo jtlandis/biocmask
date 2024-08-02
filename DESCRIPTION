@@ -16,4 +16,5 @@ Imports:
     rlang,
     SummarizedExperiment,
     tidyr,
+    tidyselect,
     vctrs
