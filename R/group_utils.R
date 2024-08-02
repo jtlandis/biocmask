@@ -172,14 +172,15 @@ get_group_indices <- function(
   switch(
     type,
     assays = {
+      browser()
       out <- purrr::map2(
-        .details$.rows,
-        .details$.cols,
+        .details[[".rows::.indices"]],
+        .details[[".cols::.indices"]],
         .f = function(row, col, n) {
           mat_index(row, col, nrows = n)
-        }, n = attr(.details, "obj_dim")[1])
-      attr(out, "biocmask:::row_chop_ind") <- .details$.rows
-      attr(out, "biocmask:::col_chop_ind") <- .details$.cols
+        }, n = attr(.groups, "obj_dim")[1])
+      attr(out, "biocmask:::row_chop_ind") <- .details[[".rows::.indices"]]
+      attr(out, "biocmask:::col_chop_ind") <- .details[[".cols::.indices"]]
       attr(out, "type") <- attr(.groups, "type")
       out},
     rowData = .groups$row_groups$.indices,
@@ -201,18 +202,19 @@ group_type <- function(obj) {
 
 group_details <- function(obj) {
   group_data <- metadata(obj)[["group_data"]]
-  row_groups <- group_data$row_groups %||% tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
-  col_groups <- group_data$col_groups %||% tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
-  out <- list(
-    row_groups = row_groups,
-    col_groups = col_groups
-  )
+  group_data$row_groups <- group_data$row_groups %||% tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
+  group_data$col_groups <- group_data$col_groups %||% tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
+  # out <- list(
+  #   row_groups = row_groups,
+  #   col_groups = col_groups
+  # )
   # out <- expand_groups2(row_groups, col_groups)
-  attr(out, "obj_dim") <- dim(obj)
+  attr(group_data, "obj_dim") <- dim(obj)
+  # attr(out, "type") <- attr(group_data, "type")
   # out |>
   #   mutate(
   #     .nrows = purrr::map_int(`.rows::.indices`, length),
   #     .ncols = purrr::map_int(`.cols::.indices`, length)
   #   )
-  out
+  group_data
 }

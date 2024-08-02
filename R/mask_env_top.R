@@ -141,7 +141,8 @@ env_group_id <- function(env) {
 }
 
 prepare_shared_ctx_env <- function(groups, expanded) {
-  ind_d <- attr(expanded, "obj_dim")
+  browser()
+  ind_d <- attr(groups, "obj_dim")
   
   inf_assay <- biocmask_group_ids2(groups, expanded, "assays")
   inf_rows <- biocmask_group_ids2(groups, expanded, "rows")
@@ -201,10 +202,10 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       `biocmask:::dim:::ncol` = ncol_info,
       `biocmask:::dim:::size` = nsize_info,
       `biocmask:::dim:::n` =    nsize_ctx,
-      `biocmask:::ctx:::n_groups` = ind |>
+      `biocmask:::ctx:::n_groups` = expanded |>
         summarise(assays = max(.group_id),
-                  rows = max(.rows_group_id),
-                  cols = max(.cols_group_id)) |>
+                  rows = max(`.rows::.indices_group_id`),
+                  cols = max(`.cols::.indices_group_id`)) |>
         as.list()
     ),
     parent = bot_env

@@ -13,6 +13,7 @@ new_biocmask <- function(obj, ...) {
 #' @rdname biocmask
 #' @export
 new_biocmask.SummarizedExperiment <- function(obj, ...) {
+  browser()
   groups <- group_details(obj)
   expanded <- expand_groups2(groups$row_groups, groups$col_groups)
   shared_ctx_env <- prepare_shared_ctx_env(groups, expanded)
