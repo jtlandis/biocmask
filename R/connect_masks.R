@@ -227,9 +227,9 @@ connect_masks <- function(mask_assays, mask_rows, mask_cols) {
 }
 
 
-wrap <- function(obj) UseMethod("wrap")
-wrap.vctrs_grouped_list <- function(obj) obj
-wrap.default <- function(obj) list(obj)
+# wrap <- function(obj) UseMethod("wrap")
+# wrap.vctrs_grouped_list <- function(obj) obj
+# wrap.default <- function(obj) list(obj)
 
 # library(bench)
 # box::use(vctrs[vec_rep_each, vec_rep])
