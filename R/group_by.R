@@ -1,5 +1,5 @@
 
-
+#' @importFrom dplyr group_by ungroup
 
 #' @name group_by
 #' @description
@@ -10,7 +10,7 @@
 #' rowData and/or colData by `rows()` and `cols()` respectively.
 #' @param .add When `FALSE`, the default, `group_by()` will override
 #' existing groups.
-#' @value SummarizedExperiment object
+#' @return SummarizedExperiment object
 #' @export
 group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # browser()

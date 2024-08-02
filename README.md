@@ -513,7 +513,7 @@ se[c(1,5), c(1, 4)]
 ```
 
     # A SummarizedExperiment-tibble abstraction: 4 × 9
-    # [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m
+    # [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m
       .feature .sample counts logcounts sample condition gene  length direction
       <chr>    <chr>    <int>     <dbl> <chr>  <chr>     <chr>  <int> <chr>    
     1 row_a    col_A       16      2.77 s1     cntrl     g1         3 -        

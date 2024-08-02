@@ -107,6 +107,13 @@ add_bind <- function(.expr, .env_expr,
 biocmask <- R6::R6Class(
   "biocmask",
   public = list(
+    #' @description
+    #' Create a biocmask from `.data`. `.data` is chopped by
+    #' `.indices`, and environments are built from `.env`
+    #' 
+    #' @param .data a named list like object to create a mask
+    #' @param .indices the indices that will be used to chop `.data`
+    #' @param .env an environment that the resulting mask will be built from.
     initialize = function(.data, .indices = NULL, .env) {
       private$.shared_env <- .env
       private$.data <- .data
@@ -128,11 +135,20 @@ biocmask <- R6::R6Class(
       invisible(self)
 
     },
+    #' @description
+    #' appends a callback function that is executed after a value is bound
+    #' to this mask. Mainly used to inform other masks of new values
+    #' 
+    #' @param .fun a function created from `add_bind()`
     on_bind = function(.fun) {
-      private$.on_bind <- append(private$.on_bind,
-                                 .fun)
+      private$.on_bind <- append(private$.on_bind, .fun)
       invisible(self)
     },
+    #' @description
+    #' binds value to an name within the chops environment.
+    #' 
+    #' @param name a character scalar
+    #' @param value results from `$eval` in the form of chops
     bind = function(name, value) {
       private$.bind_self(name, value)
       needs_unbind <- private$push(name)
@@ -150,6 +166,7 @@ biocmask <- R6::R6Class(
       }
       invisible(value)
     },
+    #' @param name name of binding to retrieve and unchop
     unchop = function(name) {
       if (is.null(private$.indices)) {
         .subset2(private$env_data_chop[[name]], 1L)
@@ -160,20 +177,23 @@ biocmask <- R6::R6Class(
         )
       }
     },
+    #' @return named list of evaluated expression, unchopped
     results = function() {
       added <- private$.added
       names(added) <- added
       lapply(added, self$unchop)
     },
+    #' @description
+    #' evaluates a quoted expression within a new datamask
     eval = function(quo, env = caller_env()) {
       mask <- new_data_mask(private$env_mask_bind, top = top_env)
       eval_tidy(quo, data = mask, env = env)
     }
   ),
   active = list(
+    #' @field environments the hierarchy of environments for this mask
     environments = function() {
-
-      out  <- env_parents(private$env_mask_bind, private)
+      out  <- env_parents(private$env_mask_bind, private$.shared_env)
       class(out) <- c("biocmask_envs", "rlang_envs")
       attr(out, "env_mask_bind") <- private$env_mask_bind
       attr(out, "env_data_chop") <- private$env_data_chop
@@ -182,6 +202,7 @@ biocmask <- R6::R6Class(
       attr(out, "env_current_group_info") <- private$env_current_group_info
       out
     },
+    #' @field names the associated names of data in mask
     names = function() {
       private$.names
     }
@@ -264,8 +285,8 @@ biocmask <- R6::R6Class(
     },
     # function to chop data
     chop_data = NULL,
-    #' @param name scalar character vector
-    #' @param value vector in the form of chops
+    # @param name scalar character vector
+    # @param value vector in the form of chops
     .bind_self = function(name, value) {
       private$env_data_chop[[name]] <- value
       name_sym <- sym(name)
@@ -324,11 +345,9 @@ biocmask <- R6::R6Class(
   )
 )
 
-# im <- biocmask$new(iris, list(1:50, 51:100, 101:150))
-# im$eval(quote(Sepal.Width))
-
 #' @rdname BiocDataMask
-#' @description 
+#' biocmask_assay
+#' 
 #' A more specialized version of the biocmask R6 object for the 
 #' assays list object. This includes chopping and unchopping 
 #' of matrix like objects.
@@ -336,6 +355,14 @@ biocmask_assay <- R6::R6Class(
   "biocmask_assay",
   inherit = biocmask,
   public = list(
+    #' @description
+    #' Create a biocmask from `.data`. `.data` is chopped by
+    #' `.indices`, and environments are built from `.env`
+    #' 
+    #' @param .data a named list like object to create a mask
+    #' @param .indices the indices that will be used to chop `.data`
+    #' @param .env an environment that the resulting mask will be built from.
+    #' @param .nrow,.ncol the number of rows and columns of each element of `.data` respectively
     initialize = function(.data, .indices, .env, .nrow, .ncol) {
       super$initialize(.data, .indices, .env)
       env_bind(
@@ -375,12 +402,16 @@ biocmask_assay <- R6::R6Class(
       #   })
 
     },
+    #' @description
+    #' evaluates a quoted expression within a new datamask, forces results into
+    #' a matrix of the expected size for the group.
     eval = function(quo, env = caller_env()) {
       quo <- quo_set_expr(quo, expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`, ncol = `biocmask:::ctx:::ncol`)))
       super$eval(quo, env = env)
       # mask <- new_data_mask(private$env_mask_bind, top = top_env)
       # eval_tidy(quo, data = mask, env = env)
     },
+    #' @param name name of binding to retrieve and unchop
     unchop = function(name) {
       unchopped <- if (is.null(private$.indices)) {
         .subset2(private$env_data_chop[[name]], 1L)

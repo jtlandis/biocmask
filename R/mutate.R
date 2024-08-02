@@ -1,10 +1,12 @@
 
 #' @importFrom dplyr mutate
 
+#' @name mutate
+#' @description
 #' Mutate a SummarizedExperiment object under an data mask
 #' @param .data a SummarizedExperiment object
 #' @param ... expressions
-#' @value SummarizedExperiment object
+#' @return SummarizedExperiment object
 #' @export
 mutate.SummarizedExperiment <- function(.data, ...) {
   # browser()
