@@ -56,42 +56,7 @@ top_env <- rlang::new_environment(
     poke_ctx_local = poke_ctx_local,
     peek_ctx = peek_ctx,
     .current_group_id = 0L,
-    .mask_manager = NULL,
-    rows = function(...) {
-      # browser()
-      mask_manager <- peek_ctx("SE:::mask_manager")
-      fn <- peek_ctx("SE:::dplyr_function")
-      env <- peek_ctx("SE:::caller_env")
-      eval_fun <- switch(fn,
-                         mutate = mask_manager$eval_mutate_rows,
-                         group_by = mask_manager$eval_mutate_rows,
-                         stop(sprintf("`%s` is not yet implemented", fn)))
-      quos <- enquos(..., .named = TRUE)
-      nms <- names(quos)
-      for (i in seq_along(quos)) {
-        quo <- rlang::quo_set_env(quos[[i]], env)
-        name <- nms[i]
-        eval_fun(quo, name)
-      }
-      skip()
-    },
-    cols = function(...) {
-      mask_manager <- peek_ctx("SE:::mask_manager")
-      fn <- peek_ctx("SE:::dplyr_function")
-      env <- peek_ctx("SE:::caller_env")
-      eval_fun <- switch(fn,
-                         mutate = mask_manager$eval_mutate_cols,
-                         group_by = mask_manager$eval_mutate_cols,
-                         stop(sprintf("`%s` is not yet implemented", fn)))
-      quos <- enquos(..., .named = TRUE)
-      nms <- names(quos)
-      for (i in seq_along(quos)) {
-        quo <- rlang::quo_set_env(quos[[i]], env)
-        name <- nms[i]
-        eval_fun(quo, name)
-      }
-      skip()
-    }
+    .mask_manager = NULL
   ),
   parent = baseenv()
 )

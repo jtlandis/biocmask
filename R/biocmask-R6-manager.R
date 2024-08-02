@@ -49,6 +49,10 @@ biocmask_manager <- R6::R6Class(
         private$.ctx_env[["biocmask:::ctx:::group_id"]] <- id
       }
       private$.ctx_env[["biocmask:::ctx:::group_id"]]
+    },
+    masks = function(value) {
+      if (!missing(value)) stop("`$masks` is read only")
+      private$.masks
     }
   ),
   private = list(
