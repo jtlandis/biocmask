@@ -1,4 +1,5 @@
 
+#' @title New Biocmask
 #' @name biocmask
 #' @description
 #' Create a biocmask for an object

@@ -1,6 +1,7 @@
 
 #' @importFrom dplyr group_by ungroup
 
+#' @title group_by SummarizedExperiment
 #' @name group_by
 #' @description
 #' create grouping variables about the rowData and colData of a 
@@ -14,17 +15,19 @@
 #' @export
 group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # browser()
-  .env <- rlang::caller_env()
+  .env <- caller_env()
   # to maintain consistency with dplyr
   # force any computations to occur on ungrouped data
   .groups <- metadata(.data)[["group_data"]]
   metadata(.data)[["group_data"]] <- NULL
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
+  poke_ctx_local("biocmask:::caller_env", .env)
+  poke_ctx_local("biocmask:::manager", mask)
   quos <- biocmask_quos(...)
   n_quo <- length(quos)
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   if (any(err <- ctxs %in% "assays")) {
-    rlang::abort(
+    abort(
       message = c(
        "Cannot group in `assays` context",
        "x" = sprintf("review expression indices %s in dots",
@@ -48,15 +51,15 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # }
   if (.add) {
     curr_groups <- metadata(.data)[["group_data"]]
-    if (rlang::is_empty(curr_groups)) break # do nothing
-    if (!rlang::is_empty(curr_groups$row_groups)) {
+    if (is_empty(curr_groups)) break # do nothing
+    if (!is_empty(curr_groups$row_groups)) {
       curr <- select(curr_groups$row_groups, - starts_with(".indices")) |>
         names()
       curr <- rowData(.data)[curr]
       curr[names(results$rows)] <- results$rows
       results$rows <- curr
     }
-    if (!rlang::is_empty(curr_groups$col_groups)) {
+    if (!is_empty(curr_groups$col_groups)) {
       curr <- select(curr_groups$col_groups, - starts_with(".indices")) |>
         names()
       curr <- colData(.data)[curr]
@@ -83,15 +86,17 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
 }
 
 
+#' @name group_by
 #' @description
 #' Ungroup a SummarizedExperiment object
 #' 
 #' @param x A SummarizedExperiment object
 #' @param ... 
+#' @export
 ungroup.SummarizedExperiment <- function(x, ...) {
   quos <- biocmask_quos(..., .named = FALSE)
   curr_groups <- metadata(x)[["group_data"]]
-  if (rlang::is_empty(curr_groups)) return(x)
+  if (is_empty(curr_groups)) return(x)
   n_quo <- length(quos)
   if (n_quo==0L) {
     metadata(x)[["group_data"]] <- NULL
@@ -99,7 +104,7 @@ ungroup.SummarizedExperiment <- function(x, ...) {
   }
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   if (any(err <- ctxs %in% "assays")) {
-    rlang::abort(
+    abort(
       message = c(
         "Cannot ungroup in `assays` context",
         "x" = sprintf("review expression indices %s in dots",
@@ -111,30 +116,30 @@ ungroup.SummarizedExperiment <- function(x, ...) {
   by_ctx <- split(quos, ctxs)
   update_cols <- update_rows <- NULL
   update_ <- ""
-  if (!rlang::is_empty(by_ctx$rows)) {
+  if (!is_empty(by_ctx$rows)) {
     select(curr_groups$row_groups, - starts_with(".indices")) |>
       names()
-    select_expr <- rlang::call2("c", splice(by_ctx$rows))
-    to_remove <- tidyselect::eval_select(
+    select_expr <- call2("c", splice(by_ctx$rows))
+    to_remove <- eval_select(
       select_expr, 
       data = as.list(colData(x)),
       allow_rename = FALSE)
     to_remove <- names(to_remove)
     new_groups <- setdiff(old_groups, to_remove)
-    update_rows <- rlang::call2("rows", splice(syms(new_groups)))
+    update_rows <- call2("rows", splice(syms(new_groups)))
     update_ <- "row"
   }
-  if (!rlang::is_empty(by_ctx$cols)) {
+  if (!is_empty(by_ctx$cols)) {
     old_groups <- select(curr_groups$col_groups, - starts_with(".indices")) |>
       names()
-    select_expr <- rlang::call2("c", splice(by_ctx$cols))
-    to_remove <- tidyselect::eval_select(
+    select_expr <- call2("c", splice(by_ctx$cols))
+    to_remove <- eval_select(
       select_expr, 
       data = as.list(colData(x)),
       allow_rename = FALSE)
     to_remove <- names(to_remove)
     new_groups <- setdiff(old_groups, to_remove)
-    update_cols <- rlang::call2("cols", splice(syms(new_groups)))
+    update_cols <- call2("cols", splice(syms(new_groups)))
     update_ <- paste0(update_, "col")
   }
   switch(update_,

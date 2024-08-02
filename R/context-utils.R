@@ -1,13 +1,15 @@
 
-#' @name context
+#' @title biocmask contexts
+#' @name biocmask-context
 #' @description
 #' Contextual user-facing helper function for dplyr verbs with SummarizedExperiment
 #' objects. These functions are intended to be used as the top level call to
 #' any dplyr verbs `...` argument, similar to that of `across()`/`if_any()`/`if_all()`.
 #' 
 #' @param ... expressions to evaluate within its associated context
+NULL
 
-#' @rdname context 
+#' @rdname biocmask-context 
 #' @description
 #' Specifies that the following expressions should be evaluated within the 
 #' colData context.
@@ -16,7 +18,7 @@ cols <- function(...) {
   abort("`cols()` is a sentinal function for SummarizedExperiment dplyr verbs")
 }
 
-#' @rdname context 
+#' @rdname biocmask-context 
 #' @description
 #' Specifies that the following expressions should be evaluated within the 
 #' rowData context.
@@ -26,7 +28,7 @@ rows <- function(...) {
 }
 
 
-#' @rdname context
+#' @rdname biocmask-context
 #' @description
 #' Specify a single expression to evaluate in another context
 #' 
@@ -39,7 +41,7 @@ col_ctx <- function(x) {
   mask$eval(quo = quo, env = env)
 }
 
-#' @rdname context
+#' @rdname biocmask-context
 #' @description
 #' Specify a single expression to evaluate in another context
 #' 
@@ -52,7 +54,7 @@ row_ctx <- function(x) {
   mask$eval(quo = quo, env = env)
 }
 
-#' @rdname context
+#' @rdname biocmask-context
 #' @description
 #' Specify a single expression to evaluate in another context
 #' 

@@ -21,6 +21,7 @@
   invisible(obj)
 }
 
+#' @title New Mask Binding Function
 #' @description
 #' Utility function to make new bindings on the fly.
 #' @param .expr an expression that will be evaluated and bound in `.env_expr`.
@@ -32,6 +33,7 @@
 #'  "lazy", or "active"
 #' @return a function taking a single argument `name` and performs a binding
 #' determined by `type`.
+#' @keywords internal
 #' @examples
 #'
 #' # example code
@@ -46,7 +48,7 @@
 #'   type = "lazy")
 #' binding_func("Sepal.Width")
 #' env$Sepal.Width
-#'
+#' @noRd
 add_bind <- function(.expr, .env_expr,
                      .env_bind = .env_expr,
                      type = c("standard", "lazy","active")) {
@@ -81,6 +83,7 @@ add_bind <- function(.expr, .env_expr,
 
 }
 
+#' @title `biocmask` Data Mask Object
 #' @name BiocDataMask
 #' @description
 #' An R6 Object that tracks bindings of a list-like object.
@@ -188,6 +191,8 @@ biocmask <- R6::R6Class(
     },
     #' @description
     #' evaluates a quoted expression within a new datamask
+    #' @param quo a quosure to evaluate
+    #' @param env an environment to search after mask
     eval = function(quo, env = caller_env()) {
       mask <- new_data_mask(private$env_mask_bind, top = top_env)
       eval_tidy(quo, data = mask, env = env)
@@ -348,9 +353,10 @@ biocmask <- R6::R6Class(
   )
 )
 
-#' @rdname BiocDataMask
-#' biocmask_assay
-#' 
+
+#' @title `biocmask` for SummarizedExperiment `assays()`
+#' @rdname BiocDataMask-assays
+#' @description
 #' A more specialized version of the biocmask R6 object for the 
 #' assays list object. This includes chopping and unchopping 
 #' of matrix like objects.
@@ -408,12 +414,16 @@ biocmask_assay <- R6::R6Class(
     #' @description
     #' evaluates a quoted expression within a new datamask, forces results into
     #' a matrix of the expected size for the group.
+    #' @param quo a quosure to evaluate
+    #' @param env an environment to search after mask
     eval = function(quo, env = caller_env()) {
       quo <- quo_set_expr(quo, expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`, ncol = `biocmask:::ctx:::ncol`)))
       super$eval(quo, env = env)
       # mask <- new_data_mask(private$env_mask_bind, top = top_env)
       # eval_tidy(quo, data = mask, env = env)
     },
+    #' @description
+    #' unchop data within the mask, returns a matrix
     #' @param name name of binding to retrieve and unchop
     unchop = function(name) {
       unchopped <- if (is.null(private$.indices)) {

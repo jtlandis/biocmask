@@ -1,5 +1,9 @@
 
-
+#' @title `biocmask` Data Mask Manager
+#' @name BiocmaskManager
+#' @description
+#' This object organizes serveral biocmasks, allowing expressions to be 
+#' evaluated in different contexts.
 biocmask_manager <- R6::R6Class(
   "biocmask_manager",
   public = list(

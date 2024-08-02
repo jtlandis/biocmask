@@ -19,6 +19,7 @@ enforce_named <- function(exprs) {
   exprs
 }
 
+#' @title biocmask quosures
 #' @description
 #' a consistent way to handle `...` for dplyr extensions.
 #' This returns a list of quosures where each quosure 
@@ -26,6 +27,7 @@ enforce_named <- function(exprs) {
 #' mask context it should be evaluate in.
 #' @param ... rlang dots, supports splicing an quoting
 #' @param .named should resulting expressions be named?
+#' @noRd
 biocmask_quos <- function(..., .named = TRUE) {
   dots <- rlang::enquos(...) |>
     as.list()
