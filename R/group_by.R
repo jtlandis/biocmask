@@ -1,14 +1,24 @@
 
 
 
-#' Mutate a SummarizedExperiment object under an data mask
+#' @name group_by
+#' @description
+#' create grouping variables about the rowData and colData of a 
+#' SummarizedExperiment object.
 #' @param .data a SummarizedExperiment object
-#' @param ... expressions
+#' @param ... expressions to group on. Grouping may only be done on
+#' rowData and/or colData by `rows()` and `cols()` respectively.
+#' @param .add When `FALSE`, the default, `group_by()` will override
+#' existing groups.
 #' @value SummarizedExperiment object
 #' @export
 group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # browser()
   .env <- rlang::caller_env()
+  # to maintain consistency with dplyr
+  # force any computations to occur on ungrouped data
+  .groups <- metadata(.data)[["group_data"]]
+  metadata(.data)[["group_data"]] <- NULL
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
   quos <- biocmask_quos(...)
   n_quo <- length(quos)
@@ -73,6 +83,11 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
 }
 
 
+#' @description
+#' Ungroup a SummarizedExperiment object
+#' 
+#' @param x A SummarizedExperiment object
+#' @param ... 
 ungroup.SummarizedExperiment <- function(x, ...) {
   quos <- biocmask_quos(..., .named = FALSE)
   curr_groups <- metadata(x)[["group_data"]]
