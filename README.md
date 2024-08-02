@@ -51,19 +51,13 @@ with the following dimensional (14599 x 7).
 
 ``` r
 se_example <- tidySummarizedExperiment::pasilla
-```
 
-    Registered S3 method overwritten by 'tidySummarizedExperiment':
-      method                      from             
-      mutate.SummarizedExperiment tidySEabstraction
-
-``` r
 native_example <- function(se) {
   assay(se, "logcounts") <- log1p(assay(se, "counts"))
   se
 }
 new_example <- function(se) {
-  tidySEabstraction:::mutate.SummarizedExperiment(
+  biocmask:::mutate.SummarizedExperiment(
     se,
     logcounts = log1p(counts)
     )
@@ -82,9 +76,15 @@ assay(se_example, "counts") <- as.matrix(assay(se_example, "counts"))
 bench::mark(
   native = native_example(se_example),
   new = new_example(se_example),
-  old = old_example(se_example)
+  old = old_example(se_example),
+  check = F
 )
 ```
+
+    Registered S3 methods overwritten by 'biocmask':
+      method                        from                    
+      group_by.SummarizedExperiment tidySummarizedExperiment
+      mutate.SummarizedExperiment   tidySummarizedExperiment
 
     Warning: Some expressions had a GC in every iteration; so filtering is
     disabled.
@@ -92,9 +92,9 @@ bench::mark(
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 native       13.3ms   14.3ms     66.8   804.77KB     1.97
-    2 new          13.5ms   15.2ms     64.6     2.54MB     1.96
-    3 old         846.4ms  846.4ms      1.18   88.27MB     2.36
+    1 native       12.1ms   12.9ms     74.8    804.8KB     1.97
+    2 new          68.1ms   71.4ms     12.9       11MB     1.85
+    3 old         376.6ms  583.9ms      1.71    84.3MB     4.28
 
 ## The abstraction
 
@@ -513,7 +513,7 @@ se[c(1,5), c(1, 4)]
 ```
 
     # A SummarizedExperiment-tibble abstraction: 4 × 9
-    # [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m
+    # [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m
       .feature .sample counts logcounts sample condition gene  length direction
       <chr>    <chr>    <int>     <dbl> <chr>  <chr>     <chr>  <int> <chr>    
     1 row_a    col_A       16      2.77 s1     cntrl     g1         3 -        
