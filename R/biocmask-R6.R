@@ -1,5 +1,6 @@
 
 
+#' @export
 .AtNames.biocmask_envs <- function(obj, pattern = "") {
   options <- setdiff(names(attributes(obj)), c("class", "names"))
   if (identical(pattern, "")) {
@@ -9,10 +10,12 @@
   }
 }
 
+#' @export
 `@.biocmask_envs` <- function(obj, name) {
   attr(obj, name, exact = TRUE)
 }
 
+#' @export
 `@<-.biocmask_envs` <- function(obj, name, value) {
   attr(obj, name) <- value
   invisible(obj)

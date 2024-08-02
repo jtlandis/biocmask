@@ -1,10 +1,10 @@
 
-`skip!` <- structure(list(), class = "skip")
-skip <- function() {
-  `skip!`
-}
-print.skip <- function(x, ...) cat("<skip>\n")
-is_skip <- function(x) inherits(x, "skip")
+# `skip!` <- structure(list(), class = "skip")
+# skip <- function() {
+#   `skip!`
+# }
+# print.skip <- function(x, ...) cat("<skip>\n")
+# is_skip <- function(x) inherits(x, "skip")
 
 
 ctx_env <- new.env(parent = emptyenv())
@@ -51,7 +51,7 @@ top_env <- rlang::new_environment(
     vec_rep = vctrs::vec_rep,
     vec_rep_each = vctrs::vec_rep_each,
     vec_c = vctrs::vec_c,
-    skip = skip,
+    # skip = skip,
     poke_ctx = poke_ctx,
     poke_ctx_local = poke_ctx_local,
     peek_ctx = peek_ctx,
