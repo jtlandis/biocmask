@@ -36,9 +36,12 @@ rows <- function(...) {
 col_ctx <- function(x) {
   env <- peek_ctx("biocmask:::caller_env")
   biocmanager <- peek_ctx("biocmask:::manager")
+  ctx <- biocmanager$ctx
+  if (ctx=="cols") abort("`col_ctx()` within cols(...) is redunant")
   quo <- new_quosure(enexpr(x), env = env)
-  mask <- biocmanager$masks[["cols"]]
-  mask$eval(quo = quo, env = env)
+  bot_env <- biocmanager$extended[["cols"]]
+  mask <- new_data_mask(bot_env, top_env)
+  eval_tidy(quo, data = mask, env = env)
 }
 
 #' @rdname biocmask-context
@@ -49,9 +52,12 @@ col_ctx <- function(x) {
 row_ctx <- function(x) {
   env <- peek_ctx("biocmask:::caller_env")
   biocmanager <- peek_ctx("biocmask:::manager")
+  ctx <- biocmanager$ctx
+  if (ctx=="rows") abort("`row_ctx()` within rows(...) is redunant")
   quo <- new_quosure(enexpr(x), env = env)
-  mask <- biocmanager$masks[["rows"]]
-  mask$eval(quo = quo, env = env)
+  bot_env <- biocmanager$extended[["rows"]]
+  mask <- new_data_mask(bot_env, top_env)
+  eval_tidy(quo, data = mask, env = env)
 }
 
 #' @rdname biocmask-context
@@ -62,9 +68,12 @@ row_ctx <- function(x) {
 assay_ctx <- function(x) {
   env <- peek_ctx("biocmask:::caller_env")
   biocmanager <- peek_ctx("biocmask:::manager")
+  ctx <- biocmanager$ctx
+  if (ctx=="assays") abort("`assay_ctx()` at top level ... is redundant")
   quo <- new_quosure(enexpr(x), env = env)
-  mask <- biocmanager$masks[["assays"]]
-  mask$eval(quo = quo, env = env)
+  bot_env <- biocmanager$extended[["assays"]]
+  mask <- new_data_mask(bot_env, top_env)
+  eval_tidy(quo, data = mask, env = env)
 }
 
 # rows = function(...) {

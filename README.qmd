@@ -47,7 +47,7 @@ native_example <- function(se) {
   se
 }
 new_example <- function(se) {
-  tidySEabstraction:::mutate.SummarizedExperiment(
+  biocmask:::mutate.SummarizedExperiment(
     se,
     logcounts = log1p(counts)
     )
@@ -66,7 +66,8 @@ assay(se_example, "counts") <- as.matrix(assay(se_example, "counts"))
 bench::mark(
   native = native_example(se_example),
   new = new_example(se_example),
-  old = old_example(se_example)
+  old = old_example(se_example),
+  check = F
 )
 
 ```
