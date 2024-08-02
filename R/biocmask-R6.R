@@ -137,7 +137,8 @@ biocmask <- R6::R6Class(
 
       # get current chop
       private$init_mask_bind()
-
+      
+      private$init_environments()
       invisible(self)
 
     },
@@ -201,14 +202,7 @@ biocmask <- R6::R6Class(
   active = list(
     #' @field environments the hierarchy of environments for this mask
     environments = function() {
-      out  <- env_parents(private$env_mask_bind, private$.shared_env)
-      class(out) <- c("biocmask_envs", "rlang_envs")
-      attr(out, "env_mask_bind") <- private$env_mask_bind
-      attr(out, "env_data_chop") <- private$env_data_chop
-      attr(out, "env_data_lazy") <- private$env_data_lazy
-      attr(out, "env_foreign_data") <- private$env_foreign_data
-      attr(out, "env_current_group_info") <- private$env_current_group_info
-      out
+      private$.environments
     },
     #' @field names the associated names of data in mask
     names = function() {
@@ -266,6 +260,17 @@ biocmask <- R6::R6Class(
                    },
                    env = private$env_data_chop)
       )
+    },
+    init_environments = function() {
+      out  <- env_parents(private$env_mask_bind, private$.shared_env)
+      class(out) <- c("biocmask_envs", "rlang_envs")
+      attr(out, "env_mask_bind") <- private$env_mask_bind
+      attr(out, "env_data_chop") <- private$env_data_chop
+      attr(out, "env_data_lazy") <- private$env_data_lazy
+      attr(out, "env_foreign_data") <- private$env_foreign_data
+      attr(out, "env_current_group_info") <- private$env_current_group_info
+      private$.environments <- out
+      invisible(NULL)
     },
     handle_chops = function(indices) {
       private$.indices <- indices
@@ -326,7 +331,7 @@ biocmask <- R6::R6Class(
     # type of grouping, "none", "group"
     .grouped = NULL,
     .ngroups = NULL,
-
+    .environments = NULL,
     #inital names of `.data`
     .names = NULL,
     # newly added names

@@ -167,7 +167,7 @@ get_group_indices <- function(
     .groups,
     .details,
     type = c("assays", "rowData", "colData")) {
-  if (is.null(.groups)) return(NULL)
+  if (is.null(attr(.groups, "type"))) return(NULL)
   type <- match.arg(type, c("assays", "rowData", "colData"))
   switch(
     type,

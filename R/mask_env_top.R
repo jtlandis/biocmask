@@ -141,7 +141,7 @@ env_group_id <- function(env) {
 }
 
 prepare_shared_ctx_env <- function(groups, expanded) {
-  browser()
+  # browser()
   ind_d <- attr(groups, "obj_dim")
   
   inf_assay <- biocmask_group_ids2(groups, expanded, "assays")
