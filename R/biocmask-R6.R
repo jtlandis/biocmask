@@ -398,38 +398,13 @@ biocmask_assay <- R6::R6Class(
         private$.ngroups <- nrow(.indices)
         fun <- switch(
           type,
-          rowcol = {
-            # row and col contexts are available
-            # private$.env_row_chop <- new_environment()
-            # private$.env_col_chop <- new_environment()
-            # self$on_bind(
-            #   add_bind(
-            #     quote(vec_chop_assays_row(!!name), private$.row_indices),
-            #     .env_expr = private$lazy_data,
-            #     .env_bind = private$.env_row_chop,
-            #     type = "lazy"
-            #   )
-            # )
-            # self$on_bind(
-            #   add_bind(
-            #     quote(vec_chop_assays_col(!!name), private$.col_indices),
-            #     .env_expr = private$lazy_data,
-            #     .env_bind = private$.env_col_chop,
-            #     type = "lazy"
-            #   )
-            # )
-            function(name) {
-              name <- enexpr(name)
-              expr(vec_chop_assays(!!name, .indices))
-            }
+          rowcol = function(name) {
+            name <- enexpr(name)
+            expr(vec_chop_assays(!!name, .indices))
           },
-          row = {
-            # private$.env_row_ctx <- new_environment()
-            # private$.env_col_ctx <- new_environment()
-            function(name) {
-              name <- enexpr(name)
-              expr(vec_chop_assays_row(!!name, .indices))
-            }
+          row = function(name) {
+            name <- enexpr(name)
+            expr(vec_chop_assays_row(!!name, .indices))
           },
           col = function(name) {
             name <- enexpr(name)
@@ -440,10 +415,6 @@ biocmask_assay <- R6::R6Class(
       }
     },
     .nrow = NULL,
-    .ncol = NULL,
-    .row_indices = NULL,
-    .env_row_ctx = NULL,
-    .col_indices = NULL,
-    .env_col_ctx = NULL
+    .ncol = NULL
   )
 )
