@@ -18,12 +18,15 @@
   invisible(obj)
 }
 
+#' @description
+#' Utility function to make new bindings on the fly.
 #' @param .expr an expression that will be evaluated and bound in `.env_expr`.
 #' It is recommened to use `base::quote()` so that `.expr` can contain diffusion
 #' operators such as `!!`
-#' @param .env_expr the environment that `.expr` is evaluated in as a quosure
+#' @param .env_expr the environment that `.expr` is evaluated in, such as a quosure
 #' @param .env_bind where the expression will be bound
-#' @param type the type of binding function to implement
+#' @param type the type of binding function to implement, "standard",
+#'  "lazy", or "active"
 #' @return a function taking a single argument `name` and performs a binding
 #' determined by `type`.
 #' @examples
@@ -75,18 +78,32 @@ add_bind <- function(.expr, .env_expr,
 
 }
 
-# env <- new_environment(list(
-#   .iris = iris,
-#   .nrow = 10),
-#   baseenv())
-# binding_func <- add_bind(
-#   .expr = quote(lapply(1:.nrow, function(i, x) x[i], x = .iris[[!!name]])),
-#   .env_expr = env,
-#   type = "lazy")
-# binding_func("Sepal.Width")
-# env$Sepal.Width
-
-
+#' @name BiocDataMask
+#' @description
+#' An R6 Object that tracks bindings of a list-like object.
+#' This includes DFrame objects. There are several inherited
+#' environments that the data is stored within.
+#' 
+#' Environments:
+#' 
+#' .shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
+#' 
+#' * .shared_env : environment provided at initialization. This may be shared
+#'                 with multiple other BiocDataMasks.
+#' * curr_group  : Currently not used.
+#' * foreign     : space to put foreign bindings, i.e. object unrelated to `.data`
+#'                 provided at initialization. This space is currently used to
+#'                 place the pronouns into related contexts.
+#' * lazy        : A strict lazy binding to the data within `.data`. This binding
+#'                 is made only at initialization.
+#' * chops       : lazy data but chopped into list by `.indices`. New bindings 
+#'                 for this BiocDataMask context are expected to be in a 
+#'                 "chopped" format and are assigned here.
+#' * active_mask : An active binding to chops in which the proper list index is
+#'                 used depending on the current group context. The current group
+#'                 context is at this moment determined by the .shared_env NOT
+#'                 the curr_group. I have plans to remove the curr_group
+#'                 environment.
 biocmask <- R6::R6Class(
   "biocmask",
   public = list(
@@ -310,6 +327,11 @@ biocmask <- R6::R6Class(
 # im <- biocmask$new(iris, list(1:50, 51:100, 101:150))
 # im$eval(quote(Sepal.Width))
 
+#' @rdname BiocDataMask
+#' @description 
+#' A more specialized version of the biocmask R6 object for the 
+#' assays list object. This includes chopping and unchopping 
+#' of matrix like objects.
 biocmask_assay <- R6::R6Class(
   "biocmask_assay",
   inherit = biocmask,

@@ -4,11 +4,13 @@
 #' Create a biocmask for an object
 #' @param obj Dispatch Object
 #' @param ... Not used
+#' @export
 new_biocmask <- function(obj, ...) {
   UseMethod("new_biocmask")
 }
 
-
+#' @rdname biocmask
+#' @export
 new_biocmask.SummarizedExperiment <- function(obj, ...) {
   groups <- metadata(obj)[["group_data"]]
   details <- group_details(obj)
