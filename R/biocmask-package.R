@@ -2,8 +2,8 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom dplyr mutate group_by ungroup arrange reframe across everything
-#'  select rename_with bind_cols
+#' @importFrom dplyr mutate group_by ungroup filter arrange reframe across everything
+#'  select rename_with bind_cols 
 #' @importFrom tidyselect eval_select
 #' @import rlang 
 #' @importFrom purrr walk map walk2 map2 map_int 

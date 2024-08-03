@@ -52,7 +52,7 @@
 add_bind <- function(.expr, .env_expr,
                      .env_bind = .env_expr,
                      type = c("standard", "lazy","active")) {
-  type <- match.arg(type, c("standard", "lazy", "active"))
+  # type <- match.arg(type, c("standard", "lazy", "active"))
   fun <- switch(type,
                 standard = expr(env_bind),
                 lazy = expr(env_bind_lazy),

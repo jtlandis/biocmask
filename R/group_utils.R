@@ -137,6 +137,12 @@ vec_chop_assays_col <- function(.data, .indices) {
 
 create_groups <- function(.data, .rename = ".indices") {
   if (rlang::is_empty(.data)) return(NULL)
+  if (nrow(.data)==0) {
+    .data <- tibble::as_tibble(.data)
+    .data[[.rename]] <- list()
+    .data[[sprintf("%s_group_id", .rename)]] <- integer()
+    return(.data)
+  }
   .data |>
     tibble::as_tibble() |>
     vctrs::vec_group_loc() |>
@@ -172,7 +178,7 @@ get_group_indices <- function(
   switch(
     type,
     assays = {
-      browser()
+      # browser()
       out <- purrr::map2(
         .details[[".rows::.indices"]],
         .details[[".cols::.indices"]],

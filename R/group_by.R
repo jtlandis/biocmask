@@ -1,5 +1,11 @@
 
-#' @importFrom dplyr group_by ungroup
+#' @importFrom dplyr group_by ungroup group_data
+NULL
+
+#' @export
+group_data.SummarizedExperiment <- function(.data) {
+  metadata(.data)[["group_data"]]
+}
 
 #' @title group_by SummarizedExperiment
 #' @name group_by
