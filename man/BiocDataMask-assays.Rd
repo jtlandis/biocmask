@@ -15,7 +15,6 @@ of matrix like objects.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-biocmask_assay-new}{\code{biocmask_assay$new()}}
-\item \href{#method-biocmask_assay-eval}{\code{biocmask_assay$eval()}}
 \item \href{#method-biocmask_assay-unchop}{\code{biocmask_assay$unchop()}}
 \item \href{#method-biocmask_assay-clone}{\code{biocmask_assay$clone()}}
 }
@@ -24,6 +23,7 @@ of matrix like objects.
 <details open><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="biocmask" data-topic="biocmask" data-id="bind"><a href='../../biocmask/html/biocmask.html#method-biocmask-bind'><code>biocmask::biocmask$bind()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="biocmask" data-topic="biocmask" data-id="eval"><a href='../../biocmask/html/biocmask.html#method-biocmask-eval'><code>biocmask::biocmask$eval()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="biocmask" data-topic="biocmask" data-id="on_bind"><a href='../../biocmask/html/biocmask.html#method-biocmask-on_bind'><code>biocmask::biocmask$on_bind()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="biocmask" data-topic="biocmask" data-id="results"><a href='../../biocmask/html/biocmask.html#method-biocmask-results'><code>biocmask::biocmask$results()</code></a></span></li>
 </ul>
@@ -49,26 +49,6 @@ Create a biocmask from \code{.data}. \code{.data} is chopped by
 \item{\code{.env}}{an environment that the resulting mask will be built from.}
 
 \item{\code{.nrow, .ncol}}{the number of rows and columns of each element of \code{.data} respectively}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-biocmask_assay-eval"></a>}}
-\if{latex}{\out{\hypertarget{method-biocmask_assay-eval}{}}}
-\subsection{Method \code{eval()}}{
-evaluates a quoted expression within a new datamask, forces results into
-a matrix of the expected size for the group.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_assay$eval(quo, env = caller_env())}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{quo}}{a quosure to evaluate}
-
-\item{\code{env}}{an environment to search after mask}
 }
 \if{html}{\out{</div>}}
 }

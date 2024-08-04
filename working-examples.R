@@ -5,17 +5,18 @@ library(tidyr)
 library(vctrs)
 library(dplyr)
 library(SummarizedExperiment)
+library(biocmask)
 
 # devtools::load_all()
 # sys.source("R/grouped_list.R", envir = attach(NULL, name = "grouped_list"))
-source("R/group_by.R") #, envir = attach(NULL, name = "group_by_funs"))
-source("R/mask_env_top.R")  #,envir = attach(NULL, name = "mask_envs"))
-source("R/prepare_quos.R")  #,envir = attach(NULL, name = "prep_quo"))
-source("R/biocmask-R6.R")  #,envir = attach(NULL, name = "biocmask-R6"))
-source("R/connect_masks.R")  #,envir = attach(NULL, name = "connect"))
-source("R/biocmask-R6-manager.R")  #,envir = attach(NULL, name = "biocmask-manager-R6"))
-source("R/biocmask.R")  #,envir = attach(NULL, name = "biocmask"))
-source("R/mutate.R")
+# source("R/group_by.R") #, envir = attach(NULL, name = "group_by_funs"))
+# source("R/mask_env_top.R")  #,envir = attach(NULL, name = "mask_envs"))
+# source("R/prepare_quos.R")  #,envir = attach(NULL, name = "prep_quo"))
+# source("R/biocmask-R6.R")  #,envir = attach(NULL, name = "biocmask-R6"))
+# source("R/connect_masks.R")  #,envir = attach(NULL, name = "connect"))
+# source("R/biocmask-R6-manager.R")  #,envir = attach(NULL, name = "biocmask-manager-R6"))
+# source("R/biocmask.R")  #,envir = attach(NULL, name = "biocmask"))
+# source("R/mutate.R")
 
 # library(tidySummarizedExperiment)
 
@@ -46,6 +47,8 @@ gse |> mutate(
     cols(n = n()),
     rows(n = n())
   ) |> rowData()
+
+gse |> filter(cols(n() > 2))
 
 # for (X in groups_data$row_groups$.indices)
 

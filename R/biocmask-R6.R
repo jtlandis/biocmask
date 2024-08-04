@@ -207,6 +207,10 @@ biocmask <- R6::R6Class(
     #' @field names the associated names of data in mask
     names = function() {
       private$.names
+    },
+    #' @field added newly added names to the mask
+    added = function() {
+      private$.added
     }
   ),
   private = list(
@@ -416,17 +420,18 @@ biocmask_assay <- R6::R6Class(
       #   })
 
     },
-    #' @description
-    #' evaluates a quoted expression within a new datamask, forces results into
-    #' a matrix of the expected size for the group.
-    #' @param quo a quosure to evaluate
-    #' @param env an environment to search after mask
-    eval = function(quo, env = caller_env()) {
-      quo <- quo_set_expr(quo, expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`, ncol = `biocmask:::ctx:::ncol`)))
-      super$eval(quo, env = env)
-      # mask <- new_data_mask(private$env_mask_bind, top = top_env)
-      # eval_tidy(quo, data = mask, env = env)
-    },
+    # @description
+    # evaluates a quoted expression within a new datamask, forces results into
+    # a matrix of the expected size for the group.
+    # @param quo a quosure to evaluate
+    # @param env an environment to search after mask
+    #eval = function(quo, env = caller_env()) {
+    #   quo <- quo_set_expr(quo, expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`, ncol = `biocmask:::ctx:::ncol`)))
+    #   super$eval(quo, env = env)
+    #   # mask <- new_data_mask(private$env_mask_bind, top = top_env)
+    #   # eval_tidy(quo, data = mask, env = env)
+    # },
+    
     #' @description
     #' unchop data within the mask, returns a matrix
     #' @param name name of binding to retrieve and unchop
@@ -434,7 +439,7 @@ biocmask_assay <- R6::R6Class(
       unchopped <- if (is.null(private$.indices)) {
         .subset2(private$env_data_chop[[name]], 1L)
       } else {
-        # browser()
+        browser()
         vctrs::list_unchop(
           lapply(private$env_data_chop[[name]], as.vector),
           indices = private$.indices

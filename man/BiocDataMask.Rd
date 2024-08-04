@@ -36,7 +36,9 @@ environment.
 \describe{
 \item{\code{environments}}{the hierarchy of environments for this mask}
 
-\item{\code{names}}{the associated names of data in mask
+\item{\code{names}}{the associated names of data in mask}
+
+\item{\code{added}}{newly added names to the mask
 holds grouping information
 for this object
 foreign bindings}

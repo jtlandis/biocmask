@@ -56,3 +56,14 @@ biocmask_quos <- function(..., .named = TRUE) {
   }
   out
 }
+
+enforce_matrix <- function(quos, ctxs) {
+  is_assay_ctx <- ctxs == "assays"
+  quos[is_assay_ctx] <- lapply(
+    quos[is_assay_ctx],
+    function(quo) quo_set_expr(quo,
+                               expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`,
+                                           ncol = `biocmask:::ctx:::ncol`)))
+    )
+  quos
+}

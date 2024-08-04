@@ -19,7 +19,7 @@ mutate.SummarizedExperiment <- function(.data, ...) {
   quos <- biocmask_quos(...)
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   nms  <- names(quos)
-  mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env)
+  mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env, .matrix = TRUE)
   results <- mask$results()
   nms <- names(results$assays)
   for (i in seq_along(results$assays)) {

@@ -1,5 +1,5 @@
 
-#' @importFrom dplyr bind_cols reframe across everything
+#' @importFrom dplyr bind_cols reframe across everything group_vars
 
 expand_groups2 <- function(.rows, .cols) {
   names(.rows) <- sprintf(".rows::%s", names(.rows))
@@ -71,6 +71,25 @@ mat_index <- function(rows_ind, cols_ind, nrows) {
                         length(rows_ind))
 }
 
+is_grouped_rows <- function(.groups) {
+  !is_empty(.groups$row_groups)
+}
+
+is_grouped_cols <- function(.groups) {
+  !is_empty(.groups$col_groups)
+}
+
+#' @export
+group_vars.SummarizedExperiment <- function(x) {
+  lapply(metadata(x)[["group_data"]],
+         function(x) {
+           grep(x = names(x),
+                pattern = "^.indices",
+                value = TRUE,
+                invert = TRUE)
+         })
+}
+
 # vec_chop_assays <- function(.data, row_indices, col_indices) {
 #   chops <- vctrs::vec_chop(as.vector(.data), indices = mat_index(row_indices, col_indices, nrow(.data)))
 #   nrows <- purrr::map_int(row_indices, length)
@@ -84,7 +103,7 @@ mat_index <- function(rows_ind, cols_ind, nrows) {
 # }
 
 vec_chop_assays <- function(.data, .indices) {
-  map(
+  map2(
     attr(.indices, "biocmask:::row_chop_ind"),
     attr(.indices, "biocmask:::col_chop_ind"),
     function(.x, .y, .data) .data[.x, .y], .data = .data

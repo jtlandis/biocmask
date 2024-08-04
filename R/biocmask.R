@@ -41,8 +41,11 @@ new_biocmask.SummarizedExperiment <- function(obj, ...) {
                        .extended_env = extended_environments)
 }
 
-biocmask_evaluate <- function(mask, quos, ctxs, nams, env) {
+biocmask_evaluate <- function(mask, quos, ctxs, nams, env, .matrix = FALSE) {
   .call <- caller_call()
+  if (.matrix) {
+    quos <- enforce_matrix(quos, ctxs)
+  }
   n_quo <- length(quos)
   try_fetch(
     {
