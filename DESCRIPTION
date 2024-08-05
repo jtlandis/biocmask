@@ -17,4 +17,5 @@ Imports:
     SummarizedExperiment,
     tidyr,
     tidyselect,
-    vctrs
+    vctrs,
+    tibble
