@@ -30,7 +30,7 @@ expand_groups <- function(.rows, .cols) {
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
   bind_cols(
-    tidyr::nest(
+    nest(
       .rows,
       .row_keys = -c(.indices, .indices_group_id)
     ) |>
@@ -41,7 +41,7 @@ expand_groups <- function(.rows, .cols) {
         ) |>
           rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
       ),
-    tidyr::nest(
+    nest(
       .cols,
       .col_keys = -c(.indices, .indices_group_id)
     ) |>
@@ -169,7 +169,7 @@ create_groups <- function(.data, .rename = ".indices") {
   .data |>
     tibble::as_tibble() |>
     vctrs::vec_group_loc() |>
-    tidyr::unnest(key) |>
+    unnest(key) |>
     rename("{.rename}" := loc) |>
     mutate("{.rename}_group_id" := 1:n())
 }

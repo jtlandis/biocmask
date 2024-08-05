@@ -69,7 +69,7 @@ case_key <- function(x, ...) {
 # # tibble(y = 1, z = 10, a = "A", x = .out)
 # 
 # # rowd <- rowData(se) |> as_tibble(rownames = ".features")
-# # col_data_chop <- colData(se) |> as_tibble(rownames = ".samples") |> tidyr::chop(-condition)
+# # col_data_chop <- colData(se) |> as_tibble(rownames = ".samples") |> chop(-condition)
 # # rowd$samples <- list()
 # #
 # # setClass("vctrs_grouped_list", contains = "list")
