@@ -9,8 +9,8 @@
 #' @importFrom tibble tibble as_tibble
 #' @importFrom purrr iwalk walk map map2 map_int reduce walk 
 #' @importFrom tidyr nest unnest chop
-#' @importFrom vctrs vec_c vec_recycle_common vec_size_common vec_chop list_unchop
-#' vec_rep vec_rep_each vec_group_loc
+#' @importFrom vctrs list_unchop new_list_of vec_c vec_chop vec_group_loc 
+#' vec_ptype vec_recycle_common vec_rep vec_rep_each vec_size_common
 NULL
 
 # rlang functions -- figure out all dependencies later

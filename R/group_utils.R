@@ -65,9 +65,9 @@ expand_groups <- function(.rows, .cols) {
 
 mat_index <- function(rows_ind, cols_ind, nrows) {
   shift <- (cols_ind - 1L) * nrows
-  vctrs::vec_rep(rows_ind,
+  vec_rep(rows_ind,
                  length(cols_ind)) +
-    vctrs::vec_rep_each(shift,
+    vec_rep_each(shift,
                         length(rows_ind))
 }
 
@@ -91,7 +91,7 @@ group_vars.SummarizedExperiment <- function(x) {
 }
 
 # vec_chop_assays <- function(.data, row_indices, col_indices) {
-#   chops <- vctrs::vec_chop(as.vector(.data), indices = mat_index(row_indices, col_indices, nrow(.data)))
+#   chops <- vec_chop(as.vector(.data), indices = mat_index(row_indices, col_indices, nrow(.data)))
 #   nrows <- map_int(row_indices, length)
 #   ncols <- map_int(col_indices, length)
 #   pmap(list(chops, nrows, ncols), ~ matrix(..1, ..2, ..3))
@@ -168,7 +168,7 @@ create_groups <- function(.data, .rename = ".indices") {
   }
   .data |>
     as_tibble() |>
-    vctrs::vec_group_loc() |>
+    vec_group_loc() |>
     unnest(key) |>
     rename("{.rename}" := loc) |>
     mutate("{.rename}_group_id" := 1:n())

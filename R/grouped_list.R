@@ -5,7 +5,7 @@
 # new_grouped_lst <- function(x, keys) {
 #   x1 <- list_of(!!!x[[1]])
 # 
-#   vctrs::new_list_of(x, ptype = vec_ptype(x1), class = "vctrs_grouped_list", .key = keys)
+#   new_list_of(x, ptype = vec_ptype(x1), class = "vctrs_grouped_list", .key = keys)
 # }
 # # .out <- vec_chop(1:10, list(1:2,3:5, 6:9, 10)) |> list() |> new_grouped_lst(keys = tibble(condition = c("cntrl","drug")))
 # 
@@ -35,8 +35,8 @@ case_key <- function(x, ...) {
     lhs_eval[[i]] <- rlang::eval_tidy(pair$lhs, env = env)
     rhs_eval[[i]] <- rlang::eval_tidy(pair$rhs, data = group_keys)
   }
-  .size <- vctrs::vec_size_common(!!!lhs_eval)
-  conditions <- vctrs::vec_recycle_common(!!!lhs_eval, .size = .size)
+  .size <- vec_size_common(!!!lhs_eval)
+  conditions <- vec_recycle_common(!!!lhs_eval, .size = .size)
   seen <- logical(.size)
   out <- vector('list', .size)
   for (i in seq_along(conditions)) {
@@ -83,6 +83,6 @@ case_key <- function(x, ...) {
 # #               },
 # #               ...
 # #             ) |>
-# #               new_list_of(ptype = vctrs::vec_ptype(X[[1]]), class = "vctrs_grouped_list", .key = attr(X, ".key"))
+# #               new_list_of(ptype = vec_ptype(X[[1]]), class = "vctrs_grouped_list", .key = attr(X, ".key"))
 # #           })
 # 
