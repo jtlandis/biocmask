@@ -42,7 +42,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
         map(group_vec, .subset, 1L)
       })
     enforce_chops_scalar(row_chops)
-    row_data <- purrr::map(
+    row_data <- map(
       row_chops,
       vctrs::list_unchop
     ) |>
@@ -59,7 +59,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
         map(group_vec, .subset, 1L)
       })
     enforce_chops_scalar(col_chops)
-    col_data <- purrr::map(
+    col_data <- map(
       col_chops,
       vctrs::list_unchop
     ) |>
@@ -75,11 +75,11 @@ summarise.SummarizedExperiment <- function(.data, ...) {
   
   #we should have some type of value to view from
   # assays as it was enforced earlier.
-  assay_data <- purrr::map(
+  assay_data <- map(
     assay_chops,
     vctrs::list_unchop
   ) |>
-    purrr::map(
+    map(
       matrix,
       nrow = .nrow,
       ncol = .ncol
@@ -96,10 +96,10 @@ summarise.SummarizedExperiment <- function(.data, ...) {
 summarize.SummarizedExperiment <- summarise.SummarizedExperiment
 
 enforce_chops_scalar <- function(chops) {
-  purrr::iwalk(
+  iwalk(
     chops,
     function(vec, name) {
-      purrr::walk(vec, vec_check_size, size = 1L, arg = name)
+      walk(vec, vec_check_size, size = 1L, arg = name)
     }
   )
   invisible(NULL)

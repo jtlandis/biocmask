@@ -394,7 +394,7 @@ biocmask_assay <- R6::R6Class(
       # private$.cached_unchop_ind <- switch(
       #   attr(.indices, "type") %||% "none",
       #   rowcol = {
-      #     purrr::map2(
+      #     map2(
       #       .indices$.rows,
       #       .indices$.cols,
       #       mat_index,
@@ -402,7 +402,7 @@ biocmask_assay <- R6::R6Class(
       #     )
       #   },
       #   row = {
-      #     purrr::map(
+      #     map(
       #       .indices$.rows,
       #       mat_index,
       #       cols_ind = seq_len(.ncol),
@@ -411,7 +411,7 @@ biocmask_assay <- R6::R6Class(
       #   },
       #   col = {
       #     n <- nrow(.data)
-      #     purrr::map(
+      #     map(
       #       .indices$.cols,
       #       mat_index,
       #       cols_ind = seq_len(.ncol),

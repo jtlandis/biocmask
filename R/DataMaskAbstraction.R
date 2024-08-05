@@ -44,7 +44,7 @@
 #'                                function(x) quo(.data[[!!x]])))
 #'       private$.chops <- new.env(parent = private$.lazy_data, size = .size)
 #'       private$.actv_chop <- new.env(parent = private$.chops, size = .size)
-#'       purrr::map(.names, function(name) self$bind_chop(as.name(name), name))
+#'       map(.names, function(name) self$bind_chop(as.name(name), name))
 #'       
 #'       private$.lazy_mold <- lapply(seq_len(.ngroups),
 #'                                    function(i, p, s) new.env(parent = p, size = s),

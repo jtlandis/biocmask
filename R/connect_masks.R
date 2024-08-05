@@ -18,8 +18,8 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
     .env_bind = env_pronoun,
     type = "active"
   )
-  purrr::walk(assay_names, fun_asis) |>
-    purrr::walk(fun_mold)
+  walk(assay_names, fun_asis) |>
+    walk(fun_mold)
   # whenever a new assay binding is made,
   # execute the prior functions
   mask_assays$on_bind(fun_asis)$on_bind(fun_mold)
@@ -50,8 +50,8 @@ connect_assays_to_cols <- function(mask_assays, mask_cols) {
     .env_bind = env_pronoun,
     type = "active"
   )
-  purrr::walk(assay_names, fun_asis) |>
-    purrr::walk(fun_mold)
+  walk(assay_names, fun_asis) |>
+    walk(fun_mold)
   # whenever a new assay binding is made,
   # execute the prior functions
   mask_assays$on_bind(fun_asis)$on_bind(fun_mold)
@@ -85,8 +85,8 @@ connect_rows_to_assays <- function(mask_rows, mask_assays) {
     .env_bind = env_pronoun,
     type = "active"
   )
-  purrr::walk(row_names, fun_asis) |>
-    purrr::walk(fun_mold)
+  walk(row_names, fun_asis) |>
+    walk(fun_mold)
   # whenever a new row binding is made,
   # execute the prior functions
   mask_rows$on_bind(fun_asis)$on_bind(fun_mold)
@@ -119,8 +119,8 @@ connect_cols_to_assays <- function(mask_cols, mask_assays) {
     .env_bind = env_pronoun,
     type = "active"
   )
-  purrr::walk(col_names, fun_asis) |>
-    purrr::walk(fun_mold)
+  walk(col_names, fun_asis) |>
+    walk(fun_mold)
   # whenever a new col binding is made,
   # execute the prior functions
   mask_cols$on_bind(fun_asis)$on_bind(fun_mold)
@@ -153,8 +153,8 @@ connect_rows_to_cols <- function(mask_rows, mask_cols) {
     .env_bind = env_pronoun,
     type = "active"
   )
-  purrr::walk(row_names, fun_asis) |>
-    purrr::walk(fun_mold)
+  walk(row_names, fun_asis) |>
+    walk(fun_mold)
   # whenever a new row binding is made,
   # execute the prior functions
   mask_rows$on_bind(fun_asis)$on_bind(fun_mold)
@@ -187,8 +187,8 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
     .env_bind = env_pronoun,
     type = "active"
   )
-  purrr::walk(col_names, fun_asis) |>
-    purrr::walk(fun_mold)
+  walk(col_names, fun_asis) |>
+    walk(fun_mold)
   # whenever a new col binding is made,
   # execute the prior functions
   mask_cols$on_bind(fun_asis)$on_bind(fun_mold)

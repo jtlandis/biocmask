@@ -10,8 +10,8 @@ expand_groups2 <- function(.rows, .cols) {
   .cols <- base::lapply(.cols, vctrs::vec_rep_each, times = .nrow)
   out <- c(.rows, .cols)
   n <- .nrow*.ncol
-  out[[".nrows"]] <- purrr::map_int(out[[".rows::.indices"]], length)
-  out[[".ncols"]] <- purrr::map_int(out[[".cols::.indices"]], length)
+  out[[".nrows"]] <- map_int(out[[".rows::.indices"]], length)
+  out[[".ncols"]] <- map_int(out[[".cols::.indices"]], length)
   attr(out, "row.names") <- c(NA_integer_, -n)
   class(out) <- c("tbl_df", "tbl", "data.frame")
   
@@ -92,13 +92,13 @@ group_vars.SummarizedExperiment <- function(x) {
 
 # vec_chop_assays <- function(.data, row_indices, col_indices) {
 #   chops <- vctrs::vec_chop(as.vector(.data), indices = mat_index(row_indices, col_indices, nrow(.data)))
-#   nrows <- purrr::map_int(row_indices, length)
-#   ncols <- purrr::map_int(col_indices, length)
-#   purrr::pmap(list(chops, nrows, ncols), ~ matrix(..1, ..2, ..3))
+#   nrows <- map_int(row_indices, length)
+#   ncols <- map_int(col_indices, length)
+#   pmap(list(chops, nrows, ncols), ~ matrix(..1, ..2, ..3))
 # }
 
 # vec_chop_assays <- function(.data, row_indices, col_indices) {
-#   purrr::map2(row_indices, col_indices,
+#   map2(row_indices, col_indices,
 #               function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
 # }
 
@@ -130,9 +130,9 @@ vec_chop_assays_col <- function(.data, .indices) {
 #   if (length(.data)!=1) stop("reshaping by row expects a single")
 #   key <- attr(.data, ".keys")
 #   .data <- .data[[1]]
-#   purrr::map(
+#   map(
 #     indices,
-#     \(x) purrr::map(.data, ~ .x[x,,drop = T])
+#     \(x) map(.data, ~ .x[x,,drop = T])
 #   ) |>
 #     new_grouped_lst(keys = key)
 # }
@@ -145,9 +145,9 @@ vec_chop_assays_col <- function(.data, .indices) {
 #   if (length(.data)!=1) stop("reshaping by row expects a single")
 #   key <- attr(.data, ".keys")
 #   .data <- .data[[1]]
-#   purrr::map(
+#   map(
 #     indices,
-#     \(x) purrr::map(.data, ~ .x[,x,drop = T])
+#     \(x) map(.data, ~ .x[,x,drop = T])
 #   ) |>
 #     new_grouped_lst(keys = key)
 # }
@@ -202,7 +202,7 @@ get_group_indices <- function(
     type,
     assays = {
       # browser()
-      out <- purrr::map2(
+      out <- map2(
         .details[[".rows::.indices"]],
         .details[[".cols::.indices"]],
         .f = function(row, col, n) {
@@ -242,8 +242,8 @@ group_details <- function(obj) {
   # attr(out, "type") <- attr(group_data, "type")
   # out |>
   #   mutate(
-  #     .nrows = purrr::map_int(`.rows::.indices`, length),
-  #     .ncols = purrr::map_int(`.cols::.indices`, length)
+  #     .nrows = map_int(`.rows::.indices`, length),
+  #     .ncols = map_int(`.cols::.indices`, length)
   #   )
   group_data
 }

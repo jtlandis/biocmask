@@ -25,7 +25,7 @@ case_key <- function(x, ...) {
   env <- rlang::current_env()
   dots <- rlang::list2(...)
   n_args <- length(dots)
-  pairs <- purrr::map(dots, \(x) {
+  pairs <- map(dots, \(x) {
     list(lhs = rlang::f_lhs(x), rhs = rlang::f_rhs(x))
   })
   lhs_eval <- vector("list", n_args)
@@ -43,12 +43,12 @@ case_key <- function(x, ...) {
     cond <- conditions[[i]]
     selection <- rhs_eval[[i]]
     adding <- (!seen) & cond
-    out[adding] <- purrr::map2(x[adding], list(selection), ~.x[.y])
+    out[adding] <- map2(x[adding], list(selection), ~.x[.y])
     seen <- seen | adding
     if (all(seen)) break
   }
 
-  if (all(purrr::map_int(out, length)==1L)) {
+  if (all(map_int(out, length)==1L)) {
     out <- unlist(out, recursive = FALSE)
   }
   out

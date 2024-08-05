@@ -42,12 +42,12 @@ filter.SummarizedExperiment <- function(.data, ..., .preserve = FALSE) {
   filter_ <- ""
   if (!is_empty(results$rows)) {
     row_logic <- vec_recycle_common(splice(results$rows)) |>
-      purrr::reduce(`&`)
+      reduce(`&`)
     filter_ <- "row"
   }
   if (!is_empty(results$cols)) {
     col_logic <- vec_recycle_common(splice(results$cols)) |>
-      purrr::reduce(`&`)
+      reduce(`&`)
     filter_ <- paste0(filter_, "col")
   }
   .data <- switch(

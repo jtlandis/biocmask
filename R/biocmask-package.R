@@ -7,7 +7,7 @@
 #' summarise ungroup
 #' @import rlang 
 #' @importFrom tibble tibble as_tibble
-#' @importFrom purrr walk map walk2 map2 map_int 
+#' @importFrom purrr iwalk walk map map2 map_int reduce walk 
 #' @importFrom tidyr nest unnest chop
 #' @importFrom vctrs vec_c vec_recycle_common vec_size_common vec_chop list_unchop
 #' vec_rep vec_rep_each vec_group_loc
