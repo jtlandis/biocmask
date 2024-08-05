@@ -161,13 +161,13 @@ create_groups <- function(.data, .rename = ".indices") {
   # check first index has length > 0
   # assumes all others have similar length (probably not always true)
   if (length(.data[[1]])==0) {
-    .data <- tibble::as_tibble(.data)
+    .data <- as_tibble(.data)
     .data[[.rename]] <- list()
     .data[[sprintf("%s_group_id", .rename)]] <- integer()
     return(.data)
   }
   .data |>
-    tibble::as_tibble() |>
+    as_tibble() |>
     vctrs::vec_group_loc() |>
     unnest(key) |>
     rename("{.rename}" := loc) |>

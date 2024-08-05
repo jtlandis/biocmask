@@ -6,7 +6,7 @@
 #' group_data group_vars mutate n reframe rename rename_with rows_update
 #' summarise ungroup
 #' @import rlang 
-#' @importFrom tibble tibble
+#' @importFrom tibble tibble as_tibble
 #' @importFrom purrr walk map walk2 map2 map_int 
 #' @importFrom tidyr nest unnest chop
 #' @importFrom vctrs vec_c vec_recycle_common vec_size_common vec_chop list_unchop
