@@ -6,7 +6,11 @@
 #' objects. These functions are intended to be used as the top level call to
 #' any dplyr verbs `...` argument, similar to that of `across()`/`if_any()`/`if_all()`.
 #' 
-#' @param ... expressions to evaluate within its associated context
+#' @param x,... expressions to evaluate within its associated context
+#' @param asis asis = FALSE (the default) will indicate using active bindings
+#' that attempt to coerce the underlying data into a format that is appropriate
+#' for the current context. Indicating TRUE will instead bind the underlying data
+#' as is.
 NULL
 
 #' @rdname biocmask-context 
@@ -33,13 +37,16 @@ rows <- function(...) {
 #' Specify a single expression to evaluate in another context
 #' 
 #' @export
-col_ctx <- function(x) {
+col_ctx <- function(x, asis = FALSE) {
   env <- peek_ctx("biocmask:::caller_env")
   biocmanager <- peek_ctx("biocmask:::manager")
   ctx <- biocmanager$ctx
   if (ctx=="cols") abort("`col_ctx()` within cols(...) is redunant")
   quo <- new_quosure(enexpr(x), env = env)
   bot_env <- biocmanager$extended[["cols"]]
+  if (asis) {
+    bot_env <- parent.env(bot_env)
+  }
   mask <- new_data_mask(bot_env, top_env)
   eval_tidy(quo, data = mask, env = env)
 }
@@ -49,13 +56,16 @@ col_ctx <- function(x) {
 #' Specify a single expression to evaluate in another context
 #' 
 #' @export
-row_ctx <- function(x) {
+row_ctx <- function(x, asis = FALSE) {
   env <- peek_ctx("biocmask:::caller_env")
   biocmanager <- peek_ctx("biocmask:::manager")
   ctx <- biocmanager$ctx
   if (ctx=="rows") abort("`row_ctx()` within rows(...) is redunant")
   quo <- new_quosure(enexpr(x), env = env)
   bot_env <- biocmanager$extended[["rows"]]
+  if (asis) {
+    bot_env <- parent.env(bot_env)
+  }
   mask <- new_data_mask(bot_env, top_env)
   eval_tidy(quo, data = mask, env = env)
 }
@@ -65,13 +75,16 @@ row_ctx <- function(x) {
 #' Specify a single expression to evaluate in another context
 #' 
 #' @export
-assay_ctx <- function(x) {
+assay_ctx <- function(x, asis = FALSE) {
   env <- peek_ctx("biocmask:::caller_env")
   biocmanager <- peek_ctx("biocmask:::manager")
   ctx <- biocmanager$ctx
   if (ctx=="assays") abort("`assay_ctx()` at top level ... is redundant")
   quo <- new_quosure(enexpr(x), env = env)
   bot_env <- biocmanager$extended[["assays"]]
+  if (asis) {
+    bot_env <- parent.env(bot_env)
+  }
   mask <- new_data_mask(bot_env, top_env)
   eval_tidy(quo, data = mask, env = env)
 }
