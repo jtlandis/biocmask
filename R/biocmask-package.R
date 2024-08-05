@@ -2,15 +2,44 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom dplyr across arrange bind_cols everything filter group_by
-#' group_data group_vars mutate n reframe rename rename_with rows_update
-#' summarise ungroup
+## usethis namespace: start
 #' @import rlang 
-#' @importFrom tibble tibble as_tibble
-#' @importFrom purrr iwalk walk map map2 map_int reduce walk 
+#' @importFrom dplyr across 
+#' @importFrom dplyr arrange 
+#' @importFrom dplyr bind_cols 
+#' @importFrom dplyr everything 
+#' @importFrom dplyr filter 
+#' @importFrom dplyr group_by
+#' @importFrom dplyr group_data
+#' @importFrom dplyr group_vars
+#' @importFrom dplyr mutate
+#' @importFrom dplyr n
+#' @importFrom dplyr reframe
+#' @importFrom dplyr rename
+#' @importFrom dplyr rename_with
+#' @importFrom dplyr rows_update
+#' @importFrom dplyr summarise 
+#' @importFrom dplyr ungroup
+#' @importFrom purrr iwalk
+#' @importFrom purrr map
+#' @importFrom purrr map_int
+#' @importFrom purrr map2
+#' @importFrom purrr reduce
+#' @importFrom purrr walk
+#' @importFrom tibble as_tibble
+#' @importFrom tibble tibble
 #' @importFrom tidyr nest unnest chop
-#' @importFrom vctrs list_unchop new_list_of vec_c vec_chop vec_group_loc 
-#' vec_ptype vec_recycle_common vec_rep vec_rep_each vec_size_common
+#' @importFrom vctrs list_unchop
+#' @importFrom vctrs new_list_of
+#' @importFrom vctrs vec_c
+#' @importFrom vctrs vec_chop
+#' @importFrom vctrs vec_group_loc
+#' @importFrom vctrs vec_ptype
+#' @importFrom vctrs vec_recycle_common
+#' @importFrom vctrs vec_rep
+#' @importFrom vctrs vec_rep_each
+#' @importFrom vctrs vec_size_common
+## usethis namespace: end
 NULL
 
 # rlang functions -- figure out all dependencies later
