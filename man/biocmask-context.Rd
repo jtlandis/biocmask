@@ -13,14 +13,19 @@ cols(...)
 
 rows(...)
 
-col_ctx(x)
+col_ctx(x, asis = FALSE)
 
-row_ctx(x)
+row_ctx(x, asis = FALSE)
 
-assay_ctx(x)
+assay_ctx(x, asis = FALSE)
 }
 \arguments{
-\item{...}{expressions to evaluate within its associated context}
+\item{x, ...}{expressions to evaluate within its associated context}
+
+\item{asis}{asis = FALSE (the default) will indicate using active bindings
+that attempt to coerce the underlying data into a format that is appropriate
+for the current context. Indicating TRUE will instead bind the underlying data
+as is.}
 }
 \description{
 Contextual user-facing helper function for dplyr verbs with SummarizedExperiment
