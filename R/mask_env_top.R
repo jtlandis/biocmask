@@ -22,7 +22,7 @@ poke_ctx <- function(name, value) {
 poke_ctx_local <- function(name, value) {
   old <- ctx_env[[name]]
   ctx_env[[name]] <- value
-  quo <- rlang::expr(ctx_env[[!!name]] <- !!old)
+  quo <- expr(ctx_env[[!!name]] <- !!old)
   do.call(
     on.exit,
     list(quo, add = TRUE),
@@ -34,7 +34,7 @@ poke_ctx_local <- function(name, value) {
 
 
 
-top_env <- rlang::new_environment(
+top_env <- new_environment(
   data = list(
     vec_chop = vctrs::vec_chop,
     vec_chop_assays = vec_chop_assays,

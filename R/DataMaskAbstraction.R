@@ -31,7 +31,7 @@
 #'     initialize = function(.data, .env = NULL, .env_top = NULL, .ngroups = 1L, ...) {
 #'       # delete this
 #'       .env <- new.env(parent = .env)
-#'       rlang::env_bind_active(
+#'       env_bind_active(
 #'         .env,
 #'         .current_group_id = new_function(pairlist(), quote(.current_group_id), private))
 #'       private$.names <- .names <- names(.data)

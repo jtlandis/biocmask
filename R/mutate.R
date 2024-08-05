@@ -11,7 +11,7 @@
 #' @export
 mutate.SummarizedExperiment <- function(.data, ...) {
   # browser()
-  .env <- rlang::caller_env()
+  .env <- caller_env()
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)

@@ -68,7 +68,7 @@ add_bind <- function(.expr, .env_expr,
         actv_fun <- new_function(pairlist(),
                                  inject(quote(!!.expr)),
                                  env = !!.env_expr)
-        # active_fun <- eval_tidy(quosure, data = rlang::as_data_mask(base::baseenv()))
+        # active_fun <- eval_tidy(quosure, data = as_data_mask(base::baseenv()))
         (!!fun)(!!.env_bind, !!name_unquo := actv_fun)
       }))
   } else {

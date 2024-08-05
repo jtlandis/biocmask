@@ -6,8 +6,8 @@ expand_groups2 <- function(.rows, .cols) {
   names(.cols) <- sprintf(".cols::%s", names(.cols))
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
-  .rows <- base::lapply(.rows, vctrs::vec_rep, times = .ncol)
-  .cols <- base::lapply(.cols, vctrs::vec_rep_each, times = .nrow)
+  .rows <- map(.rows, vec_rep, times = .ncol)
+  .cols <- map(.cols, vec_rep_each, times = .nrow)
   out <- c(.rows, .cols)
   n <- .nrow*.ncol
   out[[".nrows"]] <- map_int(out[[".rows::.indices"]], length)
@@ -65,10 +65,8 @@ expand_groups <- function(.rows, .cols) {
 
 mat_index <- function(rows_ind, cols_ind, nrows) {
   shift <- (cols_ind - 1L) * nrows
-  vec_rep(rows_ind,
-                 length(cols_ind)) +
-    vec_rep_each(shift,
-                        length(rows_ind))
+  vec_rep(rows_ind, length(cols_ind)) +
+    vec_rep_each(shift, length(rows_ind))
 }
 
 is_grouped_rows <- function(.groups) {
@@ -81,7 +79,7 @@ is_grouped_cols <- function(.groups) {
 
 #' @export
 group_vars.SummarizedExperiment <- function(x) {
-  lapply(metadata(x)[["group_data"]],
+  map(metadata(x)[["group_data"]],
          function(x) {
            grep(x = names(x),
                 pattern = "^.indices",
@@ -90,17 +88,7 @@ group_vars.SummarizedExperiment <- function(x) {
          })
 }
 
-# vec_chop_assays <- function(.data, row_indices, col_indices) {
-#   chops <- vec_chop(as.vector(.data), indices = mat_index(row_indices, col_indices, nrow(.data)))
-#   nrows <- map_int(row_indices, length)
-#   ncols <- map_int(col_indices, length)
-#   pmap(list(chops, nrows, ncols), ~ matrix(..1, ..2, ..3))
-# }
 
-# vec_chop_assays <- function(.data, row_indices, col_indices) {
-#   map2(row_indices, col_indices,
-#               function(.x, .y, .matrix) .matrix[.x, .y], .matrix = .data)
-# }
 
 vec_chop_assays <- function(.data, .indices) {
   map2(
@@ -122,42 +110,10 @@ vec_chop_assays_col <- function(.data, .indices) {
       .data = .data)
 }
 
-# vec_chop_assays_row <- function(.data, indices) UseMethod("vec_chop_assays_row")
-
-
-
-# vec_chop_assays_row.vctrs_grouped_list <- function(.data, indices) {
-#   if (length(.data)!=1) stop("reshaping by row expects a single")
-#   key <- attr(.data, ".keys")
-#   .data <- .data[[1]]
-#   map(
-#     indices,
-#     \(x) map(.data, ~ .x[x,,drop = T])
-#   ) |>
-#     new_grouped_lst(keys = key)
-# }
-
-# vec_chop_assays_col <- function(.data, indices) UseMethod("vec_chop_assays_col")
-
-
-
-# vec_chop_assays_col.vctrs_grouped_list <- function(.data, indices) {
-#   if (length(.data)!=1) stop("reshaping by row expects a single")
-#   key <- attr(.data, ".keys")
-#   .data <- .data[[1]]
-#   map(
-#     indices,
-#     \(x) map(.data, ~ .x[,x,drop = T])
-#   ) |>
-#     new_grouped_lst(keys = key)
-# }
-
-
 
 create_groups <- function(.data, .rename = ".indices") {
-  browser()
   # check if length > 0
-  if (rlang::is_empty(.data)) return(NULL)
+  if (is_empty(.data)) return(NULL)
   # check first index has length > 0
   # assumes all others have similar length (probably not always true)
   if (length(.data[[1]])==0) {

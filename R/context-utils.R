@@ -101,7 +101,7 @@ assay_ctx <- function(x, asis = FALSE) {
 #   quos <- enquos(..., .named = TRUE)
 #   nms <- names(quos)
 #   for (i in seq_along(quos)) {
-#     quo <- rlang::quo_set_env(quos[[i]], env)
+#     quo <- quo_set_env(quos[[i]], env)
 #     name <- nms[i]
 #     eval_fun(quo, name)
 #   }
@@ -118,7 +118,7 @@ assay_ctx <- function(x, asis = FALSE) {
 #   quos <- enquos(..., .named = TRUE)
 #   nms <- names(quos)
 #   for (i in seq_along(quos)) {
-#     quo <- rlang::quo_set_env(quos[[i]], env)
+#     quo <- quo_set_env(quos[[i]], env)
 #     name <- nms[i]
 #     eval_fun(quo, name)
 #   }

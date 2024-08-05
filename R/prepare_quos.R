@@ -1,6 +1,6 @@
 
 ctx_quo <- function(expr, env, ctx) {
-  quo <- rlang::new_quosure(expr = expr, env = env)
+  quo <- new_quosure(expr = expr, env = env)
   attr(quo, "biocmask:::ctx") <- ctx
   quo
 }
@@ -29,7 +29,7 @@ enforce_named <- function(exprs) {
 #' @param .named should resulting expressions be named?
 #' @noRd
 biocmask_quos <- function(..., .named = TRUE) {
-  dots <- rlang::enquos(...) |>
+  dots <- enquos(...) |>
     as.list()
   ctx_opt <- c("cols", "rows")
   for (i in seq_along(dots)) {
@@ -42,12 +42,12 @@ biocmask_quos <- function(..., .named = TRUE) {
                           ctx_quo,
                           env = .env,
                           ctx = ctx) |>
-        rlang::splice()
+        splice()
       next
     }
     dots[[i]] <- ctx_quo(.expr, env = .env, ctx = "assays")
   } 
-  out <- do.call(rlang::dots_list, c(dots, list(.named = .named)))
+  out <- do.call(dots_list, c(dots, list(.named = .named)))
   if (.named) {
     # in case the prior expansion
     # of rows(...) and cols(...) need

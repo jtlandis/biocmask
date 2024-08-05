@@ -22,18 +22,18 @@ case_key <- function(x, ...) {
     )
   }
   group_keys <- attr(x, ".key")
-  env <- rlang::current_env()
-  dots <- rlang::list2(...)
+  env <- current_env()
+  dots <- list2(...)
   n_args <- length(dots)
   pairs <- map(dots, \(x) {
-    list(lhs = rlang::f_lhs(x), rhs = rlang::f_rhs(x))
+    list(lhs = f_lhs(x), rhs = f_rhs(x))
   })
   lhs_eval <- vector("list", n_args)
   rhs_eval <- vector("list", n_args)
   for (i in seq_along(dots)) {
     pair <- pairs[[i]]
-    lhs_eval[[i]] <- rlang::eval_tidy(pair$lhs, env = env)
-    rhs_eval[[i]] <- rlang::eval_tidy(pair$rhs, data = group_keys)
+    lhs_eval[[i]] <- eval_tidy(pair$lhs, env = env)
+    rhs_eval[[i]] <- eval_tidy(pair$rhs, data = group_keys)
   }
   .size <- vec_size_common(!!!lhs_eval)
   conditions <- vec_recycle_common(!!!lhs_eval, .size = .size)
