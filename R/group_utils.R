@@ -29,36 +29,36 @@ expand_groups <- function(.rows, .cols) {
   # browser()
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
-  dplyr::bind_cols(
+  bind_cols(
     tidyr::nest(
       .rows,
       .row_keys = -c(.indices, .indices_group_id)
     ) |>
-      dplyr::reframe(
-        dplyr::across(
-          dplyr::everything(),
+      reframe(
+        across(
+          everything(),
           ~vec_rep(.x, times = .env$.ncol)
         ) |>
-          dplyr::rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
+          rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
       ),
     tidyr::nest(
       .cols,
       .col_keys = -c(.indices, .indices_group_id)
     ) |>
-      dplyr::reframe(
-        dplyr::across(
-          dplyr::everything(),
+      reframe(
+        across(
+          everything(),
           ~vec_rep_each(.x, times = .env$.nrow)
         ) |>
-          dplyr::rename_with(.fn = \(x) gsub(".indices", ".cols", x = x))
+          rename_with(.fn = \(x) gsub(".indices", ".cols", x = x))
       ),
     .name_repair = "minimal"
   ) |>
-    dplyr::arrange(
+    arrange(
       .rows_group_id,
       .cols_group_id
     ) |>
-    dplyr::mutate(
+    mutate(
       .group_id = 1:n()
     )
 }
@@ -155,8 +155,12 @@ vec_chop_assays_col <- function(.data, .indices) {
 
 
 create_groups <- function(.data, .rename = ".indices") {
+  browser()
+  # check if length > 0
   if (rlang::is_empty(.data)) return(NULL)
-  if (nrow(.data)==0) {
+  # check first index has length > 0
+  # assumes all others have similar length (probably not always true)
+  if (length(.data[[1]])==0) {
     .data <- tibble::as_tibble(.data)
     .data[[.rename]] <- list()
     .data[[sprintf("%s_group_id", .rename)]] <- integer()
@@ -166,8 +170,8 @@ create_groups <- function(.data, .rename = ".indices") {
     tibble::as_tibble() |>
     vctrs::vec_group_loc() |>
     tidyr::unnest(key) |>
-    dplyr::rename("{.rename}" := loc) |>
-    dplyr::mutate("{.rename}_group_id" := 1:n())
+    rename("{.rename}" := loc) |>
+    mutate("{.rename}_group_id" := 1:n())
 }
 
 biocmask_groups <- function(row_groups = NULL, col_groups = NULL) {

@@ -72,7 +72,7 @@ filter.SummarizedExperiment <- function(.data, ..., .preserve = FALSE) {
   if (.preserve) {
     if (!is_empty(current_groups$row_groups)) {
       current_groups$row_groups$.indices[] <- list(integer())
-      new_groups$row_groups <- dplyr::rows_update(
+      new_groups$row_groups <- rows_update(
         current_groups$row_groups,
         new_groups$row_groups,
         by = row_select
@@ -80,7 +80,7 @@ filter.SummarizedExperiment <- function(.data, ..., .preserve = FALSE) {
     }
     if (!is_empty(current_groups$col_groups)) {
       current_groups$col_groups$.indices[] <- list(integer())
-      new_groups$col_groups <- dplyr::rows_update(
+      new_groups$col_groups <- rows_update(
         current_groups$col_groups,
         new_groups$col_groups,
         by = col_select

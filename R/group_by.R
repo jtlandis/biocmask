@@ -67,6 +67,7 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
       results$rows <- curr
     }
   }
+  browser()
   groups <- biocmask_groups(
     row_groups = results$rows,
     col_groups = results$cols
