@@ -20,7 +20,7 @@ library(biocmask)
 
 # library(tidySummarizedExperiment)
 
-set.seed(1234)
+set.seed(12345)
 se <- SummarizedExperiment(
   list(counts = matrix(sample(1:20, 20), nrow = 5, ncol = 4)),
   rowData = data.frame(gene = sprintf("g%i", 1:5),
@@ -38,10 +38,12 @@ mutate(se,
        counts_1 = counts + 1,
        logcounts = log(counts_1),
        rows(sum = rowSums(.assays_asis$counts)),
-       cols(sum = purrr::map_dbl(.assays$counts, sum)))
-gse <- group_by(se,
+       cols(sum = purrr::map_dbl(.assays$counts, sum))) -> .o
+gse <- biocmask:::group_by.SummarizedExperiment(se,
          cols(condition),
          rows(direction))
+gse_out <- biocmask:::summarise.SummarizedExperiment(gse,
+                                                     counts = list(counts))
 gse |> mutate(
     n = n(),
     cols(n = n()),
