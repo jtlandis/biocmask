@@ -29,7 +29,8 @@ enforce_named <- function(exprs) {
 #' @param .named should resulting expressions be named?
 #' @noRd
 biocmask_quos <- function(..., .named = TRUE) {
-  dots <- enquos(...) |>
+  # browser()
+  dots <- quos(...) |>
     as.list()
   ctx_opt <- c("cols", "rows")
   for (i in seq_along(dots)) {
@@ -61,9 +62,15 @@ enforce_matrix <- function(quos, ctxs) {
   is_assay_ctx <- ctxs == "assays"
   quos[is_assay_ctx] <- lapply(
     quos[is_assay_ctx],
-    function(quo) quo_set_expr(quo,
-                               expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`,
-                                           ncol = `biocmask:::ctx:::ncol`)))
+    function(quo) {
+      if (is.null(quo_get_expr(quo))) 
+        return(quo)
+      else
+        quo_set_expr(quo,
+                     expr(matrix(!!quo,
+                                 nrow = `biocmask:::ctx:::nrow`,
+                                 ncol = `biocmask:::ctx:::ncol`)))
+      }
     )
   quos
 }

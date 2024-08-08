@@ -30,12 +30,13 @@ biocmask_manager <- R6::R6Class(
     #' @return returns evaluated `quo` in the form of a chop
     eval = function(quo, name, env = caller_env()) {
       mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
-      n_groups <- self$n_groups
-      chop_out <- vector("list", n_groups)
-      for (i in seq_len(n_groups)) {
-        private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
-        chop_out[[i]] <- mask$eval(quo, env = env)
-      }
+      chop_out <- biocmask_manager_eval(
+        quo = quo,
+        env = env,
+        n_groups = self$n_groups,
+        mask = mask,
+        private = private
+      )
       mask$bind(name = name, value = chop_out)
     },
     #' @description
@@ -89,3 +90,21 @@ biocmask_manager <- R6::R6Class(
     .extended_env = list()
   )
 )
+
+# Created this scoped function so that on.exit could be called
+# in case of an error. Need to write test
+# mutate(se, counts = stop("check rlang::env_parents()"))
+biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
+  chop_out <- vector("list", n_groups)
+  if (!is.null(quo_get_expr(quo))) {
+    # weird bug with eval_tidy?
+    # parent structure gets changed
+    on.exit(env_poke_parent(top_env, baseenv()), add = TRUE)
+    for (i in seq_len(n_groups)) {
+      private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
+      result <- mask$eval(quo, env = env)
+      chop_out[[i]] <- result
+    }
+  }
+  chop_out
+}

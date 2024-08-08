@@ -63,7 +63,6 @@ add_bind <- function(.expr, .env_expr,
     new_function(
       args = alist(name=),
       body = expr({
-        # browser()
         name_sym <- as.name(name)
         actv_fun <- new_function(pairlist(),
                                  inject(quote(!!.expr)),
@@ -307,14 +306,6 @@ biocmask <- R6::R6Class(
     .bind_self = function(name, value) {
       private$env_data_chop[[name]] <- value
       name_sym <- sym(name)
-      # quo <- new_quosure(
-      #   private$chop_data(!!name_sym),
-      #   env = private$env_data_lazy
-      # )
-      # env_bind_lazy(
-      #   private$env_data_chop,
-      #   !!name := !!quo
-      # )
       fun <- new_function(
         args = pairlist(),
         body = expr(.subset2(!!name_sym, `biocmask:::ctx:::group_id`)),
@@ -444,6 +435,7 @@ biocmask_assay <- R6::R6Class(
           indices = private$.indices
         )
       }
+      if (is.null(unchopped)) return(unchopped)
       matrix(
         unchopped,
         nrow = private$.nrow,
