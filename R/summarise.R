@@ -6,6 +6,7 @@ NULL
 #' @title Summarize SummarizedExperiment
 #' @export
 summarise.SummarizedExperiment <- function(.data, ...) {
+
   .env <- caller_env()
   .groups <- metadata(.data)[["group_data"]]
   mask <- new_biocmask.SummarizedExperiment(obj = .data)
@@ -30,7 +31,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
   group_vars_ <- group_vars(.data)
   row_data <- col_data <- NULL
   .nrow <- .ncol <- 1L
-  if ((is_grouped <- is_grouped_rows(.groups)) || !is_empty(chops$rows)) {
+  if ((is_grouped <- is_grouped_rows(.groups)) || "rows" %in% ctxs) {
     .nrow <- row_size <- nrow(.groups$row_groups) %||% 1L
     row_chops <- mask_pull_chops(
       mask$masks[["rows"]],
@@ -47,7 +48,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
     ) |>
       as("DataFrame")
   }
-  if (is_grouped_cols(.groups) || !is_empty(chops$cols)) {
+  if (is_grouped_cols(.groups) || "cols" %in% ctxs) {
     .ncol <- col_size <- nrow(.groups$col_groups) %||% 1L
     col_chops <- mask_pull_chops(
       mask$masks[["cols"]],
@@ -63,7 +64,10 @@ summarise.SummarizedExperiment <- function(.data, ...) {
       vctrs::list_unchop
     ) |>
       as(Class = "DataFrame")
+  } else {
+    col_data <- DataFrame(x = seq_len(.ncol))[,FALSE]
   }
+  
   new_metadata <- metadata(.data)
   if (group_type(.groups) != "none") {
     new_metadata$group_data <- biocmask_groups(
