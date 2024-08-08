@@ -71,7 +71,7 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   if (nrow(out_sub)==nrow(out)) {
     attr(out_sub, "biocmask:::has_break_at") <- 0L
   } else {
-    attr(out_sub, "biocmask:::has_break_at") <- max(top_half)
+    attr(out_sub, "biocmask:::has_break_at") <- max(top_n)
   }
   attr(out_sub, "biocmask:::data") <- x
   print(out_sub, n = n, ...)
@@ -233,4 +233,19 @@ format.blank_pillar_type <- function(x, width, ...) {
 
 #' @export
 format.blank_pillar_title <- format.blank_pillar_type
+
+
+setMethod(
+  f="show",
+  signature="SummarizedExperiment",
+  definition=function(object) {
+    if (isTRUE(x=getOption(x="restore_SummarizedExperiment_show",
+                           default = FALSE)) 
+    ) {
+      SummarizedExperiment::show(object = object)
+    } else {
+      print(object)
+    }
+  }
+)
 
