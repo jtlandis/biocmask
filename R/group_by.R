@@ -73,12 +73,25 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   )
   metadata(.data)[["group_data"]] <- groups
   nms <- names(results$rows)
-  rowData(.data)[nms] <- results$rows
+  if (length(nms)) {
+    row_data <- rowData(.data)
+    row_data[nms] <- results$rows
+    #push nms to the front
+    row_data <- row_data[c(nms, setdiff(names(row_data), nms))]
+    rowData(.data) <- row_data
+  }
+  
   # for (i in seq_along(results$rows)) {
   #   rowData(.data)[[nms[i]]] <- results$rows[[i]]
   # }
   nms <- names(results$cols)
-  colData(.data)[nms] <- results$cols
+  if (length(nms)) {
+    col_data <- colData(.data)
+    col_data[nms] <- results$cols
+    #push nms to the front
+    col_data <- col_data[c(nms, setdiff(names(col_data), nms))]
+    colData(.data) <- col_data
+  }
   # for (i in seq_along(results$cols)) {
   #   colData(.data)[[nms[i]]] <- results$cols[[i]]
   # }
