@@ -13,22 +13,21 @@ sep_ <- function(n) {
 
 #' @export
 print.SummarizedExperiment <- function(x, n = 10, ...) {
-  
-  n_slice <- ceiling(n / 4)
+  # browser()
   top_n <- ceiling(n/2)
   bot_n <- floor(n/2)
   nr <- nrow(x)
-  row_slice <- if (nr < 2 * n_slice) {
+  row_slice <- if (nr < 2 * n) {
     seq_len(nr)
   } else {
-    c(1:n_slice, (nr - n_slice + 1):nr)
+    c(1:n, (nr - n + 1):nr)
   }
   
   nc <- ncol(x)
-  col_slice <- if (nc < 2 * n_slice) {
+  col_slice <- if (nc < 2 * n) {
     seq_len(nc)
   } else {
-    c(1:n_slice, (nc - n_slice + 1):nc)
+    c(1:n, (nc - n + 1):nc)
   }
   # get first 5 and last 5 rows and cols
   x_ <- x[row_slice, col_slice]
@@ -59,6 +58,7 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   # browser()
   top_half <- 1:top_n
   bot_half <- (nn - bot_n + 1):nn
+  # if (diff(min(top_half):max(bot_half)))
   out_sub <- out[c(top_half, bot_half),]
   if (nrow(out_sub)==nrow(out)) {
     attr(out_sub, "biocmask:::has_break_at") <- 0L
@@ -169,6 +169,7 @@ tbl_format_setup.SE_abstraction <- function(x, width, ...,
                              max_footer_lines, focus) {
   
   setup <- NextMethod()
+  setup$rows_total <- prod(dim(attr(x, "biocmask:::data")))
   if (val <- attr(x, "biocmask:::has_break_at")) {
     body_idx <- val + 2L
     prev_line <- gregexec("[^ |]+", cli::ansi_strip(setup$body[body_idx]))
@@ -201,11 +202,18 @@ ctl_new_pillar.SE_abstraction <- function(controller, x, width, ..., title = NUL
   }
 }
 
-# tbl_format_body.SE_abstraction <-function(x, setup) {
-#   # browser()
-#   out <- NextMethod()
-#   out
-# }
+#' @export
+tbl_format_footer.SE_abstraction <-function(x, setup, ...) {
+  
+  out <- NextMethod()
+  c(
+    style_subtle(sprintf("# %s n = %s",
+                         cli::symbol$info,
+                         format(setup$rows_total, big.mark = ",",
+                                scientific = FALSE, digits = 1))),
+    out
+  )
+}
 
 #' @export
 format.blank_pillar_type <- function(x, width, ...) {
