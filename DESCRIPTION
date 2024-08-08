@@ -1,10 +1,14 @@
 Package: biocmask
 Title: Create data masks for SE dplyr functions
-Version: 0.0.0.9000
+Version: 0.0.1.9000
 Authors@R: 
     person("Justin", "Landis", , "jtlandis314@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5501-4934"))
-Description: What the package does (one paragraph).
+Description: The package provides `rlang` data masks for SummarizedExperiment 
+class. The enables the evaluation of unquoted expression in different contexts 
+of the SummarizedExperiment object with optional access to other contexts. The
+goal for `biocmask` is for evaluation to feel like a data.frame object without
+ever needing to unwind to a rectangular data.frame.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
