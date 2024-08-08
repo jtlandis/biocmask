@@ -32,6 +32,7 @@
 #' @importFrom pillar pillar_component
 #' @importFrom pillar pillar_shaft
 #' @importFrom pillar style_subtle
+#' @importFrom pillar tbl_format_footer
 #' @importFrom pillar tbl_format_setup
 #' @importFrom pillar tbl_sum
 #' @importFrom purrr iwalk
