@@ -207,9 +207,13 @@ ctl_new_pillar.SE_abstraction <- function(controller, x, width, ..., title = NUL
 #   out
 # }
 
-format.blank_pillar_type <- format.blank_pillar_title <- function(x, width, ...) {
+#' @export
+format.blank_pillar_type <- function(x, width, ...) {
   style_subtle("|")
 }
+
+#' @export
+format.blank_pillar_title <- format.blank_pillar_type
 
 # tbl_format_header.SE_abstraction
 
