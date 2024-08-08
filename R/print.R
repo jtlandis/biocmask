@@ -11,6 +11,8 @@ sep_ <- function(n) {
   NULL
 }
 
+
+
 #' @export
 print.SummarizedExperiment <- function(x, n = 10, ...) {
   # browser()
@@ -35,14 +37,14 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   nc <- ncol(x_)
   .features <- rownames(x_) %||% seq_len(nr)
   .samples <- colnames(x_) %||% seq_len(nc)
-  assays_ <- map(assays(x_), as.vector)
+  assays_ <- map(assays(x_), as_vec)
   row_ <- map(as_tibble(rowData(x_)), vctrs::vec_rep, times = nc)
   col_ <- map(as_tibble(colData(x_)), vctrs::vec_rep_each, times = nr)
   nn <- nc * nr
   out <- c(
     list(
       .features = vctrs::vec_rep(.features, times = nc),
-      .samples = vctrs::vec_rep(.samples, times = nr)
+      .samples = vctrs::vec_rep_each(.samples, times = nr)
     ),
     list(sep_(nn)),
     assays_,
@@ -56,10 +58,16 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   attr(out, "row.names") <- c(NA_integer_, - nr * nc)
   class(out) <- c("SE_abstraction","tbl_df", "tbl", "data.frame")
   # browser()
-  top_half <- 1:top_n
-  bot_half <- (nn - bot_n + 1):nn
+  sub_seq <- if (nn < 2 * top_n) {
+    seq_len(nn)
+  } else {
+    c(
+      1:top_n,
+      (nn - bot_n + 1):nn
+    )
+  }
   # if (diff(min(top_half):max(bot_half)))
-  out_sub <- out[c(top_half, bot_half),]
+  out_sub <- out[sub_seq,]
   if (nrow(out_sub)==nrow(out)) {
     attr(out_sub, "biocmask:::has_break_at") <- 0L
   } else {
@@ -206,13 +214,16 @@ ctl_new_pillar.SE_abstraction <- function(controller, x, width, ..., title = NUL
 tbl_format_footer.SE_abstraction <-function(x, setup, ...) {
   
   out <- NextMethod()
-  c(
-    style_subtle(sprintf("# %s n = %s",
-                         cli::symbol$info,
-                         format(setup$rows_total, big.mark = ",",
-                                scientific = FALSE, digits = 1))),
-    out
-  )
+  if (attr(x, "biocmask:::has_break_at")) {
+    out <- c(
+      style_subtle(sprintf("# %s n = %s",
+                           cli::symbol$info,
+                           format(setup$rows_total, big.mark = ",",
+                                  scientific = FALSE, digits = 1))),
+      out
+    )
+  }
+  out
 }
 
 #' @export

@@ -1,10 +1,10 @@
 #test
 
-library(rlang)
-library(tidyr)
-library(vctrs)
-library(dplyr)
-library(SummarizedExperiment)
+# library(rlang)
+# library(tidyr)
+# library(vctrs)
+# library(dplyr)
+# library(SummarizedExperiment)
 library(biocmask)
 
 # devtools::load_all()
@@ -39,11 +39,12 @@ mutate(se,
        logcounts = log(counts_1),
        rows(sum = rowSums(.assays_asis$counts)),
        cols(sum = purrr::map_dbl(.assays$counts, sum))) -> .o
-gse <- biocmask:::group_by.SummarizedExperiment(se,
+gse <- group_by(se,
          cols(condition),
          rows(direction))
-gse_out <- biocmask:::summarise.SummarizedExperiment(gse,
-                                                     counts = list(counts))
+gse_out <- summarise(gse,
+                     total = sum(counts),
+                     counts = list(counts))
 gse |> mutate(
     n = n(),
     cols(n = n()),

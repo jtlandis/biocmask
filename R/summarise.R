@@ -25,7 +25,6 @@ summarise.SummarizedExperiment <- function(.data, ...) {
   }
   nms  <- names(quos)
   mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env)
-  browser()
   assay_chops <- mask_pull_chops(mask$masks[["assays"]])
  
   group_vars_ <- group_vars(.data)
