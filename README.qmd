@@ -17,11 +17,7 @@ I will be using the following example data throughout this document:
 ```{r}
 #| message: false
 
-library(SummarizedExperiment)
-# library(tidySEabstraction)
-library(dplyr)
-library(rlang)
-library(tibble)
+library(biocmask)
 set.seed(1234)
 se <- SummarizedExperiment(
   list(counts = matrix(sample(1:20, 20), nrow = 5, ncol = 4)),
