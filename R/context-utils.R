@@ -28,7 +28,7 @@ cols <- function(...) {
 #' rowData context.
 #' @export
 rows <- function(...) {
-  abort("`cols()` is a sentinal function for SummarizedExperiment dplyr verbs")
+  abort("`rows()` is a sentinal function for SummarizedExperiment dplyr verbs")
 }
 
 

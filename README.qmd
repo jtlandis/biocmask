@@ -17,6 +17,7 @@ I will be using the following example data throughout this document:
 ```{r}
 #| message: false
 
+se_example <- tidySummarizedExperiment::pasilla
 library(biocmask)
 set.seed(1234)
 se <- SummarizedExperiment(
@@ -36,7 +37,7 @@ se
 Below shows the profiling of performing a simple operation on a dataset with the following dimensional (14599 x 7).
 
 ```{r}
-se_example <- tidySummarizedExperiment::pasilla
+
 
 native_example <- function(se) {
   assay(se, "logcounts") <- log1p(assay(se, "counts"))
