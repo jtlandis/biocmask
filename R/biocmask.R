@@ -17,11 +17,13 @@ new_biocmask.SummarizedExperiment <- function(obj, ...) {
   groups <- group_details(obj)
   expanded <- expand_groups2(groups$row_groups, groups$col_groups)
   shared_ctx_env <- prepare_shared_ctx_env(groups, expanded)
+  nr <- nrow(obj)
+  nc <- ncol(obj)
   mask_assay <- biocmask_assay$new(assays(obj),
                                    get_group_indices(groups, expanded, "assay"),
                                    .env = shared_ctx_env,
-                                   .nrow = nrow(obj),
-                                   .ncol = ncol(obj))
+                                   .nrow = nr,
+                                   .ncol = nc)
   mask_rows <- biocmask$new(rowData(obj),
                             get_group_indices(groups, expanded, "rowData"),
                             .env = shared_ctx_env)
