@@ -16,18 +16,19 @@ new_biocmask.SummarizedExperiment <- function(obj, ...) {
   # browser()
   groups <- group_details(obj)
   expanded <- expand_groups2(groups$row_groups, groups$col_groups)
-  shared_ctx_env <- prepare_shared_ctx_env(groups, expanded)
   nr <- nrow(obj)
   nc <- ncol(obj)
+  shared_ctx_env <- prepare_shared_ctx_env(groups = groups, expanded = expanded)
+  
   mask_assay <- biocmask_assay$new(assays(obj),
                                    get_group_indices(groups, expanded, "assay"),
                                    .env = shared_ctx_env,
                                    .nrow = nr,
                                    .ncol = nc)
-  mask_rows <- biocmask$new(rowData(obj),
+  mask_rows <- biocmask$new(as_tibble(rowData(obj), rownames = ".features"),
                             get_group_indices(groups, expanded, "rowData"),
                             .env = shared_ctx_env)
-  mask_cols <- biocmask$new(colData(obj),
+  mask_cols <- biocmask$new(as_tibble(colData(obj), rownames = ".samples"),
                             get_group_indices(groups, expanded, "colData"),
                             .env = shared_ctx_env)
   
