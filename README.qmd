@@ -18,6 +18,9 @@ I will be using the following example data throughout this document:
 #| message: false
 
 se_example <- tidySummarizedExperiment::pasilla
+#
+library(tidySummarizedExperiment)
+# load biocmask last to use its `dplyr` verbs
 library(biocmask)
 set.seed(1234)
 se <- SummarizedExperiment(
