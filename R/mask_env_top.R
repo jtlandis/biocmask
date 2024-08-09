@@ -221,10 +221,6 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       env = shared_ctx_env),
     `biocmask:::ctx:::current_chops` = new_function(
       pairlist(),
-      # switch(`biocmask:::ctx`,
-      #        assays = `biocmask:::assays:::current_chops`,
-      #        rows = `biocmask:::rows:::current_chops`,
-      # )
       expr(.subset2(`biocmask:::ctx:::group_chop_ids`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
@@ -275,42 +271,3 @@ prepare_shared_ctx_env <- function(groups, expanded) {
   shared_ctx_env$set_group_id <- env_group_id(shared_ctx_env)
   shared_ctx_env
 }
-
-# shared_ctx_env <- prepare_shared_ctx_env(ind)
-#
-# shared_ctx_env$`biocmask:::ctx` <- "rows"
-# set_group_id(1L)
-# shared_ctx_env$`biocmask:::ctx:::current_chops`
-# shared_ctx_env$`biocmask:::assays:::current_chops`
-# shared_ctx_env$`biocmask:::cols:::current_chops`
-# shared_ctx_env$`biocmask:::rows:::current_chops`
-
-
-# base_minimal <- new_environment(
-#   data = list(
-#     ## Syntax
-#     `{` = base::`{`,
-#     `(` = base::`(`,
-#     `~` = base::`~`,
-#     `<-` = base::`<-`,
-#     `=` = base::`=`,
-#     ##extractors
-#     `[` = base::`[`,
-#     `[[` = base::`[[`,
-#     `$` = base::`$`,
-#     `@` = base::`@`,
-#     ## operators - logical
-#     `|` = base::`|`,
-#     `&` = base::`&`,
-#     `||` = base::`||`,
-#     `&&` = base::`&&`,
-#     ## operators - math
-#     `+` = base::`+`,
-#     `-` = base::`-`,
-#     `/` = base::`/`,
-#     `*` = base::`*`,
-#     `^` = base::`^`,
-#     `sqrt` = base::sqrt,
-#
-#   )
-# )
