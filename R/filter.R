@@ -61,10 +61,10 @@ filter.SummarizedExperiment <- function(.data, ..., .preserve = FALSE) {
   if (is.null(current_groups)) return(.data)
   row_select <- grep("^.indices", names(current_groups[["row_groups"]]),
                      value = TRUE, invert = TRUE)
-  row_groups <- row_select %|!|% rowData(.data)[row_select]
+  row_groups <- row_select %|!|% as_tibble(rowData(.data), rownames = ".features")[row_select]
   col_select <- grep("^.indices", names(current_groups[["col_groups"]]),
                      value = TRUE, invert = TRUE)
-  col_groups <- col_select %|!|% colData(.data)[col_select]
+  col_groups <- col_select %|!|% as_tibble(colData(.data), rownames = ".samples")[col_select]
   new_groups <- biocmask_groups(
     row_groups = row_groups,
     col_groups = col_groups

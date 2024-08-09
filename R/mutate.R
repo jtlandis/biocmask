@@ -26,13 +26,29 @@ mutate.SummarizedExperiment <- function(.data, ...) {
     assay(.data, nms[i], withDimnames = FALSE) <- results$assays[[i]]
   }
   nms <- names(results$rows)
-  for (i in seq_along(results$rows)) {
-    rowData(.data)[[nms[i]]] <- results$rows[[i]]
+  if (length(nms)) {
+    if (".features" %in% nms) {
+      rownames(.data) <- results$rows$.features
+      results$rows$.features <- NULL
+      nms <- names(results$rows)
+    }
+    for (i in seq_along(results$rows)) {
+      rowData(.data)[[nms[i]]] <- results$rows[[i]]
+    }
   }
+  
   nms <- names(results$cols)
-  for (i in seq_along(results$cols)) {
-    colData(.data)[[nms[i]]] <- results$cols[[i]]
+  if (length(nms)) {
+    if (".samples" %in% nms) {
+      colnames(.data) <- results$cols$.samples
+      results$cols$.samples <- NULL
+      nms <- names(results$cols)
+    }
+    for (i in seq_along(results$cols)) {
+      colData(.data)[[nms[i]]] <- results$cols[[i]]
+    }
   }
+  
   .data
 }
 

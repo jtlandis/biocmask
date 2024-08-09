@@ -32,6 +32,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
   group_vars_ <- group_vars(.data)
   row_data <- col_data <- NULL
   .nrow <- .ncol <- 1L
+  row_names <- col_names <- NULL
   if ((is_grouped <- is_grouped_rows(.groups)) || "rows" %in% ctxs) {
     .nrow <- row_size <- nrow(.groups$row_groups) %||% 1L
     row_chops <- mask_pull_chops(
@@ -46,8 +47,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
     row_data <- map(
       row_chops,
       vctrs::list_unchop
-    ) |>
-      as("DataFrame")
+    ) |> as(Class = "DataFrame")
   }
   if (is_grouped_cols(.groups) || "cols" %in% ctxs) {
     .ncol <- col_size <- nrow(.groups$col_groups) %||% 1L
@@ -63,8 +63,7 @@ summarise.SummarizedExperiment <- function(.data, ...) {
     col_data <- map(
       col_chops,
       vctrs::list_unchop
-    ) |>
-      as(Class = "DataFrame")
+    ) |> as(Class = "DataFrame")
   } else {
     col_data <- DataFrame(x = seq_len(.ncol))[,FALSE]
   }
@@ -76,6 +75,14 @@ summarise.SummarizedExperiment <- function(.data, ...) {
       col_data[group_vars_$col_groups])
   }
   
+  if (".features" %in% names(row_data)) {
+    row_names <- row_data$.features
+    row_data$.features <- NULL
+  }
+  if (".samples" %in% names(col_data)) {
+    col_names <- col_data$.samples
+    col_data$.samples <- NULL
+  }
   
   #we should have some type of value to view from
   # assays as it was enforced earlier.
@@ -89,11 +96,18 @@ summarise.SummarizedExperiment <- function(.data, ...) {
       ncol = .ncol
     )
   
-  SummarizedExperiment(assays = assay_data,
+  out <- SummarizedExperiment(assays = assay_data,
                        rowData = row_data,
                        colData = col_data,
                        metadata = new_metadata,
                        checkDimnames = FALSE)
+  if (!is.null(row_names)) {
+    rownames(out) <- row_names
+  }
+  if (!is.null(col_names)) {
+    colnames(out) <- col_names
+  }
+  out
 }
 
 #' @export

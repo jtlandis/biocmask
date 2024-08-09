@@ -73,6 +73,11 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   )
   metadata(.data)[["group_data"]] <- groups
   nms <- names(results$rows)
+  if (".features" %in% nms) {
+    rownames(.data) <- results$rows$.features
+    results$rows$.features <- NULL
+    nms <- names(results$rows)
+  }
   if (length(nms)) {
     row_data <- rowData(.data)
     row_data[nms] <- results$rows
@@ -85,6 +90,11 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   #   rowData(.data)[[nms[i]]] <- results$rows[[i]]
   # }
   nms <- names(results$cols)
+  if (".samples" %in% nms) {
+    colnames(.data) <- results$cols$.samples
+    results$cols$.samples <- NULL
+    nms <- names(results$cols)
+  }
   if (length(nms)) {
     col_data <- colData(.data)
     col_data[nms] <- results$cols
