@@ -201,17 +201,14 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
   invisible(env_pronoun)
 }
 
-connect_masks <- function(mask_assays, mask_rows, mask_cols,
-                          .features = NULL, .samples = NULL) {
-  browser()
+connect_masks <- function(mask_assays, mask_rows, mask_cols) {
+  
   col2row <- connect_cols_to_rows(mask_cols = mask_cols, mask_rows = mask_rows)
   row2col <- connect_rows_to_cols(mask_rows = mask_rows, mask_cols = mask_cols)
   col2assay <- connect_cols_to_assays(mask_cols = mask_cols, mask_assays = mask_assays)
   row2assay <- connect_rows_to_assays(mask_rows = mask_rows, mask_assays = mask_assays)
   assay2row <- connect_assays_to_rows(mask_assays = mask_assays, mask_rows = mask_rows)
   assay2col <- connect_assays_to_cols(mask_assays = mask_assays, mask_cols = mask_cols)
-  
-  
   
   list(
     assays = list(
