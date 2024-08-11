@@ -5,7 +5,7 @@
 \alias{biocmask-package}
 \title{biocmask: Create data masks for SE dplyr functions}
 \description{
-What the package does (one paragraph).
+The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
 }
 \author{
 \strong{Maintainer}: Justin Landis \email{jtlandis314@gmail.com} (\href{https://orcid.org/0000-0001-5501-4934}{ORCID})
