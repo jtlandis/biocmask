@@ -203,3 +203,11 @@ group_details <- function(obj) {
   #   )
   group_data
 }
+
+group_ind <- function(x, n) {
+  int <- integer(n)
+  for (i in seq_along(x)) {
+    int[x[[i]]] <- i
+  }
+  int
+}

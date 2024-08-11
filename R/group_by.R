@@ -170,3 +170,28 @@ ungroup.SummarizedExperiment <- function(x, ...) {
          row = group_by(x, !!update_rows),
          col = group_by(x, !!update_cols))
 }
+
+
+
+#' @export
+groups.SummarizedExperiment <- function(x) {
+  map(
+    group_vars(x),
+    syms
+  )
+}
+
+biocmask_curr_groups <- function(x) {
+  vars <- groups(x)
+  row_v <- if (is_empty(vars$row_groups)) {
+    NULL
+  } else {
+    call2("rows", splice(vars$row_groups))
+  }
+  col_v <- if (is_empty(vars$col_groups)) {
+    NULL
+  } else {
+    call2("cols", splice(vars$col_groups))
+  }
+  c(row_v, col_v)
+}

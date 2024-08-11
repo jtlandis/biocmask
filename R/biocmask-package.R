@@ -12,6 +12,7 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr group_data
 #' @importFrom dplyr group_vars
+#' @importFrom dplyr groups
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
 #' @importFrom dplyr reframe
