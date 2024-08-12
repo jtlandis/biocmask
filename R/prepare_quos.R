@@ -33,20 +33,32 @@ biocmask_quos <- function(..., .named = TRUE) {
   dots <- quos(...) |>
     as.list()
   ctx_opt <- c("cols", "rows")
+  nms <- rlang::names2(dots)
+  is_nms <- nms != ""
   for (i in seq_along(dots)) {
     quo <- dots[[i]]
     .env <- quo_get_env(quo)
     .expr <- quo_get_expr(quo)
     if (is_call(.expr, ctx_opt)) {
       ctx <- as_label(.expr[[1]])
-      dots[[i]] <- lapply(.expr[-1],
-                          ctx_quo,
-                          env = .env,
-                          ctx = ctx) |>
-        splice()
+      ctx_exprs <- .expr[-1]
+      ctx_nms <- rlang::names2(ctx_exprs)
+      ctx_is_named <- ctx_nms != ""
+      ctx_quos <- pmap(
+        list(ctx_exprs,
+             name = ctx_nms,
+             is_named = ctx_is_named),
+        biocmask_quo,
+        env = .env,
+        ctx = ctx)
+      dots[[i]] <- splice(ctx_quos)
       next
     }
-    dots[[i]] <- ctx_quo(.expr, env = .env, ctx = "assays")
+    
+    dots[[i]] <- biocmask_quo(.expr, env = .env,
+                              ctx = "assays",
+                              is_named = is_nms[i], 
+                              name = nms[i])
   } 
   out <- do.call(dots_list, c(dots, list(.named = .named)))
   if (.named) {
@@ -56,6 +68,13 @@ biocmask_quos <- function(..., .named = TRUE) {
     out <- enforce_named(out)
   }
   out
+}
+
+biocmask_quo <- function(expr, env, ctx, ...) {
+  quo <- new_quosure(expr = expr, env = env)
+  attr(quo, "biocmask:::ctx") <- ctx
+  attr(quo, "biocmask:::data") <- list2(...)
+  quo
 }
 
 enforce_matrix <- function(quos, ctxs) {

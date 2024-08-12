@@ -30,14 +30,25 @@ biocmask_manager <- R6::R6Class(
     #' @return returns evaluated `quo` in the form of a chop
     eval = function(quo, name, env = caller_env()) {
       mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
-      chop_out <- biocmask_manager_eval(
-        quo = quo,
-        env = env,
-        n_groups = self$n_groups,
-        mask = mask,
-        private = private
-      )
-      mask$bind(name = name, value = chop_out)
+      # expand across into more biocmask_quos
+      quos <- expand_across(quo)
+      for (k in seq_along(quos)) {
+        quo <- quos[[i]]
+        quo_data <- attr(quo, "biocmask:::data")
+        chop_out <- biocmask_manager_eval(
+          quo = quo,
+          env = env,
+          n_groups = self$n_groups,
+          mask = mask,
+          private = private
+        )
+        name <- if (quo_data$is_named) 
+          quo_data$name
+        else
+          as_label(quo_get_expr(quo))
+        mask$bind(name = name, value = chop_out)
+      }
+      invisible(self)
     },
     #' @description
     #' collects the evaluated results with biocmasks
