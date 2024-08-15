@@ -7,3 +7,11 @@ as_vec <- function(x) {
   dim(x) <- NULL
   x
 }
+
+
+prepend_rownames <- function(DF, column) {
+  name_col <- list(rownames(DF))
+  names(name_col) <- column
+  DF@listData <- c(name_col, DF@listData)
+  DF
+}

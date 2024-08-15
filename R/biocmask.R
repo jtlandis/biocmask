@@ -13,7 +13,6 @@ new_biocmask <- function(obj, ...) {
 #' @rdname biocmask
 #' @export
 new_biocmask.SummarizedExperiment <- function(obj, ...) {
-  # browser()
   groups <- group_details(obj)
   expanded <- expand_groups2(groups$row_groups, groups$col_groups)
   nr <- nrow(obj)
@@ -25,10 +24,10 @@ new_biocmask.SummarizedExperiment <- function(obj, ...) {
                                    .env = shared_ctx_env,
                                    .nrow = nr,
                                    .ncol = nc)
-  mask_rows <- biocmask$new(as_tibble(rowData(obj), rownames = ".features"),
+  mask_rows <- biocmask$new(prepend_rownames(rowData(obj), column = ".features"),
                             get_group_indices(groups, expanded, "rowData"),
                             .env = shared_ctx_env)
-  mask_cols <- biocmask$new(as_tibble(colData(obj), rownames = ".samples"),
+  mask_cols <- biocmask$new(prepend_rownames(colData(obj), column = ".samples"),
                             get_group_indices(groups, expanded, "colData"),
                             .env = shared_ctx_env)
   

@@ -10,6 +10,7 @@ select.SummarizedExperiment <- function(.data, ...) {
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   nms  <- names(quos)
   
+  
   selected <- biocmask_eval_select(
     quos = quos, ctxs = ctxs, data = .data
   )

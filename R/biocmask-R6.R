@@ -126,6 +126,7 @@ biocmask <- R6::R6Class(
       private$init_current_group_info()
 
       private$.names <- setNames(nm = names(.data))
+      private$.ptype <- lapply(.data, vec_slice, i = 0L)
       private$.env_size <- length(private$.names) + 20L
 
       private$init_foreign_data()
@@ -156,8 +157,8 @@ biocmask <- R6::R6Class(
     #' @param name a character scalar
     #' @param value results from `$eval` in the form of chops
     bind = function(name, value) {
-      private$.bind_self(name, value)
-      needs_unbind <- private$push(name)
+      needs_unbind <- private$.bind_self(name, value)
+      # needs_unbind <- private$push(name)
       binding_funcs <- private$.on_bind
       if (needs_unbind) {
         for (i in seq_along(binding_funcs)) {
@@ -206,6 +207,9 @@ biocmask <- R6::R6Class(
     #' @field names the associated names of data in mask
     names = function() {
       private$.names
+    },
+    ptype = function() {
+      private$.ptype
     },
     #' @field added newly added names to the mask
     added = function() {
@@ -265,7 +269,10 @@ biocmask <- R6::R6Class(
       )
     },
     init_environments = function() {
-      out  <- env_parents(private$env_mask_bind, private$.shared_env)
+      out  <- c(
+        list(private$env_mask_bind),
+        env_parents(private$env_mask_bind, private$.shared_env)
+      )
       class(out) <- c("biocmask_envs", "rlang_envs")
       attr(out, "env_mask_bind") <- private$env_mask_bind
       attr(out, "env_data_chop") <- private$env_data_chop
@@ -315,7 +322,14 @@ biocmask <- R6::R6Class(
         private$env_mask_bind,
         !!name := fun
       )
-      invisible(self)
+      
+      
+      needs_unbind <- name %in% private$.names
+      private$.names[name] <- name
+      private$.added[name] <- name
+      private$.ptype[[name]] <- vec_slice(value[[1]], 0L)
+      invisible(needs_unbind)
+      
     },
     .on_bind = list(),
 
@@ -327,8 +341,10 @@ biocmask <- R6::R6Class(
     .grouped = NULL,
     .ngroups = NULL,
     .environments = NULL,
-    #inital names of `.data`
+    #names of `.data`
     .names = NULL,
+    #size 0 vectors of `.data`
+    .ptype = NULL,
     # newly added names
     .added = character(),
     push = function(name) {
