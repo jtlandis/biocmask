@@ -41,7 +41,7 @@ biocmask_quos <- function(..., .named = TRUE) {
     .expr <- quo_get_expr(quo)
     if (is_call(.expr, ctx_opt)) {
       ctx <- as_label(.expr[[1]])
-      ctx_exprs <- .expr[-1]
+      ctx_exprs <- as.list(.expr[-1])
       ctx_nms <- rlang::names2(ctx_exprs)
       ctx_is_named <- ctx_nms != ""
       ctx_quos <- pmap(
