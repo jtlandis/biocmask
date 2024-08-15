@@ -20,4 +20,5 @@ Imports:
     tibble,
     pillar,
     cli,
-    glue
+    glue,
+    S7
