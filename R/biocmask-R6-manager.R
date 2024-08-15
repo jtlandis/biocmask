@@ -31,9 +31,9 @@ biocmask_manager <- R6::R6Class(
     eval = function(quo, name, env = caller_env()) {
       mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
       # expand across into more biocmask_quos
-      quos <- expand_across(quo)
+      quos <- expand_across(quo, mask = self, error_call = caller_call())
       for (k in seq_along(quos)) {
-        quo <- quos[[i]]
+        quo <- quos[[k]]
         quo_data <- attr(quo, "biocmask:::data")
         chop_out <- biocmask_manager_eval(
           quo = quo,
@@ -119,3 +119,20 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
   }
   chop_out
 }
+
+setOldClass("biocmask_manager")
+
+setMethod("assays", signature = "biocmask_manager",
+          definition = function(x, withDimnames = TRUE, ...) {
+            x$masks[["assays"]]$ptype
+          })
+
+setMethod("rowData", signature = "biocmask_manager",
+          definition = function(x, withDimnames = TRUE, ...) {
+            x$masks[["rows"]]$ptype
+          })
+
+setMethod("colData", signature = "biocmask_manager",
+          definition = function(x, withDimnames = TRUE, ...) {
+            x$masks[["cols"]]$ptype
+          })
