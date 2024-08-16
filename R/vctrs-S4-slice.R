@@ -56,10 +56,6 @@ vec_slice <- S7::new_generic("vec_slice",
   S7_dispatch()
 })
 
-class_vctrs <- S7::new_union(S7::class_atomic, S7::class_list,
-                             S7::class_data.frame, S7::class_factor,
-                             S7::class_Date, S7::class_POSIXct)
-
 method(vec_slice, class_vctrs) <- function(x, i, ..., error_call = current_env()) {
   vctrs::vec_slice(x, i, ..., error_call = error_call)
 }
@@ -86,11 +82,11 @@ method(vec_slice, getClass("CompressedGRangesList")) <- function(x, i, ...) {
   )
 }
 
-method(vec_slice, getClass("Vector")) <- function(x, i, ...) {
+method(vec_slice, class_s4_vctrs) <- function(x, i, ...) {
   x[i]
 }
 
-method(vec_slice, getClass("DataFrame")) <- function(x, i, ...) {
+method(vec_slice, class_DF) <- function(x, i, ...) {
   x@listData <- purrr::map(x@listData, vec_slice, i = i)
   x@nrows <- length(i)
   if (!is.null(x@elementMetadata)) {
@@ -107,7 +103,7 @@ method(vec_chop2, class_vctrs) <- function(x, ..., indices = NULL, sizes = NULL)
   vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
 } 
 
-method(vec_chop2, getClass("Vector")) <- function(x, ..., indices = NULL) {
+method(vec_chop2, class_s4_vctrs) <- function(x, ..., indices = NULL) {
   fun <- method(vec_slice, object = x)
   if (is.null(indices)) {
     indices <- seq_along(x)
