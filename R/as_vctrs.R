@@ -1,15 +1,7 @@
 
-# 
-# as_vctrs <- function(x) {
-#   UseMethod("as_vctrs")
-# }
-
-# new_s4_proxy <- function(fields, ..., original_type = NULL) {
-#   vctrs::new_rcrd(fields, original_type = original_type,
-#                   class = c("s4_proxy", sprintf("%s_proxy", original_type)),
-#                   ...,
-#                   inherit_base_type = TRUE)
-# }
+##################
+## EXPERIMENTAL ##
+##################
 
 as_s4_proxy <- function(x) {
   UseMethod("as_s4_proxy")
