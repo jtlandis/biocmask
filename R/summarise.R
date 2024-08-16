@@ -4,8 +4,15 @@
 NULL
 
 #' @title Summarize SummarizedExperiment
+#' @param .data a SummarizedExperiment object,
+#' @param ... expressions to summarize the object
+#' @param .retain logical value. When TRUE (the default), ungrouped dimensions
+#' are retained in the resulting SummarizedExperiment object and scalar outputs
+#' are recycled to the length of the ungrouped dimension. When FALSE, all 
+#' outputs are expected to be scalar values and all columns in ungrouped 
+#' dimensions are dropped.
 #' @export
-summarise.SummarizedExperiment <- function(.data, ...) {
+summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
 
   .env <- caller_env()
   .groups <- metadata(.data)[["group_data"]]
@@ -24,7 +31,6 @@ summarise.SummarizedExperiment <- function(.data, ...) {
       )
     )
   }
-  # browser()
   nms  <- names(quos)
   mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env)
   assay_chops <- mask_pull_chops(mask$masks[["assays"]])
@@ -32,40 +38,80 @@ summarise.SummarizedExperiment <- function(.data, ...) {
   group_vars_ <- group_vars(.data)
   row_data <- col_data <- NULL
   .nrow <- .ncol <- 1L
+  row_chops_sizes <- col_chops_sizes <- 1L
   row_names <- col_names <- NULL
-  if ((is_grouped <- is_grouped_rows(.groups)) || "rows" %in% ctxs) {
-    .nrow <- row_size <- nrow(.groups$row_groups) %||% 1L
+  grouped_rows <- is_grouped_rows(.groups)
+  grouped_cols <- is_grouped_cols(.groups)
+  if (grouped_rows || "rows" %in% ctxs) {
+    # get all chop data, groups and evaled
     row_chops <- mask_pull_chops(
       mask$masks[["rows"]],
-      union(group_vars_$row_groups, mask$masks[["rows"]]$added))
-    row_chops[group_vars_$row_groups] <- map(
-      row_chops[group_vars_$row_groups],
-      function(group_vec) {
-        map(group_vec, .subset, 1L)
-      })
-    enforce_chops_scalar(row_chops)
+      union(group_vars_$row_groups,
+            mask$masks[["rows"]]$added))
+    # some settings
+    if (.retain && !grouped_rows) {
+      row_chops_sizes <- .nrow <- nrow(.data)
+    } else {
+      row_chops_sizes <- .nrow <- 1L
+      if (grouped_rows) {
+        .nrow <- nrow(.groups$row_groups)
+        # slice grouped columns
+        row_chops[group_vars_$row_groups] <- map(
+          row_chops[group_vars_$row_groups],
+          function(group_vec) {
+            map(group_vec, .subset, 1L)
+          })
+      }
+    }
+    # recycle each chop to required length
+    row_chops <- assert_chops_size(row_chops, size = row_chops_sizes)
     row_data <- map(
       row_chops,
       vctrs::list_unchop
     ) |> as(Class = "DataFrame")
   }
-  if (is_grouped_cols(.groups) || "cols" %in% ctxs) {
-    .ncol <- col_size <- nrow(.groups$col_groups) %||% 1L
+  if (grouped_cols || "cols" %in% ctxs) {
+    # get all of the chops, including any groups
     col_chops <- mask_pull_chops(
       mask$masks[["cols"]],
       union(group_vars_$col_groups, mask$masks[["cols"]]$added))
-    col_chops[group_vars_$col_groups] <- map(
-      col_chops[group_vars_$col_groups],
-      function(group_vec) {
-        map(group_vec, .subset, 1L)
-      })
-    enforce_chops_scalar(col_chops)
+    # settings
+    if (.retain && !grouped_cols) {
+      col_chops_sizes <- .ncol <- ncol(.data)
+    } else {
+      col_chops_sizes <- .ncol <- 1L
+      if (grouped_cols) {
+        .ncol <- ncol(.groups$col_groups)
+        # if grouped, grab only the first instance
+        col_chops[group_vars_$col_groups] <- map(
+          col_chops[group_vars_$col_groups],
+          function(group_vec) {
+            map(group_vec, .subset, 1L)
+          })
+      }
+    }
+    # recycle each chop to required length
+    col_chops <- assert_chops_size(col_chops, size = col_chops_sizes)
     col_data <- map(
       col_chops,
       vctrs::list_unchop
     ) |> as(Class = "DataFrame")
   } else {
-    col_data <- DataFrame(x = seq_len(.ncol))[,FALSE]
+    col_data <- methods::new("DFrame",
+                             listData = set_names(list(), character()),
+                             nrows = .ncol)
+  }
+  # finally, if retained and not grouped, reassign back
+  # to original row_data/col_data
+  if (.retain) {
+    if (!grouped_rows) {
+      row_chops_sizes <- .nrow <- nrow(.data)
+      row_data <- replace(rowData(.data), names(row_data), row_data)
+    }
+    if (!grouped_cols) {
+      col_chops_sizes <- .ncol <- ncol(.data)
+      col_data <- replace(colData(.data), names(col_data), col_data)
+    }
   }
   
   new_metadata <- metadata(.data)
@@ -86,8 +132,9 @@ summarise.SummarizedExperiment <- function(.data, ...) {
   
   #we should have some type of value to view from
   # assays as it was enforced earlier.
-  assay_data <- map(
-    assay_chops,
+  assay_data <- assert_chops_size(assay_chops,
+                                  size = row_chops_sizes * col_chops_sizes) |>
+    map(
     vctrs::list_unchop
   ) |>
     map(
@@ -113,14 +160,19 @@ summarise.SummarizedExperiment <- function(.data, ...) {
 #' @export
 summarize.SummarizedExperiment <- summarise.SummarizedExperiment
 
-enforce_chops_scalar <- function(chops) {
-  iwalk(
+
+
+assert_chops_size <- function(chops, size = 1L) {
+  imap(
     chops,
-    function(vec, name) {
-      walk(vec, vec_check_size, size = 1L, arg = name)
-    }
+    function(vec, name, size) {
+      # get the underlying vec_recycle
+      # method for this vec class
+      fn <- method(vec_recycle, object = vec[[1]])
+      map(vec, fn, size = size, x_arg = name)
+    },
+    size = size
   )
-  invisible(NULL)
 }
 
 mask_pull_chops <- function(mask, names = NULL) {

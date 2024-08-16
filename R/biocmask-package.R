@@ -37,6 +37,7 @@
 #' @importFrom pillar tbl_format_footer
 #' @importFrom pillar tbl_format_setup
 #' @importFrom pillar tbl_sum
+#' @importFrom purrr imap
 #' @importFrom purrr iwalk
 #' @importFrom purrr map
 #' @importFrom purrr map_int

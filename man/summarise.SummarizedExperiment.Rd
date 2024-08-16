@@ -4,7 +4,18 @@
 \alias{summarise.SummarizedExperiment}
 \title{Summarize SummarizedExperiment}
 \usage{
-\method{summarise}{SummarizedExperiment}(.data, ...)
+\method{summarise}{SummarizedExperiment}(.data, ..., .retain = TRUE)
+}
+\arguments{
+\item{.data}{a SummarizedExperiment object,}
+
+\item{...}{expressions to summarize the object}
+
+\item{.retain}{logical value. When TRUE (the default), ungrouped dimensions
+are retained in the resulting SummarizedExperiment object and scalar outputs
+are recycled to the length of the ungrouped dimension. When FALSE, all
+outputs are expected to be scalar values and all columns in ungrouped
+dimensions are dropped.}
 }
 \description{
 Summarize SummarizedExperiment
