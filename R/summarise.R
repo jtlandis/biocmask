@@ -34,7 +34,6 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
   nms  <- names(quos)
   mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env)
   assay_chops <- mask_pull_chops(mask$masks[["assays"]])
- 
   group_vars_ <- group_vars(.data)
   row_data <- col_data <- NULL
   .nrow <- .ncol <- 1L
@@ -81,7 +80,7 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
     } else {
       col_chops_sizes <- .ncol <- 1L
       if (grouped_cols) {
-        .ncol <- ncol(.groups$col_groups)
+        .ncol <- nrow(.groups$col_groups)
         # if grouped, grab only the first instance
         col_chops[group_vars_$col_groups] <- map(
           col_chops[group_vars_$col_groups],
