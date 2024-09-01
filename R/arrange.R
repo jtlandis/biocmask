@@ -1,5 +1,16 @@
 
-
+#' @title arrange rows or columns
+#' @name arrange-SE
+#' @description
+#' `arrange()` orders either the rows or columns of a `SummarizedExperiment`
+#' object. Note, to guarentee a valid `SummarizedExperiment` is returned, 
+#' arranging in the `assays` evaluation context is disabled.
+#' 
+#' Unlike other dplyr verbs, `arrange()` largely ignores grouping. The 
+#' `SummarizedExperiment` method also provides the same functionality via the
+#' `.by_group` argument.
+#' 
+#' @inheritParams dplyr::arrange
 #' @export
 arrange.SummarizedExperiment <- function(.data, ..., .by_group = FALSE) {
   .env <- caller_env()
