@@ -1,6 +1,16 @@
-
-
-expand_across <- function(quo, ctx = attr(quo, "biocmask:::ctx"), mask, error_call) {
+#' @title expand across quosure
+#' @description This function will transform a quosure
+#' that uses the `across()` function and split it into a list
+#' of quosures with the appropriate data to loop along. If the
+#' quosure does not use `across()`, the quosure is returned as-is
+#' in a list.
+#' @param quo a quosure
+#' @param ctx retrieves the current evaluation context of the quosure
+#' @param mask the R6 mask-manager of all `rlang` data mask contexts
+#' @param error_call function call to report there was an error if one is raised
+#' @noRd
+expand_across <- function(quo, ctx = attr(quo, "biocmask:::ctx"),
+                          mask, error_call) {
   
   
   if (!quo_is_call(quo, "across", ns = c("", "dplyr"))) {
@@ -83,6 +93,19 @@ expand_across <- function(quo, ctx = attr(quo, "biocmask:::ctx"), mask, error_ca
   
 }
 
+#' @title setup across
+#' @description
+#' generate the list of new quosures based on the selected columns, functions
+#' and returned names.
+#' @param cols selected columns from across tidy-select
+#' @param fns functions to apply to each selected column
+#' @param names names to save the results into
+#' @param mask specific data mask for evaluation context
+#' @param ctx the evaluation context name
+#' @param manager the R6 mask-manager
+#' @param .caller_env environment the original quosure sure be evaluated within
+#' @param error_call function call to report there was an error if one is raised
+#' @noRd
 biocmask_across_setup <- function(cols, fns, names, mask, ctx,
                                   manager, .caller_env, error_call) {
   cols <- enquo(cols)
@@ -153,7 +176,13 @@ biocmask_across_setup <- function(cols, fns, names, mask, ctx,
        ctx_swap = ctx_swap)
 }
 
-# Taken from dplyr
+#' @title dplyr across internals
+#' @name dplyr_across_internals
+#' @description
+#' the following functions were taken verbatim from the `dplyr` package such 
+#' that behaviors of `across()` were consistent between `dplyr` and `biocmask`
+#' @keywords internal 
+#' @noRd
 expr_substitute <-function (expr, old, new) 
 {
   expr <- duplicate(expr)
@@ -163,6 +192,7 @@ expr_substitute <-function (expr, old, new)
   expr
 }
 
+#' @rdname dplyr_across_internals
 node_walk_replace <- function (node, old, new) {
   while (!is_null(node)) {
     switch(typeof(node_car(node)),
@@ -175,6 +205,7 @@ node_walk_replace <- function (node, old, new) {
   }
 }
 
+#' @rdname dplyr_across_internals
 as_across_expr <- function (fn, var) {
   if (is_inlinable_lambda(fn)) {
     arg <- names(formals(fn))[[1]]
@@ -186,10 +217,12 @@ as_across_expr <- function (fn, var) {
   }
 }
 
+#' @rdname dplyr_across_internals
 is_inlinable_lambda <- function (x) {
   is_function(x) && identical(fn_env(x), empty_env())
 }
 
+#' @rdname dplyr_across_internals
 validate_fns <- function(quo, mask, error_call = caller_env()) {
   sentinel_env <- empty_env()
   out <- eval_tidy(quo({
@@ -225,6 +258,7 @@ validate_fns <- function(quo, mask, error_call = caller_env()) {
   }
 }
 
+#' @rdname dplyr_across_internals
 is_inlinable_function <- function (x) 
 {
   if (!is_function(x)) {
@@ -240,6 +274,7 @@ is_inlinable_function <- function (x)
   TRUE
 }
 
+#' @rdname dplyr_across_internals
 is_inlinable_formula <- function (x) {
   if (!is_formula(x, lhs = FALSE)) {
     return(FALSE)
