@@ -1,6 +1,23 @@
 
 
-
+#' @title select assays, rowData, and colData names
+#' @description
+#' Select one or more values from each context. By default omitting an expression
+#' for a context is the same as selecting NOTHING from that context. 
+#' 
+#' The <[`tidy-select`][dplyr::dplyr_tidy_select]> implementation within 
+#' `biocmask` is almost similar to `dplyr` except that the data provided to
+#' [eval_select][tidyselect::eval_select] is a zero length slice of the data.
+#' This was an intentional choice to prevent the evaluation of potentionally 
+#' expensive chopping operations for S4Vectors. This means that predicate
+#' function from [`where()`][tidyselect::where] will NOT be able to query the
+#' original data.
+#' 
+#' 
+#' @param .data a `SummarizedExperiment` object
+#' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> one or more selection 
+#' expressions. Supports the `SummarizedExperiment-context-functions`.
+#' @export
 select.SummarizedExperiment <- function(.data, ...) {
   
   .env <- caller_env()
@@ -24,7 +41,8 @@ select.SummarizedExperiment <- function(.data, ...) {
   
 }
 
-
+# underlying selection function. This may need to be an S3 generic
+# for when `biocmask` extends to other classes
 biocmask_eval_select <- function(quos, ctxs, data) {
   
   out <- vector("list", length(quos))
