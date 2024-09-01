@@ -33,21 +33,17 @@ poke_ctx_local <- function(name, value) {
 
 
 
-
+# this is the top of all our rlang data masks (inherited from base).
+# it contains all expected functions for transforming values  in multi-tiered
+# data masks.
+# If future extensions need access to additional functions, they should consider
+# creating their own top_env, or open a PR to add it here.
 top_env <- new_environment(
   data = list(
     vec_chop = vctrs::vec_chop,
     vec_chop_assays = vec_chop_assays,
     vec_chop_assays_row = vec_chop_assays_row,
-    # vec_chop_assays_row.matrix = vec_chop_assays_row.matrix,
-    # vec_chop_assays_row.vctrs_grouped_list = vec_chop_assays_row.vctrs_grouped_list,
     vec_chop_assays_col = vec_chop_assays_col,
-    # vec_chop_assays_col.matrix = vec_chop_assays_col.matrix,
-    # vec_chop_assays_col.vctrs_grouped_list = vec_chop_assays_col.vctrs_grouped_list,
-    # wrap = wrap,
-    # wrap.default = wrap.default,
-    # wrap.vctrs_grouped_list = wrap.vctrs_grouped_list,
-    # new_grouped_lst = new_grouped_lst,
     vec_rep = vctrs::vec_rep,
     vec_rep_each = vctrs::vec_rep_each,
     vec_c = vctrs::vec_c,
@@ -140,6 +136,9 @@ env_group_id <- function(env) {
   }
 }
 
+# provides most of the connectivity for tracking how other
+# contexts should collect certain data. Most of this headache is to support
+# grouping operations.
 prepare_shared_ctx_env <- function(groups, expanded) {
   # browser()
   ind_d <- attr(groups, "obj_dim")
@@ -184,22 +183,46 @@ prepare_shared_ctx_env <- function(groups, expanded) {
     rows = inf_rows[[".nsize"]],
     cols = inf_cols[[".nsize"]]
   )
+  # this may be incorrect???
   nsize_ctx = list(
     assays = inf_assay[[".nsize"]],
     rows = inf_rows[[".nrow"]],
+    # is .ncol refering to size of output?
     cols = inf_cols[[".ncol"]]
   )
 
   shared_ctx_env <- new_environment(
     data = list(
+      #current context
       `biocmask:::ctx` = "assays",
+      #context group id
       `biocmask:::ctx:::group_id` = 1L,
+      # list of all contexts, each contains
+      # indices to retrieve data from that context
+      # while evaluating from assays context
       `biocmask:::assays:::group_chop_ids` = assay_group_id,
+      # list of all contexts, each contains
+      # indices to retrieve data from that context
+      # while evaluating from rows context
       `biocmask:::rows:::group_chop_ids` =   rows_group_id,
+      # list of all contexts, each contains
+      # indices to retrieve data from that context
+      # while evaluating from cols context
       `biocmask:::cols:::group_chop_ids` =   cols_group_id,
+      # shortcut to the current context's indices
       `biocmask:::ctx:::group_chop_ids`  =   ctx_group_id,
+      # list of all contexts, each contains
+      # the number of rows for the context
       `biocmask:::dim:::nrow` = nrow_info,
+      # list of all contexts, each contains
+      # the number of cols for the context
+      # NOTE: assays context reports its dims, NOT how many assays
       `biocmask:::dim:::ncol` = ncol_info,
+      # list of all contexts, each contains
+      # expected size of output... example:
+      # assays -> nrow * ncol
+      # rows -> nrow of rowData
+      # cols -> nrow of colData
       `biocmask:::dim:::size` = nsize_info,
       `biocmask:::dim:::n` =    nsize_ctx,
       `biocmask:::ctx:::n_groups` = expanded |>
@@ -211,56 +234,64 @@ prepare_shared_ctx_env <- function(groups, expanded) {
     parent = bot_env
   )
   
-  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), shared_ctx_env)
-
+  # set of active bindings to retrieve above info dynamically
   env_bind_active(
     shared_ctx_env,
+    # number of groups for current context
     `biocmask:::n_groups` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::ctx:::n_groups`, `biocmask:::ctx`)),
       env = shared_ctx_env),
+    # indices of current group in current context
     `biocmask:::ctx:::current_chops` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::ctx:::group_chop_ids`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    # assays indices for current group
     `biocmask:::assays:::current_chops` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::assays:::group_chop_ids`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    # rowData indices for current group 
     `biocmask:::rows:::current_chops` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::rows:::group_chop_ids`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    # colData indices for current group
     `biocmask:::cols:::current_chops` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::cols:::group_chop_ids`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    # nrow for current context and group
     `biocmask:::ctx:::nrow` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::dim:::nrow`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    # nrow for current context and group
     `biocmask:::ctx:::ncol` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::dim:::ncol`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    # size for current context and group
     `biocmask:::ctx:::size` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::dim:::size`, `biocmask:::ctx`) |>
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
+    #
     `biocmask:::ctx:::n` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::dim:::n`, `biocmask:::ctx`) |>
@@ -268,6 +299,7 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       env = shared_ctx_env
     )
   )
+  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), shared_ctx_env)
   shared_ctx_env$set_group_id <- env_group_id(shared_ctx_env)
   shared_ctx_env
 }

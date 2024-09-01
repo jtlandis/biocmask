@@ -1,6 +1,7 @@
 
 #' @importFrom dplyr bind_cols reframe across everything group_vars
 
+# faster implementation
 expand_groups2 <- function(.rows, .cols) {
   names(.rows) <- sprintf(".rows::%s", names(.rows))
   names(.cols) <- sprintf(".cols::%s", names(.cols))
@@ -25,6 +26,7 @@ expand_groups2 <- function(.rows, .cols) {
   out
 }
 
+# inefficient and possibly defunct
 expand_groups <- function(.rows, .cols) {
   # browser()
   .nrow <- nrow(.rows)
@@ -65,8 +67,8 @@ expand_groups <- function(.rows, .cols) {
 
 mat_index <- function(rows_ind, cols_ind, nrows) {
   shift <- (cols_ind - 1L) * nrows
-  vec_rep(rows_ind, length(cols_ind)) +
-    vec_rep_each(shift, length(rows_ind))
+  vctrs::vec_rep(rows_ind, length(cols_ind)) +
+    vctrs::vec_rep_each(shift, length(rows_ind))
 }
 
 is_grouped_rows <- function(.groups) {

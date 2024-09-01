@@ -4,10 +4,12 @@
 
 #' @title Filter SummarizedExperiment
 #' @description
-#' Filtering operations can only return a SummarizedExperiment
-#' object so long as they are performed on rows and cols contexts.
-#' This is because filtering on assays does not gaurentee a recoverable
-#' SummarizedExperiment structure.
+#' 
+#' The `filter()` function is sused to subset an object, returing the observations
+#' that satisfy your conditions. An observation must return TRUE for all conditions
+#' within a context to be retained. Note, to guarantee a valid
+#' `SummarizedExperiment` is returned, filtering in the `assays` evaluation 
+#' context is disabled.
 #' 
 #' @param .data A SummarizedExperiment object
 #' @param ... conditions to filter on. These must be wrapped in `cols()` and or

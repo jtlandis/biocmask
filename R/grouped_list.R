@@ -1,20 +1,14 @@
 
-# library(vctrs)
-# 
-# 
-# new_grouped_lst <- function(x, keys) {
-#   x1 <- list_of(!!!x[[1]])
-# 
-#   new_list_of(x, ptype = vec_ptype(x1), class = "vctrs_grouped_list", .key = keys)
-# }
-# # .out <- vec_chop(1:10, list(1:2,3:5, 6:9, 10)) |> list() |> new_grouped_lst(keys = tibble(condition = c("cntrl","drug")))
-# 
-# vec_ptype_abbr.vctrs_grouped_list <- function(x, ...) {
-#   paste0("grpd<",
-#          vec_ptype_abbr(attr(attr(x, "ptype"), "ptype"))
-#          ,"[", nrow(attr(x, ".key")),"]>")
-# }
+##########
+# UNUSED #
+##########
 
+# this function is likely going to be unused in the future. This was made to
+# address a possible branch the codebase was possibly going towards, specifically
+# for multi-grouped contexts and cross referencing issues.
+# The NEW (and likely more stable assumption) is that if multigrouped context 
+# exists and we try to access colData from a row context, we pull the colData 
+# as-is, without being grouped.
 case_key <- function(x, ...) {
   if (!inherits(x, "vctrs_grouped_list")) {
     cli::cli_abort(
@@ -56,33 +50,4 @@ case_key <- function(x, ...) {
 }
 
 
-# pillar_shaft.vctrs_grouped_list <- function(x, ...) {
-#   out <- map_chr(
-#     x,
-#     ~ sprintf("[%s]",
-#               paste0(pillar::style_subtle(map_chr(.x, size_sum)),
-#                      collapse = ","))
-#   )
-#   pillar::new_pillar_shaft_simple(out, align = "left", min_width = 10, shorten = "back")
-# }
-# 
-# # tibble(y = 1, z = 10, a = "A", x = .out)
-# 
-# # rowd <- rowData(se) |> as_tibble(rownames = ".features")
-# # col_data_chop <- colData(se) |> as_tibble(rownames = ".samples") |> chop(-condition)
-# # rowd$samples <- list()
-# #
-# # setClass("vctrs_grouped_list", contains = "list")
-# #
-# # setMethod(lapply, signature(X = "vctrs_grouped_list"),
-# #           function(X, FUN, ...) {
-# #             base::lapply(
-# #               X,
-# #               function(x, ...) {
-# #                 base::lapply(X = x, FUN = FUN, ...)
-# #               },
-# #               ...
-# #             ) |>
-# #               new_list_of(ptype = vec_ptype(X[[1]]), class = "vctrs_grouped_list", .key = attr(X, ".key"))
-# #           })
-# 
+

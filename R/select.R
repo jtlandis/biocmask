@@ -16,7 +16,8 @@
 #' 
 #' @param .data a `SummarizedExperiment` object
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> one or more selection 
-#' expressions. Supports the `SummarizedExperiment-context-functions`.
+#' expressions. Supports wrapping expressions within the 
+#' <[`biocmask-contexts`][biocmask::`biocmask-context`]>.
 #' @export
 select.SummarizedExperiment <- function(.data, ...) {
   

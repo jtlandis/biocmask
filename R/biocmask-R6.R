@@ -208,6 +208,7 @@ biocmask <- R6::R6Class(
     names = function() {
       private$.names
     },
+    #' @field ptype get zero-length slices of underlying data
     ptype = function() {
       private$.ptype
     },

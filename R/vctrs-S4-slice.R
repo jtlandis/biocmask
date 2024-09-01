@@ -1,6 +1,7 @@
 
 #' @title Get observations of a vector
 #' 
+#' @description
 #' This extends `vctrs::vec_slice` to `S4Vectors::Vector` class by masking 
 #' `vec_slice` with `S7::new_generic`. Atomic vectors and other base S3 classes
 #'  (list, data.frame, factor, Dat, POSIXct) will dispatch to the 

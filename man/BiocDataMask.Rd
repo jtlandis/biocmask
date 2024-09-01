@@ -38,6 +38,8 @@ environment.
 
 \item{\code{names}}{the associated names of data in mask}
 
+\item{\code{ptype}}{get zero-length slices of underlying data}
+
 \item{\code{added}}{newly added names to the mask
 holds grouping information
 for this object

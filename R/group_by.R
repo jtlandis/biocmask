@@ -2,6 +2,12 @@
 #' @importFrom dplyr group_by ungroup group_data
 NULL
 
+#' @title get grouping data
+#' @description
+#' retrieve grouping information from a `SummarizedExperiment` object. This
+#' is stored within the `metadata()` of the object.
+#' 
+#' @param .data an object
 #' @export
 group_data.SummarizedExperiment <- function(.data) {
   metadata(.data)[["group_data"]]
@@ -11,7 +17,9 @@ group_data.SummarizedExperiment <- function(.data) {
 #' @name group_by
 #' @description
 #' create grouping variables about the rowData and colData of a 
-#' SummarizedExperiment object.
+#' SummarizedExperiment object. Unlike the `data.frame` method
+#' the resulting output class is left unchanged. Thus `dplyr` generics for
+#' `SummarizedExperiment` must check grouping information manually.
 #' @param .data a SummarizedExperiment object
 #' @param ... expressions to group on. Grouping may only be done on
 #' rowData and/or colData by `rows()` and `cols()` respectively.
