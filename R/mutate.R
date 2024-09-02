@@ -4,9 +4,11 @@
 #' @title Mutate a SummarizedExperiment object
 #' @name mutate
 #' @description
-#' Mutate a SummarizedExperiment object under an data mask
+#' Mutate a SummarizedExperiment object under an data mask. Unlike a few other
+#' `dplyr` implementations, all contextual evaluations of `mutate()` for
+#' `SummarizedExperiment` are valid.
 #' @param .data a SummarizedExperiment object
-#' @param ... expressions
+#' @param ... expressions to evaluate
 #' @return SummarizedExperiment object
 #' @export
 mutate.SummarizedExperiment <- function(.data, ...) {
