@@ -18,6 +18,24 @@
 #' (the default), the grouping structure is recalculated based on the resulting data,
 #' i.e. the number of groups may change.
 #' @return SummarizedExperiment Object
+#' @examples
+#' # example code
+#' filter(se_simple,
+#'        rows(length > 30),
+#'        cols(condition == "drug"))
+#'  
+#' filter(se_simple,
+#'        rows(rowSums(.assays_asis$counts) > 40),
+#'        cols(colSums(.assays_asis$counts) < 50))
+#' 
+#' # assay context is disabled
+#' filter(se_simple,
+#'        counts > 12) |> try()
+#' 
+#' # convert to `data.frame` first
+#' as.data.frame(se_simple) |>
+#'   filter(counts > 12)
+#' 
 #' @export
 filter.SummarizedExperiment <- function(.data, ..., .preserve = FALSE) {
   .env <- caller_env()

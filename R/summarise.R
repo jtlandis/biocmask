@@ -11,6 +11,31 @@ NULL
 #' are recycled to the length of the ungrouped dimension. When FALSE, all 
 #' outputs are expected to be scalar values and all columns in ungrouped 
 #' dimensions are dropped.
+#' @examples
+#' 
+#' # outputs in assay context may be either
+#' # length 1, or the length of the ungrouped
+#' # dimension while .retain = TRUE
+#' se_simple |>
+#'   group_by(rows(group)) |>
+#'   summarise(col_sums = colSums(counts),
+#'             sample = sample(1:20, 1L))
+#' 
+#' # .retain = FALSE will drop ungrouped dimensions and
+#' # outputs of assay context should be length 1.
+#' se_simple |>
+#'   group_by(rows(direction)) |>
+#'   summarise(col_sums = list(colSums(counts)),
+#'             .retain = FALSE) 
+#' 
+#' # using an `across()` function will help
+#' # nest ungrouped dimensions
+#' se_simple |>
+#'   group_by(rows(direction)) |>
+#'   summarise(col_sums = list(colSums(counts)),
+#'             cols(across(everything(), list)),
+#'              .retain = FALSE)
+#'  
 #' @export
 summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
 
@@ -31,6 +56,7 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
       )
     )
   }
+
   nms  <- names(quos)
   mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env)
   assay_chops <- mask_pull_chops(mask$masks[["assays"]])
@@ -64,10 +90,12 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
     }
     # recycle each chop to required length
     row_chops <- assert_chops_size(row_chops, size = row_chops_sizes)
-    row_data <- map(
-      row_chops,
-      vctrs::list_unchop
-    ) |> as(Class = "DataFrame")
+    row_data <- new(
+      "DFrame",
+      listData = map(
+        row_chops,
+        vctrs::list_unchop),
+      nrows = .nrow)
   }
   if (grouped_cols || "cols" %in% ctxs) {
     # get all of the chops, including any groups
@@ -91,10 +119,12 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
     }
     # recycle each chop to required length
     col_chops <- assert_chops_size(col_chops, size = col_chops_sizes)
-    col_data <- map(
-      col_chops,
-      vctrs::list_unchop
-    ) |> as(Class = "DataFrame")
+    col_data <- new(
+      "DFrame",
+      listData = map(
+        col_chops,
+        vctrs::list_unchop),
+      nrows = .ncol)
   } else {
     col_data <- methods::new("DFrame",
                              listData = set_names(list(), character()),

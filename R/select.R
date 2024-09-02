@@ -6,7 +6,8 @@
 #' for a context is the same as selecting NOTHING from that context. 
 #' 
 #' The <[`tidy-select`][dplyr::dplyr_tidy_select]> implementation within 
-#' `biocmask` is almost similar to `dplyr` except that the data provided to
+#' `biocmask` is almost similar to `dplyr` except when used within the
+#' `across()` function. When used from `accross()`, the data provided to
 #' [eval_select][tidyselect::eval_select] is a zero length slice of the data.
 #' This was an intentional choice to prevent the evaluation of potentionally 
 #' expensive chopping operations for S4Vectors. This means that predicate
@@ -18,6 +19,33 @@
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> one or more selection 
 #' expressions. Supports wrapping expressions within the 
 #' <[`biocmask-contexts`][biocmask::`biocmask-context`]>.
+#' 
+#' @examples
+#' 
+#' 
+#' # only keep assays, other contexts are dropped
+#' select(se_simple, everything())
+#' 
+#' # only keep rowData, other contexts are dropped
+#' select(se_simple, rows(everything()))
+#' 
+#' select(se_simple, rows(where(is.numeric)))
+#' 
+#' # Note on `where()` clause, all data is available within select
+#' select(se_simple, rows(where(~any(grepl("-", .x)))))
+#' 
+#' # within an `across()`, only a zero-length slice avialble, so the
+#' # `where()` predicate cannot access the data
+#' mutate(se_simple,
+#'        rows(
+#'         across(where(~any(grepl("-", .x))),
+#'                ~sprintf("%s foo", .x))))
+#' # here is an acceptable usage of the `where()` predicate
+#' mutate(se_simple,
+#'        rows(
+#'         across(where(is.character),
+#'                ~sprintf("%s foo", .x))))
+#' 
 #' @export
 select.SummarizedExperiment <- function(.data, ...) {
   

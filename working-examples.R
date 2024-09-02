@@ -1,4 +1,4 @@
-#test
+# test
 
 # library(rlang)
 # library(tidyr)
@@ -23,36 +23,44 @@ library(biocmask)
 set.seed(12345)
 se <- SummarizedExperiment(
   list(counts = matrix(sample(1:20, 20), nrow = 5, ncol = 4)),
-  rowData = data.frame(gene = sprintf("g%i", 1:5),
-                       length = rbinom(5, 100, runif(5)),
-                       direction = sample(c("-","+"), 5, T)),
-  colData = data.frame(sample = sprintf("s%i", 1:4),
-                       condition = rep(c("cntrl","drug"), each =2))
+  rowData = data.frame(
+    gene = sprintf("g%i", 1:5),
+    length = rbinom(5, 100, runif(5)),
+    direction = sample(c("-", "+"), 5, T)
+  ),
+  colData = data.frame(
+    sample = sprintf("s%i", 1:4),
+    condition = rep(c("cntrl", "drug"), each = 2)
+  )
 )
 rownames(se) <- sprintf("row_%s", letters[1:5])
 colnames(se) <- sprintf("col_%s", LETTERS[1:4])
-assay(se, 'logcounts') <- log(assay(se, 'counts'))
+assay(se, "logcounts") <- log(assay(se, "counts"))
 se
 
-mutate(se, 
-       counts_1 = counts + 1,
-       logcounts = log(counts_1),
-       rows(sum = rowSums(.assays_asis$counts)),
-       cols(sum = purrr::map_dbl(.assays$counts, sum))) -> .o
-gse <- group_by(se,
-         cols(condition),
-         rows(direction))
+mutate(se,
+  counts_1 = counts + 1,
+  logcounts = log(counts_1),
+  rows(sum = rowSums(.assays_asis$counts)),
+  cols(sum = purrr::map_dbl(.assays$counts, sum))
+) -> .o
+gse <- group_by(
+  se,
+  cols(condition),
+  rows(direction)
+)
 gse_out <- summarise(gse,
-                     total = sum(counts),
-                     counts = list(counts))
-gse |> mutate(
+  total = sum(counts),
+  counts = list(counts)
+)
+gse |>
+  mutate(
     n = n(),
     cols(n = n()),
     rows(n = n())
-  ) |> rowData()
+  ) |>
+  rowData()
 
-gse |> filter(cols(n() > 2))
-
+gse |> filter(rows(n() > 2))
+gse
 # for (X in groups_data$row_groups$.indices)
-
-

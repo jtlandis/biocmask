@@ -11,6 +11,26 @@
 #' `.by_group` argument.
 #' 
 #' @inheritParams dplyr::arrange
+#' @examples
+#' 
+#' #arrange within rows/cols contexts separately
+#' arrange(se_simple,
+#'         rows(direction),
+#'         cols(dplyr::desc(condition)))
+#' 
+#' # access assay data to compute arrangement
+#' arrange(se_simple, 
+#'         rows(rowSums(.assays_asis$counts)),
+#'         cols(colSums(.assays_asis$counts)))
+#' 
+#' # assay context is disabled
+#' arrange(se_simple, counts) |> try()
+#' 
+#' # convert to `data.frame` first
+#' as.data.frame(se_simple) |>
+#'   arrange(counts)
+#' 
+#' 
 #' @export
 arrange.SummarizedExperiment <- function(.data, ..., .by_group = FALSE) {
   .env <- caller_env()
@@ -26,7 +46,7 @@ arrange.SummarizedExperiment <- function(.data, ..., .by_group = FALSE) {
   if (any(err <- ctxs %in% "assays")) {
     abort(
       message = c(
-        "Cannot group in `assays` context",
+        "Cannot arrange in `assays` context",
         "x" = sprintf("review expression indices %s in dots",
                       paste0(which(err), collapse = ", ")),
         "i" = "consider wrapping expressions in rows(...) or cols(...)"

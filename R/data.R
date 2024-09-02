@@ -8,17 +8,23 @@
 #' \describe{
 #' 
 #'  \item{`assays`}{
-#'    \item{counts}{sampled data points between 1:20}
-#'    \item{logcounts}{log transform of `counts`}
+#'    \describe{
+#'      \item{counts}{sampled data points between 1:20}
+#'      \item{logcounts}{log transform of `counts`}
+#'    }
 #'  }
 #'  \item{`rowData`/`.features`}{
-#'    \item{gene}{fake gene name}
-#'    \item{length}{fake gene length}
-#'    \item{direction}{fake strand}
+#'    \describe{
+#'      \item{gene}{fake gene name}
+#'      \item{length}{fake gene length}
+#'      \item{direction}{fake strand}
+#'    }
 #'  }
 #'  \item{`colData`/`.samples`}{
-#'    \item{sample}{fake sample name}
-#'    \item{condition}{control or drug treatment}
+#'    \describe{
+#'      \item{sample}{fake sample name}
+#'      \item{condition}{control or drug treatment}
+#'    }
 #'  }
 #' }
 #' 
