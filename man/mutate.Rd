@@ -10,11 +10,27 @@
 \arguments{
 \item{.data}{a SummarizedExperiment object}
 
-\item{...}{expressions}
+\item{...}{expressions to evaluate}
 }
 \value{
 SummarizedExperiment object
 }
 \description{
-Mutate a SummarizedExperiment object under an data mask
+Mutate a SummarizedExperiment object under an data mask. Unlike a few other
+\code{dplyr} implementations, all contextual evaluations of \code{mutate()} for
+\code{SummarizedExperiment} are valid.
+}
+\examples{
+
+mutate(se,
+    counts_1 = counts + 1,
+    logp_counts = log(counts_1),
+    # access assays context with ".assays" pronoun,
+    # note that assays are sliced into a list to 
+    # fit dimensions of cols context
+    cols(sum = purrr::map_dbl(.assays$counts, sum))
+    # access assays context "asis" with the same pronoun
+    # but with a "_asis" suffix.
+    rows(sum = rowSums(.assays_asis$counts)),
+)
 }

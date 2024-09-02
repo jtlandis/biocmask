@@ -20,8 +20,28 @@ i.e. the number of groups may change.}
 SummarizedExperiment Object
 }
 \description{
-Filtering operations can only return a SummarizedExperiment
-object so long as they are performed on rows and cols contexts.
-This is because filtering on assays does not gaurentee a recoverable
-SummarizedExperiment structure.
+The \code{filter()} function is sused to subset an object, returing the observations
+that satisfy your conditions. An observation must return TRUE for all conditions
+within a context to be retained. Note, to guarantee a valid
+\code{SummarizedExperiment} is returned, filtering in the \code{assays} evaluation
+context is disabled.
+}
+\examples{
+# example code
+filter(se_simple,
+       rows(length > 30),
+       cols(condition == "drug"))
+ 
+filter(se_simple,
+       rows(rowSums(.assays_asis$counts) > 40),
+       cols(colSums(.assays_asis$counts) < 50))
+
+# assay context is disabled
+filter(se_simple,
+       counts > 12) |> try()
+
+# convert to `data.frame` first
+as.data.frame(se_simple) |>
+  filter(counts > 12)
+
 }

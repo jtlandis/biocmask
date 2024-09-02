@@ -25,7 +25,9 @@ SummarizedExperiment object
 }
 \description{
 create grouping variables about the rowData and colData of a
-SummarizedExperiment object.
+SummarizedExperiment object. Unlike the \code{data.frame} method
+the resulting output class is left unchanged. Thus \code{dplyr} generics for
+\code{SummarizedExperiment} must check grouping information manually.
 
 Ungroup a SummarizedExperiment object
 }

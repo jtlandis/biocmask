@@ -2,63 +2,11 @@
 % Please edit documentation in R/vctrs-S4-slice.R
 \name{vec_slice}
 \alias{vec_slice}
-\title{Get observations of a vector
-
-This extends \code{vctrs::vec_slice} to \code{S4Vectors::Vector} class by masking
-\code{vec_slice} with \code{S7::new_generic}. Atomic vectors and other base S3 classes
-(list, data.frame, factor, Dat, POSIXct) will dispatch to the
-\code{vctrs::vec_slice} method as normal. Dispatch support on the
-\code{S4Vectors::Vector} and \code{S4Vectors::DataFrame} classes provides a unified
-framework for working with base R vectors and \code{S4Vectors}.
-\subsection{\code{S4Vectors::Vector} Implementation}{
-
-This method will naively call the \code{[} method for any S4 class that inherits
-from the \code{S4Vectors::Vector} class. This may not be a very efficient way to
-slice up an S4 class, but will work.
-
-With this implementation, the \code{x@mcol} data is expected to be retained after
-a call to \code{biocmask::vec_slice(x, i)}.
-}
-
-\subsection{\code{S4Vectors::DataFrame} Implementation}{
-
-The \code{DataFrame} implementation works similar to how \code{vctrs::vec_slice} works
-on a \code{data.frame} object. What is being sliced is the rows of \code{x@listData}.
-To maintain the size stability of the \code{DataFrame} object, we change \verb{@nrows}
-to the appropriate value, and perform a recursive call if \verb{@elementMetadata}
-is not \code{NULL}.
-}
-
-\subsection{Performance}{
-
-Depending on the size and complexity of your S4 Vector object, you may find
-the standard subset operation is extremely slow. For example, consider a
-\code{SummarizedExperiment} whose rowData contains a \code{CompressedGRangesList}
-object assigned to the name "exons" and whose length is 250,000 and
-underlying \verb{@unlistData} is length 1,600,000. Performing a by \code{.features}
-grouping operation and attempting to evaluate the \code{exons} within the row
-context would force the \code{CompressedGRangesList} object to be
-chopped element-wise.
-
-Unfortunately, there is a massive performance hit in attempting to construct
-250,000 \code{GRanges}. Unless you do not mind waiting over an hour for each
-\code{dplyr} verb in which \code{exons} gets evaluated, consider \code{biocmask_s4_proxy_vec()}.
-This attempts to reconstruct certain standard \code{S4Vectors::Vectors} as
-standard vectors or tibbles. The equivalent \code{exons} object would require
-much more memory use, but at the advantage of only taking several seconds to
-construct.When you are done, you can attempt to restore the original S4
-Vector with \code{biocmask_restore_s4_proxy()}.
-
-\code{biocmask_s4_proxy_vec()} is faster to work with because there are less
-checks on the object validity and all \verb{@elementMetadata} and \verb{@metadata} are
-dropped from the objects.
-}}
+\title{Get observations of a vector}
 \usage{
 vec_slice(x, i, ...)
 }
 \description{
-Get observations of a vector
-
 This extends \code{vctrs::vec_slice} to \code{S4Vectors::Vector} class by masking
 \code{vec_slice} with \code{S7::new_generic}. Atomic vectors and other base S3 classes
 (list, data.frame, factor, Dat, POSIXct) will dispatch to the

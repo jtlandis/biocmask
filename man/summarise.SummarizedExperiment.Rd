@@ -20,3 +20,29 @@ dimensions are dropped.}
 \description{
 Summarize SummarizedExperiment
 }
+\examples{
+
+# outputs in assay context may be either
+# length 1, or the length of the ungrouped
+# dimension while .retain = TRUE
+se_simple |>
+  group_by(rows(group)) |>
+  summarise(col_sums = colSums(counts),
+            sample = sample(1:20, 1L))
+
+# .retain = FALSE will drop ungrouped dimensions and
+# outputs of assay context should be length 1.
+se_simple |>
+  group_by(rows(direction)) |>
+  summarise(col_sums = list(colSums(counts)),
+            .retain = FALSE) 
+
+# using an `across()` function will help
+# nest ungrouped dimensions
+se_simple |>
+  group_by(rows(direction)) |>
+  summarise(col_sums = list(colSums(counts)),
+            cols(across(everything(), list)),
+             .retain = FALSE)
+ 
+}
