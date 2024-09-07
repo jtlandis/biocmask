@@ -11,21 +11,79 @@ sep_ <- function(n) {
   NULL
 }
 
+class_vec_phantom <- S7::new_S3_class("vec_phantom")
+
+vec_phantom <- function(x) {
+  vctrs::new_vctr(
+    seq_len(length.out = length(x)),
+    phantomData = x,
+    class = "vec_phantom"
+  )
+}
+
+vec_restore.vec_phantom <- function(x, to, ...) {
+  # cannot make assumptions on what
+  # the phantomData is, we use base subset
+  phantom_data <- attr(to, "phantomData")[x]
+  vec_phantom(phantom_data)
+}
+
+#' @export
+vec_ptype_abbr.vec_phantom <- function(x, ...) {
+  vec_ptype_abbr(attr(x, "phantomData"))
+}
+
+# x <- vec_phantom(letters)
+# attr(x[1], "phantomData")
+
+#' @export
+pillar_shaft.vec_phantom <- function(x, ...) {
+  fmt <- biocmask_pillar_format(attr(x, "phantomData"))
+  cur_width <- max(nchar(fmt))
+  min_width <- min(10, cur_width)
+  pillar::new_pillar_shaft_simple(
+    formatted = fmt,
+    ...,
+    width = max(nchar(fmt)),
+    min_width = min_width,
+    shorten = "mid"
+  )
+}
+
+#' @export
+biocmask_pillar_format <- function(x, ...) {
+  UseMethod("biocmask_pillar_format")
+}
+
+#' @export
+biocmask_pillar_format.default <- function(x, ...) {
+  S4Vectors::showAsCell(x)
+}
+
+maybe_phantom <- function(x) {
+  if (isS4(x)) return(vec_phantom(x))
+  x
+}
+
+length.vec_phantom <- function(x, ...) {
+  length(attr(x, "phantomData"))
+}
+
 
 
 #' @export
 print.SummarizedExperiment <- function(x, n = 10, ...) {
-  # browser()
+  
   top_n <- ceiling(n/2)
   bot_n <- floor(n/2)
-  nr <- nrow(x)
+  onr <- nr <- nrow(x)
   row_slice <- if (nr < 2 * n) {
     seq_len(nr)
   } else {
     c(1:n, (nr - n + 1):nr)
   }
   
-  nc <- ncol(x)
+  onc <- nc <- ncol(x)
   col_slice <- if (nc < 2 * n) {
     seq_len(nc)
   } else {
@@ -35,11 +93,11 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   x_ <- x[row_slice, col_slice]
   nr <- nrow(x_)
   nc <- ncol(x_)
-  .features <- rownames(x_) %||% seq_len(nr)
-  .samples <- colnames(x_) %||% seq_len(nc)
+  .features <- rownames(x_) %||% seq_len(onr)[row_slice]
+  .samples <- colnames(x_) %||% seq_len(onc)[col_slice]
   assays_ <- map(assays(x_), as_vec)
-  row_ <- map(as_tibble(rowData(x_)), vctrs::vec_rep, times = nc)
-  col_ <- map(as_tibble(colData(x_)), vctrs::vec_rep_each, times = nr)
+  row_ <- map(rowData(x_), vec_rep, times = nc) |> map(maybe_phantom)
+  col_ <- map(colData(x_), vec_rep_each, times = nr) |> map(maybe_phantom)
   nn <- nc * nr
   out <- c(
     list(
@@ -54,9 +112,9 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
     col_
   )
   # browser()
-  
-  attr(out, "row.names") <- c(NA_integer_, - nr * nc)
+  attr(out, "row.names") <- c(NA_integer_, - nn)
   class(out) <- c("SE_abstraction","tbl_df", "tbl", "data.frame")
+  
   # browser()
   sub_seq <- if (nn < 2 * top_n) {
     seq_len(nn)
@@ -68,7 +126,8 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   }
   # if (diff(min(top_half):max(bot_half)))
   out_sub <- out[sub_seq,]
-  if (nrow(out_sub)==nrow(out)) {
+  
+  if (nrow(out_sub)==nn) {
     attr(out_sub, "biocmask:::has_break_at") <- 0L
   } else {
     attr(out_sub, "biocmask:::has_break_at") <- max(top_n)
@@ -197,7 +256,7 @@ tbl_format_setup.SE_abstraction <- function(x, width, ...,
 ctl_new_pillar.SE_abstraction <- function(controller, x, width, ..., title = NULL) {
   
   if (inherits(x, "sep!")) {
-    p <-pillar(x, title = "|", ...)
+    p <- pillar(x, title = "|", ...)
     class(p$title[[1]]) <- "blank_pillar_title"
     class(p$type[[1]]) <- "blank_pillar_type"
     attr(p$type, "width") <- 1L
