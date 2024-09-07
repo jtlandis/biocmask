@@ -83,6 +83,15 @@ method(vec_slice, getClass("CompressedGRangesList")) <- function(x, i, ...) {
   )
 }
 
+method(vec_slice, class_vec_phantom) <- function(x, i, ...) {
+  attr(x, "phantomData") <- vec_slice(attr(x, "phantomData"), i)
+  x
+}
+
+method(vec_slice, S7::class_any) <- function(x, i, ...) {
+  x[i]
+}
+
 method(vec_slice, class_s4_vctrs) <- function(x, i, ...) {
   x[i]
 }
