@@ -10,7 +10,8 @@ as_vec <- function(x) {
 
 
 prepend_rownames <- function(DF, column) {
-  name_col <- list(rownames(DF))
+  name_col <- rownames(DF) %||% as.character(seq_len(nrow(DF)))
+  name_col <- list(name_col)
   names(name_col) <- column
   DF@listData <- c(name_col, DF@listData)
   DF
