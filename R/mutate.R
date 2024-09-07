@@ -36,10 +36,7 @@ mutate.SummarizedExperiment <- function(.data, ...) {
   nms  <- names(quos)
   mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env, .matrix = TRUE)
   results <- mask$results()
-  nms <- names(results$assays)
-  for (i in seq_along(results$assays)) {
-    assay(.data, nms[i], withDimnames = FALSE) <- results$assays[[i]]
-  }
+  
   nms <- names(results$rows)
   if (length(nms)) {
     if (".features" %in% nms) {
@@ -62,6 +59,14 @@ mutate.SummarizedExperiment <- function(.data, ...) {
     for (i in seq_along(results$cols)) {
       colData(.data)[[nms[i]]] <- results$cols[[i]]
     }
+  }
+  # set assays last to reset dimnames
+  nms <- names(results$assays)
+  dim_nms <- dimnames(.data)
+  for (i in seq_along(results$assays)) {
+    new_assay <- results$assays[[i]]
+    dimnames(new_assay) <- dim_nms
+    assay(.data, nms[i], withDimnames = FALSE) <- new_assay
   }
   
   .data
