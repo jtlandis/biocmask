@@ -76,6 +76,7 @@
 #' @importFrom vctrs vec_recycle_common
 #' @importFrom vctrs vec_rep
 #' @importFrom vctrs vec_rep_each
+#' @importFrom vctrs vec_restore
 #' @importFrom vctrs vec_size_common
 ## usethis namespace: end
 NULL

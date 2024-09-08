@@ -21,6 +21,7 @@ vec_phantom <- function(x) {
   )
 }
 
+#' @export
 vec_restore.vec_phantom <- function(x, to, ...) {
   # cannot make assumptions on what
   # the phantomData is, we use base subset
