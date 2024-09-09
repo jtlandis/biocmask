@@ -3,6 +3,9 @@
 # be available to users from our package
 
 #' @export
+dplyr::arrange
+
+#' @export
 dplyr::mutate
 
 #' @export
@@ -10,6 +13,9 @@ dplyr::filter
 
 #' @export
 dplyr::summarise
+
+#' @export
+dplyr::select
 
 #' @export
 dplyr::group_by
