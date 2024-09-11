@@ -84,6 +84,7 @@ maybe_phantom <- function(x) {
   x
 }
 
+#' @export
 length.vec_phantom <- function(x, ...) {
   length(attr(x, "phantomData"))
 }

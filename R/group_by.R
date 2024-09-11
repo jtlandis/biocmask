@@ -56,9 +56,8 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # for (i in seq_along(results$assays)) {
   #   assays(.data, withDimnames = FALSE)[[nms[i]]] <- results$assays[[i]]
   # }
-  if (.add) {
-    curr_groups <- metadata(.data)[["group_data"]]
-    if (is_empty(curr_groups)) break # do nothing
+  
+  if (.add && !is_empty(curr_groups <- metadata(.data)[["group_data"]])) {
     if (!is_empty(curr_groups$row_groups)) {
       curr <- select(curr_groups$row_groups, - starts_with(".indices")) |>
         names()
