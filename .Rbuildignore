@@ -4,9 +4,8 @@
 ^presentations
 src
 \.github
-^.*_files$
-.*\.pdf
-.*\.rds
-.*\.qmd
+README_files
+README.qmd
+README.pdf
 ^.*\.Rproj$
 _devel
