@@ -240,10 +240,10 @@ tbl_format_setup.SE_abstraction <- function(x, width, ...,
   setup$rows_total <- prod(dim(attr(x, "biocmask:::data")))
   if (val <- attr(x, "biocmask:::has_break_at")) {
     body_idx <- val + 2L
-    prev_line <- gregexec("[^ |]+", cli::ansi_strip(setup$body[body_idx]))
-    position <- prev_line[[1]]
+    prev_line <- cli::ansi_strip(setup$body[body_idx])
+    position <- gregexec("[^ |]+", prev_line)[[1]]
     len <- attr(position, "match.length")
-    new_line <- vctrs::vec_rep(" ", times = setup$width)
+    new_line <- vctrs::vec_rep(" ", times = nchar(prev_line))
     new_line[position + floor(len / 2)] <- style_subtle(cli::symbol$continue)
     setup$body <- append(setup$body,
                          paste(new_line, collapse = ""),
