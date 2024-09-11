@@ -7,6 +7,13 @@
 \description{
 The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/jtlandis/biocmask}
+}
+
+}
 \author{
 \strong{Maintainer}: Justin Landis \email{jtlandis314@gmail.com} (\href{https://orcid.org/0000-0001-5501-4934}{ORCID})
 

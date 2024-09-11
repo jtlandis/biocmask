@@ -28,9 +28,9 @@ mutate(se,
     # access assays context with ".assays" pronoun,
     # note that assays are sliced into a list to 
     # fit dimensions of cols context
-    cols(sum = purrr::map_dbl(.assays$counts, sum))
+    cols(sum = purrr::map_dbl(.assays$counts, sum)),
     # access assays context "asis" with the same pronoun
     # but with a "_asis" suffix.
-    rows(sum = rowSums(.assays_asis$counts)),
+    rows(sum = rowSums(.assays_asis$counts))
 )
 }

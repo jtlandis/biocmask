@@ -89,6 +89,45 @@ assay_ctx <- function(x, asis = FALSE) {
   eval_tidy(quo, data = mask, env = env)
 }
 
+
+#' @name dot-pronouns
+#' @title contextual biocmask pronouns
+#' @description
+#' `biocmask` utilizes its own version of `rlang::.data` pronouns. These may be
+#' used to gain access to other evaluation contexts for a managed set of 
+#' data-masks.
+#' 
+#' Similar to `rlang::.data`, `biocmask::.assays` and other exported pronouns 
+#' are exported to pass R CMD Checks. When using a `biocmask` within your package,
+#' import the associated pronoun from `biocmask` but only use the fully unqualified 
+#' name, `.assays`, `.assays_asis`, etc.
+NULL
+
+#' @rdname dot-pronouns
+#' @export
+.assays <- NULL
+
+#' @rdname dot-pronouns
+#' @export
+.assays_asis <- NULL
+
+
+#' @rdname dot-pronouns
+#' @export
+.rows <- NULL
+
+#' @rdname dot-pronouns
+#' @export
+.rows_asis <- NULL
+
+#' @rdname dot-pronouns
+#' @export
+.cols <- NULL
+
+#' @rdname dot-pronouns
+#' @export
+.cols_asis <- NULL
+
 # rows = function(...) {
 #   # browser()
 #   mask_manager <- peek_ctx("SE:::mask_manager")

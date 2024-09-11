@@ -22,10 +22,13 @@ Imports:
     pillar,
     cli,
     glue,
-    S7
+    S7,
+    S4Vectors,
+    IRanges
 Depends: 
     R (>= 2.10)
 Suggests:
+    devtools,
     knitr,
     rmarkdown,
     testthat
