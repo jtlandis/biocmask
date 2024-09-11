@@ -17,7 +17,7 @@ NULL
 #' # length 1, or the length of the ungrouped
 #' # dimension while .retain = TRUE
 #' se_simple |>
-#'   group_by(rows(group)) |>
+#'   group_by(rows(direction)) |>
 #'   summarise(col_sums = colSums(counts),
 #'             sample = sample(1:20, 1L))
 #' 

@@ -1,8 +1,8 @@
 
 
 #' @export
-.AtNames.biocmask_envs <- function(obj, pattern = "") {
-  options <- setdiff(names(attributes(obj)), c("class", "names"))
+.AtNames.biocmask_envs <- function(x, pattern = "") {
+  options <- setdiff(names(attributes(x)), c("class", "names"))
   if (identical(pattern, "")) {
     options
   } else {
