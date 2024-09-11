@@ -1,0 +1,26 @@
+---
+title: "biocmask is great"
+author: "us"
+date: "`r format(Sys.time(), '%m/%d/%Y')`"
+output: rmarkdown::html_document
+abstract: >
+  biocmask is great.
+bibliography: library.bib
+vignette: |
+  %\VignetteIndexEntry{This will show up on Bioc landing page}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+the `GRanges` package [@granges] is great
+
+# Session info
+
+```{r}
+library(devtools)
+session_info()
+```
+
+# References
