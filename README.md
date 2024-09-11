@@ -100,9 +100,9 @@ bench::mark(
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 native       12.6ms   17.1ms     58.6   804.77KB     1.95
-    2 new            22ms     25ms     39.1     9.42MB     3.91
-    3 old           632ms    632ms      1.58   83.53MB     4.75
+    1 native       14.1ms     18ms     54.9   804.77KB     1.96
+    2 new          23.6ms   25.2ms     38.8     9.42MB     3.88
+    3 old         893.7ms  893.7ms      1.12   83.53MB     3.36
 
 ## The abstraction
 
@@ -129,7 +129,7 @@ more information on what this does, please see `` ?rlang::`bang-bang` ``
 
 ### The proposal
 
-![](./_devel/data-mask-abstraction.png)
+![](_devel/data-mask-abstraction.png)
 
 In <a href="#fig-abstraction" class="quarto-xref">Figure 1</a>, we an
 abstract a `SummarizedExperiment` object (top portion) into three
