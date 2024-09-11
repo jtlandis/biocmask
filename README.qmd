@@ -91,7 +91,7 @@ We will be using the `!!` operator from the `rlang` package as well. For more in
 
 ### The proposal {#sec-proposal}
 
-![Figure created with BioRender.com](./data-mask-abstraction.png){#fig-abstraction}
+![Figure created with BioRender.com](./_devel/data-mask-abstraction.png){#fig-abstraction}
 
 In @fig-abstraction, we an abstract a `SummarizedExperiment` object (top portion) into three distinct data masks (the bottom portion) that represent different evaluation contexts for our object. We are either evaluating on the `assay_mask`, `rowData_mask`, or the `colData_mask`. 
 

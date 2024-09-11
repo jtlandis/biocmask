@@ -17,11 +17,18 @@ structure of classes and code organization is likely to change.
 I will be using the following example data throughout this document:
 
 ``` r
-library(SummarizedExperiment)
-library(tidySEabstraction)
-library(dplyr)
-library(rlang)
-library(tibble)
+se_example <- tidySummarizedExperiment::pasilla
+#
+library(tidySummarizedExperiment)
+```
+
+    Warning: package 'S4Vectors' was built under R version 4.4.1
+
+    Warning: package 'IRanges' was built under R version 4.4.1
+
+``` r
+# load biocmask last to use its `dplyr` verbs
+library(biocmask)
 set.seed(1234)
 se <- SummarizedExperiment(
   list(counts = matrix(sample(1:20, 20), nrow = 5, ncol = 4)),
@@ -37,21 +44,27 @@ assay(se, 'logcounts') <- log(assay(se, 'counts'))
 se
 ```
 
-    class: SummarizedExperiment 
-    dim: 5 4 
-    metadata(0):
-    assays(2): counts logcounts
-    rownames(5): row_a row_b row_c row_d row_e
-    rowData names(3): gene length direction
-    colnames(4): col_A col_B col_C col_D
-    colData names(2): sample condition
+    # A SummarizedExperiment-tibble Abstraction: 5 × 4
+        .features .samples | counts logcounts | gene  length direction | sample
+        <chr>     <chr>    |  <int>     <dbl> | <chr>  <int> <chr>     | <chr> 
+      1 row_a     col_A    |     16      2.77 | g1         3 -         | s1    
+      2 row_b     col_A    |      5      1.61 | g2        51 -         | s1    
+      3 row_c     col_A    |     12      2.48 | g3        24 -         | s1    
+      4 row_d     col_A    |     15      2.71 | g4        32 +         | s1    
+      5 row_e     col_A    |      9      2.20 | g5        49 +         | s1    
+      …   …         …             …        …     …         … …            …    
+    n-4 row_a     col_D    |      8      2.08 | g1         3 -         | s4    
+    n-3 row_b     col_D    |     17      2.83 | g2        51 -         | s4    
+    n-2 row_c     col_D    |      1      0    | g3        24 -         | s4    
+    n-1 row_d     col_D    |     18      2.89 | g4        32 +         | s4    
+    n   row_e     col_D    |      3      1.10 | g5        49 +         | s4    
+    # ℹ n = 20
+    # ℹ 1 more variable: condition <chr>
 
 Below shows the profiling of performing a simple operation on a dataset
 with the following dimensional (14599 x 7).
 
 ``` r
-se_example <- tidySummarizedExperiment::pasilla
-
 native_example <- function(se) {
   assay(se, "logcounts") <- log1p(assay(se, "counts"))
   se
@@ -81,20 +94,15 @@ bench::mark(
 )
 ```
 
-    Registered S3 methods overwritten by 'biocmask':
-      method                        from                    
-      group_by.SummarizedExperiment tidySummarizedExperiment
-      mutate.SummarizedExperiment   tidySummarizedExperiment
-
     Warning: Some expressions had a GC in every iteration; so filtering is
     disabled.
 
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 native       12.1ms   12.9ms     74.8    804.8KB     1.97
-    2 new          68.1ms   71.4ms     12.9       11MB     1.85
-    3 old         376.6ms  583.9ms      1.71    84.3MB     4.28
+    1 native       12.6ms   17.1ms     58.6   804.77KB     1.95
+    2 new            22ms     25ms     39.1     9.42MB     3.91
+    3 old           632ms    632ms      1.58   83.53MB     4.75
 
 ## The abstraction
 
@@ -121,7 +129,7 @@ more information on what this does, please see `` ?rlang::`bang-bang` ``
 
 ### The proposal
 
-![](./data-mask-abstraction.png)
+![](./_devel/data-mask-abstraction.png)
 
 In <a href="#fig-abstraction" class="quarto-xref">Figure 1</a>, we an
 abstract a `SummarizedExperiment` object (top portion) into three
@@ -138,7 +146,16 @@ For example, the `se` bindings in the top level may look like this:
 
 ``` r
 library(rlang)
+```
 
+
+    Attaching package: 'rlang'
+
+    The following object is masked from 'package:Biobase':
+
+        exprs
+
+``` r
 shared_env <- new_environment(
   list(
     .nrow = nrow(se),
@@ -512,14 +529,14 @@ the closest equivalent for `se` would be:
 se[c(1,5), c(1, 4)]
 ```
 
-    # A SummarizedExperiment-tibble abstraction: 4 × 9
-    # [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m
-      .feature .sample counts logcounts sample condition gene  length direction
-      <chr>    <chr>    <int>     <dbl> <chr>  <chr>     <chr>  <int> <chr>    
-    1 row_a    col_A       16      2.77 s1     cntrl     g1         3 -        
-    2 row_e    col_A        9      2.20 s1     cntrl     g5        49 +        
-    3 row_a    col_D        8      2.08 s4     drug      g1         3 -        
-    4 row_e    col_D        3      1.10 s4     drug      g5        49 +        
+    # A SummarizedExperiment-tibble Abstraction: 2 × 2
+      .features .samples | counts logcounts | gene  length direction | sample
+      <chr>     <chr>    |  <int>     <dbl> | <chr>  <int> <chr>     | <chr> 
+    1 row_a     col_A    |     16      2.77 | g1         3 -         | s1    
+    2 row_e     col_A    |      9      2.20 | g5        49 +         | s1    
+    3 row_a     col_D    |      8      2.08 | g1         3 -         | s4    
+    4 row_e     col_D    |      3      1.10 | g5        49 +         | s4    
+    # ℹ 1 more variable: condition <chr>
 
 Thus I think it would make sense to error if the user attempts to filter
 in the assay context and inform them that a valid `SummarizedExperiment`
