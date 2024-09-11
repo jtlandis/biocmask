@@ -4,6 +4,7 @@ Version: 0.99.2
 Authors@R: 
     person("Justin", "Landis", , "jtlandis314@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5501-4934"))
+    person("Michael" "Love", role = c("aut"))
 Description: The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
 License: MIT + file LICENSE
 Encoding: UTF-8
