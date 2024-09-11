@@ -64,9 +64,12 @@
 #' @importFrom tibble tibble
 #' @importFrom tidyr nest unnest chop
 #' @importFrom tidyselect eval_select
+#' @importFrom tidyselect starts_with
 #' @importFrom utils .AtNames
+#' @importFrom vctrs field
 #' @importFrom vctrs list_unchop
 #' @importFrom vctrs new_list_of
+#' @importFrom vctrs new_rcrd
 #' @importFrom vctrs obj_is_list
 #' @importFrom vctrs vec_c
 #' @importFrom vctrs vec_check_size

@@ -27,43 +27,43 @@ expand_groups2 <- function(.rows, .cols) {
 }
 
 # inefficient and possibly defunct
-expand_groups <- function(.rows, .cols) {
-  # browser()
-  .nrow <- nrow(.rows)
-  .ncol <- nrow(.cols)
-  bind_cols(
-    nest(
-      .rows,
-      .row_keys = -c(.indices, .indices_group_id)
-    ) |>
-      reframe(
-        across(
-          everything(),
-          ~vec_rep(.x, times = .env$.ncol)
-        ) |>
-          rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
-      ),
-    nest(
-      .cols,
-      .col_keys = -c(.indices, .indices_group_id)
-    ) |>
-      reframe(
-        across(
-          everything(),
-          ~vec_rep_each(.x, times = .env$.nrow)
-        ) |>
-          rename_with(.fn = \(x) gsub(".indices", ".cols", x = x))
-      ),
-    .name_repair = "minimal"
-  ) |>
-    arrange(
-      .rows_group_id,
-      .cols_group_id
-    ) |>
-    mutate(
-      .group_id = 1:n()
-    )
-}
+# expand_groups <- function(.rows, .cols) {
+#   # browser()
+#   .nrow <- nrow(.rows)
+#   .ncol <- nrow(.cols)
+#   bind_cols(
+#     nest(
+#       .rows,
+#       .row_keys = -c(.indices, .indices_group_id)
+#     ) |>
+#       reframe(
+#         across(
+#           everything(),
+#           ~vec_rep(.x, times = .env$.ncol)
+#         ) |>
+#           rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
+#       ),
+#     nest(
+#       .cols,
+#       .col_keys = -c(.indices, .indices_group_id)
+#     ) |>
+#       reframe(
+#         across(
+#           everything(),
+#           ~vec_rep_each(.x, times = .env$.nrow)
+#         ) |>
+#           rename_with(.fn = \(x) gsub(".indices", ".cols", x = x))
+#       ),
+#     .name_repair = "minimal"
+#   ) |>
+#     arrange(
+#       .rows_group_id,
+#       .cols_group_id
+#     ) |>
+#     mutate(
+#       .group_id = 1:n()
+#     )
+# }
 
 mat_index <- function(rows_ind, cols_ind, nrows) {
   shift <- (cols_ind - 1L) * nrows

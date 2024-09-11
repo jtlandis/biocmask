@@ -26,7 +26,7 @@ poke_ctx_local <- function(name, value) {
   do.call(
     on.exit,
     list(quo, add = TRUE),
-    env = parent.frame()
+    envir = parent.frame()
   )
   invisible(old)
 }
@@ -114,19 +114,19 @@ biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows
   )
 }
 
-biocmask_group_ids <- function(.data, var) {
-  group_by(.data, {{ var }}) |>
-    mutate(rows_keep = !duplicated(.rows_group_id),
-           cols_keep = !duplicated(.cols_group_id)) |>
-    summarise(assays = list(.group_id[rows_keep | cols_keep]),
-              rows = list(.rows_group_id[rows_keep]),
-              cols = list(.cols_group_id[cols_keep]),
-              .nrow = list(sum(.nrows[rows_keep])),
-              .ncol = list(sum(.ncols[cols_keep])),
-              .nsize = list(.nrow[[1]]*.ncol[[1]])) |>
-    select(- {{ var }}) |>
-    as.list()
-}
+# biocmask_group_ids <- function(.data, var) {
+#   group_by(.data, {{ var }}) |>
+#     mutate(rows_keep = !duplicated(.rows_group_id),
+#            cols_keep = !duplicated(.cols_group_id)) |>
+#     summarise(assays = list(.group_id[rows_keep | cols_keep]),
+#               rows = list(.rows_group_id[rows_keep]),
+#               cols = list(.cols_group_id[cols_keep]),
+#               .nrow = list(sum(.nrows[rows_keep])),
+#               .ncol = list(sum(.ncols[cols_keep])),
+#               .nsize = list(.nrow[[1]]*.ncol[[1]])) |>
+#     select(- {{ var }}) |>
+#     as.list()
+# }
 
 env_group_id <- function(env) {
   force(env)

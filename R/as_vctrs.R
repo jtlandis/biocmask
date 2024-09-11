@@ -134,7 +134,7 @@ s4_proxy_restore.CompressedGRangesList_proxy <- function(x) {
     strand = S4Vectors::Rle(strand)
   )
   
-  out <- as(gr, "CompressedGRangesList")
+  out <- methods::as(gr, "CompressedGRangesList")
   out@partitioning  <- p
   out@elementMetadata <- attr(x, "elementMetadata")
   out

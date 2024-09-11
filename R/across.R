@@ -110,7 +110,7 @@ biocmask_across_setup <- function(cols, fns, names, mask, ctx,
                                   manager, .caller_env, error_call) {
   cols <- enquo(cols)
   if (is.null(fns) && quo_is_call(cols, "~")) {
-    bullets <- c("Must supply a column selection.", i = glue("You most likely meant: `{across_if_fn}(everything(), {as_label(cols)})`."), 
+    bullets <- c("Must supply a column selection.", i = glue::glue("You most likely meant: `{across_if_fn}(everything(), {as_label(cols)})`."), 
                  i = "The first argument `.cols` selects a set of columns.", 
                  i = "The second argument `.fns` operates on each selected columns.")
     abort(bullets, call = error_call)

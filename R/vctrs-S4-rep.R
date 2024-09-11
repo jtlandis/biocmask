@@ -1,4 +1,5 @@
 
+
 #' @export
 vec_rep <- new_generic("vec_rep", dispatch_args = "x",
                        function(x, times, ..., 
