@@ -2,6 +2,9 @@ url: https://jtlandis.github.io/biocmask
 
 title: biocmask
 
+template:
+  bootstrap: 5
+
 authors:
   Justin Landis:
     href: https://github.com/jtlandis
