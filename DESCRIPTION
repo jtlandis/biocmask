@@ -36,5 +36,5 @@ Suggests:
     rmarkdown,
     testthat
 LazyData: true
-URL: https://github.com/jtlandis/biocmask
+URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
 biocViews: Annotation, GenomeAnnotation, Transcriptomics
