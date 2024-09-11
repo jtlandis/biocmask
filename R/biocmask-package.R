@@ -64,6 +64,7 @@
 #' @importFrom tibble tibble
 #' @importFrom tidyr nest unnest chop
 #' @importFrom tidyselect eval_select
+#' @importFrom utils .AtNames
 #' @importFrom vctrs list_unchop
 #' @importFrom vctrs new_list_of
 #' @importFrom vctrs obj_is_list

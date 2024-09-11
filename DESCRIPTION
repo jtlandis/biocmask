@@ -24,7 +24,8 @@ Imports:
     glue,
     S7,
     S4Vectors,
-    IRanges
+    IRanges,
+    utils
 Depends: 
     R (>= 2.10)
 Suggests:
