@@ -1,6 +1,10 @@
 
-
-
+#' @title Recycle a vector
+#' @name vctrs-vec_recycle
+#' @description
+#' A re-export of [`vctrs::vec_recycle`][vctrs::vec_recycle] as an S7 generic
+#' function to allow `S4Vectors`.
+#' @inheritParams vctrs::vec_recycle
 #' @export
 vec_recycle <- new_generic("vec_recycle", dispatch_args = "x",
                            function(x, size, ..., x_arg = "",

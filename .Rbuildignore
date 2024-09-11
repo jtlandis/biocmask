@@ -9,3 +9,4 @@ README.qmd
 README.pdf
 ^.*\.Rproj$
 _devel
+pkgdown

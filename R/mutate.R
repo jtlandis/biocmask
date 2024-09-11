@@ -2,7 +2,6 @@
 #' @importFrom dplyr mutate
 
 #' @title Mutate a SummarizedExperiment object
-#' @name mutate
 #' @description
 #' Mutate a SummarizedExperiment object under an data mask. Unlike a few other
 #' `dplyr` implementations, all contextual evaluations of `mutate()` for

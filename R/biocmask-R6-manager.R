@@ -120,19 +120,24 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
   chop_out
 }
 
-setOldClass("biocmask_manager")
-
-setMethod("assays", signature = "biocmask_manager",
-          definition = function(x, withDimnames = TRUE, ...) {
-            x$masks[["assays"]]$ptype
-          })
-
-setMethod("rowData", signature = "biocmask_manager",
-          definition = function(x, withDimnames = TRUE, ...) {
-            x$masks[["rows"]]$ptype
-          })
-
-setMethod("colData", signature = "biocmask_manager",
-          definition = function(x, withDimnames = TRUE, ...) {
-            x$masks[["cols"]]$ptype
-          })
+## created for a hypothetical usage of passing a `biocmask_manager`
+## as the data argument to `biocmask_eval_select()`.
+## This use case is not used within the package, so we should not
+## write documentation for something that isn't used until we actual
+## use it...
+# setOldClass("biocmask_manager")
+# 
+# setMethod("assays", signature = "biocmask_manager",
+#           definition = function(x, withDimnames = TRUE, ...) {
+#             x$masks[["assays"]]$ptype
+#           })
+# 
+# setMethod("rowData", signature = "biocmask_manager",
+#           definition = function(x, withDimnames = TRUE, ...) {
+#             x$masks[["rows"]]$ptype
+#           })
+# 
+# setMethod("colData", signature = "biocmask_manager",
+#           definition = function(x, withDimnames = TRUE, ...) {
+#             x$masks[["cols"]]$ptype
+#           })

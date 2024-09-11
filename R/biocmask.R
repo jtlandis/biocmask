@@ -1,6 +1,6 @@
 
 #' @title New Biocmask
-#' @name biocmask
+#' @name new_biocmask
 #' @description
 #' Create a biocmask for an object
 #' @param obj Dispatch Object

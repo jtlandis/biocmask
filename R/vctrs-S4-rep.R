@@ -1,5 +1,11 @@
 
-
+#' @title replicate a vector
+#' @name vctrs-vec_rep
+#' @description
+#' A re-export of [`vctrs::vec_rep`][vctrs::vec_rep] and 
+#' [`vctrs::vec_rep_each`][vctrs::vec_rep_each] as an S7 generic
+#' function to allow `S4Vectors`.
+#' @inheritParams vctrs::vec_rep
 #' @export
 vec_rep <- new_generic("vec_rep", dispatch_args = "x",
                        function(x, times, ..., 
@@ -24,6 +30,7 @@ method(vec_rep, class_s4_vctrs) <- function(x, times, ...,
   rep(x, times)
 }
 
+#' @rdname vctrs-vec_rep
 #' @export
 vec_rep_each <- new_generic("vec_rep_each", dispatch_args = "x",
                        function(x, times, ..., 

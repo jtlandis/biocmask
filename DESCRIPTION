@@ -24,7 +24,6 @@ Imports:
     glue,
     S7,
     S4Vectors,
-    IRanges,
     utils,
     methods
 Depends: 

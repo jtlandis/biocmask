@@ -1,8 +1,7 @@
 
-#' @importFrom dplyr group_by ungroup group_data
-NULL
 
 #' @title get grouping data
+#' @name group_data-SummarizedExperiment
 #' @description
 #' retrieve grouping information from a `SummarizedExperiment` object. This
 #' is stored within the `metadata()` of the object.
@@ -14,7 +13,7 @@ group_data.SummarizedExperiment <- function(.data) {
 }
 
 #' @title group_by SummarizedExperiment
-#' @name group_by
+#' @name group_by-SummarizedExperiment
 #' @description
 #' create grouping variables about the rowData and colData of a 
 #' SummarizedExperiment object. Unlike the `data.frame` method
@@ -117,12 +116,11 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
 }
 
 
-#' @name group_by
-#' @description
-#' Ungroup a SummarizedExperiment object
+#' @describeIn group_by-SummarizedExperiment Ungroup a SummarizedExperiment object
 #' 
 #' @param x A SummarizedExperiment object
-#' @param ... 
+#' @param ... [contextual expressions][biocmask::biocmask-context] specifying 
+#' which columns to ungroup. Omitting `...` ungroups the entire object.
 #' @export
 ungroup.SummarizedExperiment <- function(x, ...) {
   quos <- biocmask_quos(..., .named = FALSE)

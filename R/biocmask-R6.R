@@ -372,7 +372,7 @@ biocmask <- R6::R6Class(
 
 
 #' @title `biocmask` for SummarizedExperiment `assays()`
-#' @rdname BiocDataMask-assays
+#' @name BiocDataMask-assays
 #' @description
 #' A more specialized version of the biocmask R6 object for the 
 #' assays list object. This includes chopping and unchopping 
