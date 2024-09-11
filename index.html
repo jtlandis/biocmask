@@ -129,9 +129,9 @@
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># A tibble: 3 × 6</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  expression      min   median <span class="st">`</span><span class="at">itr/sec</span><span class="st">`</span> mem_alloc <span class="st">`</span><span class="at">gc/sec</span><span class="st">`</span></span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="sc">&lt;</span>bch<span class="sc">:</span>expr<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>tm<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>tm<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>byt<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="dv">1</span> native       <span class="fl">12.6</span>ms   <span class="fl">17.1</span>ms     <span class="fl">58.6</span>   <span class="fl">804.77</span>KB     <span class="fl">1.95</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="dv">2</span> new            <span class="dv">22</span>ms     <span class="dv">25</span>ms     <span class="fl">39.1</span>     <span class="fl">9.42</span>MB     <span class="fl">3.91</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="dv">3</span> old           <span class="dv">632</span>ms    <span class="dv">632</span>ms      <span class="fl">1.58</span>   <span class="fl">83.53</span>MB     <span class="fl">4.75</span></span></code></pre></div>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="dv">1</span> native       <span class="fl">14.1</span>ms     <span class="dv">18</span>ms     <span class="fl">54.9</span>   <span class="fl">804.77</span>KB     <span class="fl">1.96</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="dv">2</span> new          <span class="fl">23.6</span>ms   <span class="fl">25.2</span>ms     <span class="fl">38.8</span>     <span class="fl">9.42</span>MB     <span class="fl">3.88</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="dv">3</span> old         <span class="fl">893.7</span>ms  <span class="fl">893.7</span>ms      <span class="fl">1.12</span>   <span class="fl">83.53</span>MB     <span class="fl">3.36</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-abstraction">The abstraction<a class="anchor" aria-label="anchor" href="#the-abstraction"></a>
@@ -150,7 +150,7 @@
 <div class="section level3">
 <h3 id="the-proposal">The proposal<a class="anchor" aria-label="anchor" href="#the-proposal"></a>
 </h3>
-<p><img src="./_devel/data-mask-abstraction.png"></p>
+<p><img src="_devel/data-mask-abstraction.png"></p>
 <p>In <a href="#fig-abstraction" class="quarto-xref">Figure 1</a>, we an abstract a <code>SummarizedExperiment</code> object (top portion) into three distinct data masks (the bottom portion) that represent different evaluation contexts for our object. We are either evaluating on the <code>assay_mask</code>, <code>rowData_mask</code>, or the <code>colData_mask</code>.</p>
 <div class="section level4">
 <h4 id="top-level-of-the-mask">Top level of the mask<a class="anchor" aria-label="anchor" href="#top-level-of-the-mask"></a>
@@ -342,7 +342,7 @@
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#test expression</span></span>
 <span><span class="va">my_tibble_expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/expr.html" class="external-link">expr</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  <span class="fu">tibble</span><span class="op">(</span></span>
 <span>    counts <span class="op">=</span> <span class="va">counts</span>,</span>
 <span>    length <span class="op">=</span> <span class="va">length</span>,</span>
 <span>    condition <span class="op">=</span> <span class="va">condition</span></span>
