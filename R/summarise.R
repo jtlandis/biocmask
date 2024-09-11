@@ -119,7 +119,7 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
     }
     # recycle each chop to required length
     col_chops <- assert_chops_size(col_chops, size = col_chops_sizes)
-    col_data <- new(
+    col_data <- methods::new(
       "DFrame",
       listData = map(
         col_chops,

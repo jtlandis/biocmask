@@ -1,6 +1,14 @@
-^tidySEabstraction\.Rproj$
+*.Rproj
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^data-raw$
 ^presentations
 src
+.github
+*_files
+*.pdf
+*.rds
+*.R
+*.
+*.qmd
+*.png
