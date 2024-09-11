@@ -11,7 +11,7 @@
 
 \item{...}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> one or more selection
 expressions. Supports wrapping expressions within the
-<\code{\link[=`biocmask-context]{biocmask-contexts}}>.}
+<\code{\link[=biocmask-context]{biocmask-contexts}}>.}
 }
 \description{
 Select one or more values from each context. By default omitting an expression

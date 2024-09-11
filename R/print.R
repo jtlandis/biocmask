@@ -7,7 +7,7 @@ sep_ <- function(n) {
 }
 
 #' @export
-`vec_ptype_abbr.sep!` <- function(x) {
+`vec_ptype_abbr.sep!` <- function(x, ..., prefix_named, suffix_shape) {
   NULL
 }
 
@@ -31,7 +31,7 @@ vec_restore.vec_phantom <- function(x, to, ...) {
 
 #' @export
 vec_ptype_abbr.vec_phantom <- function(x, ...) {
-  vec_ptype_abbr(attr(x, "phantomData"))
+  vec_ptype_abbr(attr(x, "phantomData"), ...)
 }
 
 # x <- vec_phantom(letters)
@@ -39,7 +39,7 @@ vec_ptype_abbr.vec_phantom <- function(x, ...) {
 
 #' @export
 pillar_shaft.vec_phantom <- function(x, ...) {
-  fmt <- biocmask_pillar_format(attr(x, "phantomData"))
+  fmt <- biocmask_pillar_format(attr(x, "phantomData"), ...)
   cur_width <- max(nchar(fmt))
   min_width <- min(10, cur_width)
   pillar::new_pillar_shaft_simple(
@@ -51,6 +51,24 @@ pillar_shaft.vec_phantom <- function(x, ...) {
   )
 }
 
+#' @name biocmask-printing
+#' @title Printing within tibble with S4 objects
+#' @description
+#' `biocmask` uses [pillar][pillar::pillar-package] for its printing.
+#' If you want to change how your S4 object is printed within
+#' `biocmask`'s print method, consider writing a method for 
+#' this function.
+#'
+#' To print S4 objects in a tibble, `biocmask` hacks a custom
+#' integer vector built from [`vctrs`][vctrs::new_vctr] where 
+#' the S4 object lives in an attribute named "phantomData". 
+#' 
+#' The default method for formatting a `vec_phantom` is to call
+#' [`showAsCell()`][S4Vectors::showAsCell].
+#' 
+#' @param x The S4 object
+#' @param ... other arguments passed from [`pillar_shaft`][pillar::pillar_shaft]
+#' 
 #' @export
 biocmask_pillar_format <- function(x, ...) {
   UseMethod("biocmask_pillar_format")
@@ -206,7 +224,7 @@ ctl_new_rowid_pillar.SE_abstraction <- function(controller,
 }
 
 #' @export
-`pillar_shaft.sep!` <- function(x) {
+`pillar_shaft.sep!` <- function(x, ...) {
   new_pillar_shaft_simple(
     style_subtle(x),
     align = "left",

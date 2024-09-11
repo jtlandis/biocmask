@@ -6,6 +6,16 @@
 \usage{
 vec_slice(x, i, ...)
 }
+\arguments{
+\item{x}{A vector}
+
+\item{i}{An integer, character or logical vector specifying the
+locations or names of the observations to get/set. Specify
+\code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
+\code{integer()} to index none (as in \code{x[NULL]}).}
+
+\item{...}{These dots are for future extensions and must be empty.}
+}
 \description{
 This extends \code{vctrs::vec_slice} to \code{S4Vectors::Vector} class by masking
 \code{vec_slice} with \code{S7::new_generic}. Atomic vectors and other base S3 classes

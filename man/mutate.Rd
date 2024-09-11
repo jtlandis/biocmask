@@ -22,7 +22,7 @@ Mutate a SummarizedExperiment object under an data mask. Unlike a few other
 }
 \examples{
 
-mutate(se,
+mutate(se_simple,
     counts_1 = counts + 1,
     logp_counts = log(counts_1),
     # access assays context with ".assays" pronoun,

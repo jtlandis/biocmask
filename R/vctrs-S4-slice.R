@@ -50,6 +50,7 @@
 #' checks on the object validity and all `@elementMetadata` and `@metadata` are
 #' dropped from the objects.
 #'
+#' @inheritParams vctrs::vec_slice
 #' @export
 vec_slice <- S7::new_generic("vec_slice", 
                              dispatch_args = "x",

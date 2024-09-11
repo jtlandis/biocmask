@@ -18,7 +18,7 @@
 #' @param .data a `SummarizedExperiment` object
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> one or more selection 
 #' expressions. Supports wrapping expressions within the 
-#' <[`biocmask-contexts`][biocmask::`biocmask-context`]>.
+#' <[`biocmask-contexts`][biocmask::biocmask-context]>.
 #' 
 #' @examples
 #' 
