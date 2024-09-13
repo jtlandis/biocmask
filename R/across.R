@@ -182,8 +182,8 @@ biocmask_across_setup <- function(cols, fns, names, mask, ctx,
 #' the following functions were taken verbatim from the `dplyr` package such 
 #' that behaviors of `across()` were consistent between `dplyr` and `biocmask`
 #' @keywords internal 
-#' @noRD
-expr_substitute <-function (expr, old, new) 
+#' @noRd
+expr_substitute <- function(expr, old, new) 
 {
   expr <- duplicate(expr)
   switch(typeof(expr),
@@ -193,7 +193,7 @@ expr_substitute <-function (expr, old, new)
 }
 
 #' @rdname dplyr_across_internals
-node_walk_replace <- function (node, old, new) {
+node_walk_replace <- function(node, old, new) {
   while (!is_null(node)) {
     switch(typeof(node_car(node)),
            language = {if (!is_call(node_car(node), c("~", "function")) || 
@@ -206,7 +206,7 @@ node_walk_replace <- function (node, old, new) {
 }
 
 #' @rdname dplyr_across_internals
-as_across_expr <- function (fn, var) {
+as_across_expr <- function(fn, var) {
   if (is_inlinable_lambda(fn)) {
     arg <- names(formals(fn))[[1]]
     expr <- body(fn)
@@ -218,7 +218,7 @@ as_across_expr <- function (fn, var) {
 }
 
 #' @rdname dplyr_across_internals
-is_inlinable_lambda <- function (x) {
+is_inlinable_lambda <- function(x) {
   is_function(x) && identical(fn_env(x), empty_env())
 }
 
@@ -260,7 +260,7 @@ validate_fns <- function(quo, mask, error_call = caller_env()) {
 }
 
 #' @rdname dplyr_across_internals
-is_inlinable_function <- function (x) 
+is_inlinable_function <- function(x) 
 {
   if (!is_function(x)) {
     return(FALSE)
@@ -276,7 +276,7 @@ is_inlinable_function <- function (x)
 }
 
 #' @rdname dplyr_across_internals
-is_inlinable_formula <- function (x) {
+is_inlinable_formula <- function(x) {
   if (!is_formula(x, lhs = FALSE)) {
     return(FALSE)
   }
