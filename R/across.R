@@ -224,8 +224,9 @@ is_inlinable_lambda <- function (x) {
 #' @rdname dplyr_across_internals
 validate_fns <- function(quo, mask, error_call = caller_env()) {
   sentinel_env <- empty_env()
+  this <- current_env()
   out <- eval_tidy(quo({
-    sentinel_env <<- current_env()
+    .env$this$sentinel_env <- current_env()
     !!quo
   }))
   validate <- function(x) {
