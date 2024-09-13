@@ -11,6 +11,7 @@ The package provides `rlang` data masks for SummarizedExperiment class. The enab
 Useful links:
 \itemize{
   \item \url{https://github.com/jtlandis/biocmask}
+  \item \url{https://jtlandis.github.io/biocmask}
 }
 
 }

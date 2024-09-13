@@ -40,12 +40,12 @@ vec_ptype_abbr.vec_phantom <- function(x, ...) {
 #' @export
 pillar_shaft.vec_phantom <- function(x, ...) {
   fmt <- biocmask_pillar_format(attr(x, "phantomData"), ...)
-  cur_width <- max(nchar(fmt))
+  cur_width <- max(nchar(fmt), 2, na.rm = TRUE)
   min_width <- min(10, cur_width)
   pillar::new_pillar_shaft_simple(
     formatted = fmt,
     ...,
-    width = max(nchar(fmt)),
+    width = cur_width,
     min_width = min_width,
     shorten = "mid"
   )
@@ -321,7 +321,10 @@ setMethod(
     if (isTRUE(x=getOption(x="restore_SummarizedExperiment_show",
                            default = FALSE)) 
     ) {
-      SummarizedExperiment::show(object = object)
+      getMethod(
+        f = "show",
+        signature = "SummarizedExperiment",
+        where=asNamespace(ns = "SummarizedExperiment"))(x)
     } else {
       print(object)
     }
