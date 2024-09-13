@@ -38,4 +38,5 @@ Suggests:
     airway
 LazyData: true
 URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
+BugReports: https://www.github.com/jtlandis/biocmask/issues
 biocViews: Annotation, GenomeAnnotation, Transcriptomics
