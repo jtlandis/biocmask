@@ -1,6 +1,6 @@
 Package: biocmask
 Title: Create data masks for SE dplyr functions
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(
     person("Justin", "Landis", email = "jtlandis314@gmail.com", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0001-5501-4934")),
