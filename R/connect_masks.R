@@ -15,7 +15,7 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(lapply(1:`biocmask:::ctx:::n`, function(i,x) x[i,,drop=TRUE], x = !!name_sym)),
+    quote(lapply(seq_len(`biocmask:::ctx:::n`), function(i,x) x[i,,drop=TRUE], x = !!name_sym)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -47,7 +47,7 @@ connect_assays_to_cols <- function(mask_assays, mask_cols) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(lapply(1:`biocmask:::ctx:::n`, function(i,x) x[,i,drop=TRUE], x = !!name_sym)),
+    quote(lapply(seq_len(`biocmask:::ctx:::n`), function(i,x) x[,i,drop=TRUE], x = !!name_sym)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"

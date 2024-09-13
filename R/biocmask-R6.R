@@ -43,7 +43,7 @@
 #'   .nrow = 10),
 #'   baseenv())
 #' binding_func <- add_bind(
-#'   .expr = quote(lapply(1:.nrow, function(i, x) x[i], x = .iris[[!!name]])),
+#'   .expr = quote(lapply(seq_len(.nrow), function(i, x) x[i], x = .iris[[!!name]])),
 #'   .expr_env = env,
 #'   type = "lazy")
 #' binding_func("Sepal.Width")
