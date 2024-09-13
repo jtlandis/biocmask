@@ -1,26 +1,76 @@
 ---
-title: "biocmask is great"
-author: "us"
+title: "`biocmask` Usage Guide"
+author:
+    - name: Justin Landis
+      orcid: 0000-0001-5501-4934
+    - name: Michael Love
+      orcid: 0000-0001-8401-0545
 date: "`r format(Sys.time(), '%m/%d/%Y')`"
 output: rmarkdown::html_document
 abstract: >
   biocmask is great.
 bibliography: library.bib
 vignette: |
-  %\VignetteIndexEntry{This will show up on Bioc landing page}
+  %\VignetteIndexEntry{biocmask Usage Guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction
+# Quick start
 
-the `GRanges` package [@granges] is great
+One or two sentence overview of what is going on here...
+
+## Supported data types and operations
+
+`biocmask` works on *SummarizedExperiment* objects, as well as most
+classes derived from this, including *DESeqDataSet*,
+*SingleCellExperiment*, etc.
+
+It supports the following operations:
+
+* `mutate`
+* `select`
+* ...
+
+## Typical use case
+
+```{r message=FALSE}
+library(airway)
+data(airway)
+library(biocmask)
+airway |>
+  mutate(log_counts = log1p(counts),
+         cols(treated = dex == "trt"),
+         rows(new_id = paste0("gene-", gene_name)))
+```
+
+## Related work
+
+* these
+* are 
+* some 
+* others
+
+# Manipulating *SummarizedExperiment* with `biocmask`
+
+## assay context
+
+## row context
+
+## col context
+
+# How it works
+
+# Advanced features
+
+# Troubleshooting and best practices
+
+# Community and support
 
 # Session info
 
 ```{r}
-library(devtools)
-session_info()
+devtools::session_info()
 ```
 
 # References
