@@ -43,8 +43,18 @@ mentioned in error messages as the source of the error. See the
 
 \item{x_arg, times_arg}{Argument names for errors.}
 }
+\value{
+a new S3 or S4 vector replicated by specified times
+}
 \description{
 A re-export of \code{\link[vctrs:vec-rep]{vctrs::vec_rep}} and
 \code{\link[vctrs:vec-rep]{vctrs::vec_rep_each}} as an S7 generic
 function to allow \code{S4Vectors}.
+}
+\examples{
+vec_rep(1:2, times = 5)
+vec_rep(S4Vectors::Rle(1:2), times = 5)
+
+vec_rep_each(1:2, times = 5)
+vec_rep_each(S4Vectors::Rle(1:2), times = 5)
 }

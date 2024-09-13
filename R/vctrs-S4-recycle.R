@@ -5,6 +5,11 @@
 #' A re-export of [`vctrs::vec_recycle`][vctrs::vec_recycle] as an S7 generic
 #' function to allow `S4Vectors`.
 #' @inheritParams vctrs::vec_recycle
+#' @return a S3 or S4 vector
+#' @examples
+#' vec_recycle(1L, size = 5L)
+#' vec_recycle(S4Vectors::Rle(1L), size = 5L)
+#' 
 #' @export
 vec_recycle <- new_generic("vec_recycle", dispatch_args = "x",
                            function(x, size, ..., x_arg = "",

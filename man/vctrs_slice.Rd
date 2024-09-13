@@ -17,6 +17,9 @@ locations or names of the observations to get/set. Specify
 
 \item{...}{These dots are for future extensions and must be empty.}
 }
+\value{
+a new S3 or S4 vector subsetted by \code{i}
+}
 \description{
 This extends \code{vctrs::vec_slice} to \code{S4Vectors::Vector} class by masking
 \code{vec_slice} with \code{S7::new_generic}. Atomic vectors and other base S3 classes
@@ -67,4 +70,9 @@ Vector with \code{biocmask_restore_s4_proxy()}.
 checks on the object validity and all \verb{@elementMetadata} and \verb{@metadata} are
 dropped from the objects.
 }
+}
+\examples{
+vec_slice(1:10, i = 5)
+vec_slice(S4Vectors::Rle(rep(1:3, each = 3)), i = 5)
+
 }

@@ -51,6 +51,11 @@
 #' dropped from the objects.
 #'
 #' @inheritParams vctrs::vec_slice
+#' @return a new S3 or S4 vector subsetted by `i`
+#' @examples
+#' vec_slice(1:10, i = 5)
+#' vec_slice(S4Vectors::Rle(rep(1:3, each = 3)), i = 5)
+#' 
 #' @export
 vec_slice <- S7::new_generic("vec_slice", 
                              dispatch_args = "x",

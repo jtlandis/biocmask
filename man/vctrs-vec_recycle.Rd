@@ -27,7 +27,15 @@ running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
+\value{
+a S3 or S4 vector
+}
 \description{
 A re-export of \code{\link[vctrs:vec_recycle]{vctrs::vec_recycle}} as an S7 generic
 function to allow \code{S4Vectors}.
+}
+\examples{
+vec_recycle(1L, size = 5L)
+vec_recycle(S4Vectors::Rle(1L), size = 5L)
+
 }

@@ -2,9 +2,12 @@
 % Please edit documentation in R/biocmask.R
 \name{new_biocmask}
 \alias{new_biocmask}
+\alias{new_biocmask.SummarizedExperiment}
 \title{New Biocmask}
 \usage{
 new_biocmask(obj, ...)
+
+\method{new_biocmask}{SummarizedExperiment}(obj, ...)
 }
 \arguments{
 \item{obj}{Dispatch Object}
@@ -16,4 +19,7 @@ a biocmask_manager R6 class object
 }
 \description{
 Create a biocmask for an object
+}
+\seealso{
+\link{BiocmaskManager}
 }

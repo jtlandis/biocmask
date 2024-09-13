@@ -327,10 +327,10 @@ setMethod(
     if (isTRUE(x=getOption(x="restore_SummarizedExperiment_show",
                            default = FALSE)) 
     ) {
-      getMethod(
+      methods::getMethod(
         f = "show",
         signature = "SummarizedExperiment",
-        where=asNamespace(ns = "SummarizedExperiment"))(x)
+        where=asNamespace(ns = "SummarizedExperiment"))(object)
     } else {
       print(object)
     }
