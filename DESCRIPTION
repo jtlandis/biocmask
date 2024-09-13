@@ -1,5 +1,5 @@
 Package: biocmask
-Title: Create data masks for SE dplyr functions
+Title: Create S4 BioConductor data masks for dplyr functions
 Version: 0.99.3
 Authors@R: c(
     person("Justin", "Landis", email = "jtlandis314@gmail.com", role = c("aut", "cre"),
