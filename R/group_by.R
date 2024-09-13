@@ -7,6 +7,9 @@
 #' is stored within the `metadata()` of the object.
 #' 
 #' @param .data an object
+#' @return list of groupings for an SummarizedExperiment
+#' @examples
+#' group_by(se_simple, rows(direction), cols(condition)) |> group_data()
 #' @export
 group_data.SummarizedExperiment <- function(.data) {
   metadata(.data)[["group_data"]]

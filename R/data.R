@@ -27,5 +27,9 @@
 #'    }
 #'  }
 #' }
-#' 
+#' @return a `SummarizedExperiment` object
+#' @examples
+#' SummarizedExperiment::assays(se_simple)
+#' SummarizedExperiment::rowData(se_simple)
+#' SummarizedExperiment::colData(se_simple)
 "se_simple"

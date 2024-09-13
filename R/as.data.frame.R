@@ -4,6 +4,9 @@
 #' @param x `SummarizedExperiment` object
 #' @param ... unused arguments
 #' @return a data.frame object
+#' @examples
+#' as.data.frame(se_simple)
+#' 
 #' @export
 as.data.frame.SummarizedExperiment <- function(x, ...) {
   nc <- ncol(x)

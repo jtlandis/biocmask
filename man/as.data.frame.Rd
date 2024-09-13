@@ -18,3 +18,7 @@ a data.frame object
 \description{
 create data.frame
 }
+\examples{
+as.data.frame(se_simple)
+
+}

@@ -1,6 +1,5 @@
 
 #' @title arrange rows or columns
-#' @name arrange-SE
 #' @description
 #' `arrange()` orders either the rows or columns of a `SummarizedExperiment`
 #' object. Note, to guarentee a valid `SummarizedExperiment` is returned, 
@@ -15,21 +14,21 @@
 #' @examples
 #' 
 #' #arrange within rows/cols contexts separately
-#' arrange(se_simple,
+#' dplyr::arrange(se_simple,
 #'         rows(direction),
 #'         cols(dplyr::desc(condition)))
 #' 
 #' # access assay data to compute arrangement
-#' arrange(se_simple, 
+#' dplyr::arrange(se_simple, 
 #'         rows(rowSums(.assays_asis$counts)),
 #'         cols(colSums(.assays_asis$counts)))
 #' 
 #' # assay context is disabled
-#' arrange(se_simple, counts) |> try()
+#' dplyr::arrange(se_simple, counts) |> try()
 #' 
 #' # convert to `data.frame` first
 #' as.data.frame(se_simple) |>
-#'   arrange(counts)
+#'   dplyr::arrange(counts)
 #' 
 #' 
 #' @export

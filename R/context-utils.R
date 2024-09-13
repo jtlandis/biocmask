@@ -18,9 +18,7 @@
 #' mutate(se_simple,
 #'        cols(is_drug = condition=="drug"),
 #'        #bind a different context
-#'        effect = col_ctx(counts + (is_drug * rbinom(n(), 20, .3))),
-#'        # access via pronoun
-#'        rows(sum = rowSums(.assays_asis$effect)))
+#'        effect = col_ctx(counts + (is_drug * rbinom(n(), 20, .3))))
 #' 
 NULL
 
@@ -112,6 +110,13 @@ assay_ctx <- function(x, asis = FALSE) {
 #' are exported to pass R CMD Checks. When using a `biocmask` within your package,
 #' import the associated pronoun from `biocmask` but only use the fully unqualified 
 #' name, `.assays`, `.assays_asis`, etc.
+#' @return access to specific values behind the rlang pronoun
+#' @examples
+#' mutate(se_simple,
+#'        # access via pronoun
+#'        rows(sum = rowSums(.assays_asis$counts)),
+#'        cols(sum = vapply(.assays$counts, sum, numeric(1))))
+#' 
 NULL
 
 #' @rdname dot-pronouns

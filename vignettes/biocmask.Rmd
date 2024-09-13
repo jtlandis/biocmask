@@ -37,6 +37,7 @@ It supports the following operations:
 ```{r message=FALSE}
 library(airway)
 data(airway)
+library(dplyr)
 library(biocmask)
 airway |>
   mutate(log_counts = log1p(counts),

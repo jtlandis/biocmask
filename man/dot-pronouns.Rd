@@ -46,4 +46,11 @@ are exported to pass R CMD Checks. When using a \code{biocmask} within your pack
 import the associated pronoun from \code{biocmask} but only use the fully unqualified
 name, \code{.assays}, \code{.assays_asis}, etc.
 }
+\examples{
+mutate(se_simple,
+       # access via pronoun
+       rows(sum = rowSums(.assays_asis$counts)),
+       cols(sum = vapply(.assays$counts, sum, numeric(1))))
+
+}
 \keyword{datasets}
