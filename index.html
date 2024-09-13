@@ -4,68 +4,49 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create data masks for SE dplyr functions • biocmask</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Create data masks for SE dplyr functions">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Create S4 BioConductor data masks for dplyr functions • biocmask</title>
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create S4 BioConductor data masks for dplyr functions">
+<meta name="description" content="The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.">
 <meta property="og:description" content="The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">biocmask</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="articles/biocmask.html">Get started</a>
-</li>
-<li>
-  <a href="reference/index.html">Reference</a>
-</li>
+    <a class="navbar-brand me-2" href="index.html">biocmask</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.6</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/biocmask.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/jtlandis/biocmask/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/jtlandis/biocmask/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
-
-
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-<div class="section level1">
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="readme">README<a class="anchor" aria-label="anchor" href="#readme"></a>
 </h1></div>
 <p>The goal of this repo is to design efficient abstractions to the <code>SummarizedExperiment</code> class such that using common dplyr functions feels as natural to operating on a <code>data.frame</code> or <code>tibble</code>. While the overall goal is for it to <strong>feel</strong> like a tibble operation, it would be smart to emphasize that certain data wrangling pipelines do not translate well to the structure of the <code>SummarizedExperiment</code> class.</p>
@@ -75,11 +56,15 @@
 </h2>
 <p>I will be using the following example data throughout this document:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">tidySEabstraction</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rlang.r-lib.org" class="external-link">rlang</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">se_example</span> <span class="op">&lt;-</span> <span class="fu">tidySummarizedExperiment</span><span class="fu">::</span><span class="va">pasilla</span></span>
+<span><span class="co">#</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">tidySummarizedExperiment</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>Warning<span class="sc">:</span> package <span class="st">'S4Vectors'</span> was built under R version <span class="dv">4</span>.<span class="fl">4.1</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>Warning<span class="sc">:</span> package <span class="st">'IRanges'</span> was built under R version <span class="dv">4</span>.<span class="fl">4.1</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load biocmask last to use its `dplyr` verbs</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jtlandis/biocmask" class="external-link">biocmask</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -93,19 +78,25 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"col_%s"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">'logcounts'</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">'counts'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">se</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>class<span class="sc">:</span> SummarizedExperiment </span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>dim<span class="sc">:</span> <span class="dv">5</span> <span class="dv">4</span> </span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">metadata</span>(<span class="dv">0</span>)<span class="sc">:</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">assays</span>(<span class="dv">2</span>)<span class="sc">:</span> counts logcounts</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">rownames</span>(<span class="dv">5</span>)<span class="sc">:</span> row_a row_b row_c row_d row_e</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>rowData <span class="fu">names</span>(<span class="dv">3</span>)<span class="sc">:</span> gene length direction</span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">colnames</span>(<span class="dv">4</span>)<span class="sc">:</span> col_A col_B col_C col_D</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>colData <span class="fu">names</span>(<span class="dv">2</span>)<span class="sc">:</span> sample condition</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>    .features .samples <span class="sc">|</span> counts logcounts <span class="sc">|</span> gene  length direction <span class="sc">|</span> sample</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">|</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">|</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">|</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="dv">1</span> row_a     col_A    <span class="sc">|</span>     <span class="dv">16</span>      <span class="fl">2.77</span> <span class="sc">|</span> g1         <span class="dv">3</span> <span class="sc">-</span>         <span class="er">|</span> s1    </span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="dv">2</span> row_b     col_A    <span class="sc">|</span>      <span class="dv">5</span>      <span class="fl">1.61</span> <span class="sc">|</span> g2        <span class="dv">51</span> <span class="sc">-</span>         <span class="er">|</span> s1    </span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="dv">3</span> row_c     col_A    <span class="sc">|</span>     <span class="dv">12</span>      <span class="fl">2.48</span> <span class="sc">|</span> g3        <span class="dv">24</span> <span class="sc">-</span>         <span class="er">|</span> s1    </span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="dv">4</span> row_d     col_A    <span class="sc">|</span>     <span class="dv">15</span>      <span class="fl">2.71</span> <span class="sc">|</span> g4        <span class="dv">32</span> <span class="sc">+</span>         <span class="er">|</span> s1    </span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="dv">5</span> row_e     col_A    <span class="sc">|</span>      <span class="dv">9</span>      <span class="fl">2.20</span> <span class="sc">|</span> g5        <span class="dv">49</span> <span class="sc">+</span>         <span class="er">|</span> s1    </span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  …   …         …             …        …     …         … …            …    </span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>n<span class="dv">-4</span> row_a     col_D    <span class="sc">|</span>      <span class="dv">8</span>      <span class="fl">2.08</span> <span class="sc">|</span> g1         <span class="dv">3</span> <span class="sc">-</span>         <span class="er">|</span> s4    </span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>n<span class="dv">-3</span> row_b     col_D    <span class="sc">|</span>     <span class="dv">17</span>      <span class="fl">2.83</span> <span class="sc">|</span> g2        <span class="dv">51</span> <span class="sc">-</span>         <span class="er">|</span> s4    </span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>n<span class="dv">-2</span> row_c     col_D    <span class="sc">|</span>      <span class="dv">1</span>      <span class="dv">0</span>    <span class="sc">|</span> g3        <span class="dv">24</span> <span class="sc">-</span>         <span class="er">|</span> s4    </span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>n<span class="dv">-1</span> row_d     col_D    <span class="sc">|</span>     <span class="dv">18</span>      <span class="fl">2.89</span> <span class="sc">|</span> g4        <span class="dv">32</span> <span class="sc">+</span>         <span class="er">|</span> s4    </span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>n   row_e     col_D    <span class="sc">|</span>      <span class="dv">3</span>      <span class="fl">1.10</span> <span class="sc">|</span> g5        <span class="dv">49</span> <span class="sc">+</span>         <span class="er">|</span> s4    </span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co"># ℹ n = 20</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co"># ℹ 1 more variable: condition &lt;chr&gt;</span></span></code></pre></div>
 <p>Below shows the profiling of performing a simple operation on a dataset with the following dimensional (14599 x 7).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">se_example</span> <span class="op">&lt;-</span> <span class="fu">tidySummarizedExperiment</span><span class="fu">::</span><span class="va">pasilla</span></span>
-<span></span>
-<span><span class="va">native_example</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">native_example</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"logcounts"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log1p</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">se</span></span>
 <span><span class="op">}</span></span>
@@ -132,20 +123,15 @@
 <span>  old <span class="op">=</span> <span class="fu">old_example</span><span class="op">(</span><span class="va">se_example</span><span class="op">)</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>Registered S3 methods overwritten by <span class="st">'biocmask'</span><span class="sc">:</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  method                        from                    </span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  group_by.SummarizedExperiment tidySummarizedExperiment</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  mutate.SummarizedExperiment   tidySummarizedExperiment</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>Warning<span class="sc">:</span> Some expressions had a GC <span class="cf">in</span> every iteration; so filtering is</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>disabled.</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># A tibble: 3 × 6</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  expression      min   median <span class="st">`</span><span class="at">itr/sec</span><span class="st">`</span> mem_alloc <span class="st">`</span><span class="at">gc/sec</span><span class="st">`</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  <span class="sc">&lt;</span>bch<span class="sc">:</span>expr<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>tm<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>tm<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>byt<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="dv">1</span> native       <span class="fl">12.1</span>ms   <span class="fl">12.9</span>ms     <span class="fl">74.8</span>    <span class="fl">804.8</span>KB     <span class="fl">1.97</span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="dv">2</span> new          <span class="fl">68.1</span>ms   <span class="fl">71.4</span>ms     <span class="fl">12.9</span>       <span class="dv">11</span>MB     <span class="fl">1.85</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="dv">3</span> old         <span class="fl">376.6</span>ms  <span class="fl">583.9</span>ms      <span class="fl">1.71</span>    <span class="fl">84.3</span>MB     <span class="fl">4.28</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>Warning<span class="sc">:</span> Some expressions had a GC <span class="cf">in</span> every iteration; so filtering is</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>disabled.</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># A tibble: 3 × 6</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  expression      min   median <span class="st">`</span><span class="at">itr/sec</span><span class="st">`</span> mem_alloc <span class="st">`</span><span class="at">gc/sec</span><span class="st">`</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="sc">&lt;</span>bch<span class="sc">:</span>expr<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>tm<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>tm<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>bch<span class="sc">:</span>byt<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="dv">1</span> native       <span class="fl">14.1</span>ms     <span class="dv">18</span>ms     <span class="fl">54.9</span>   <span class="fl">804.77</span>KB     <span class="fl">1.96</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="dv">2</span> new          <span class="fl">23.6</span>ms   <span class="fl">25.2</span>ms     <span class="fl">38.8</span>     <span class="fl">9.42</span>MB     <span class="fl">3.88</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="dv">3</span> old         <span class="fl">893.7</span>ms  <span class="fl">893.7</span>ms      <span class="fl">1.12</span>   <span class="fl">83.53</span>MB     <span class="fl">3.36</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-abstraction">The abstraction<a class="anchor" aria-label="anchor" href="#the-abstraction"></a>
@@ -164,17 +150,22 @@
 <div class="section level3">
 <h3 id="the-proposal">The proposal<a class="anchor" aria-label="anchor" href="#the-proposal"></a>
 </h3>
-<p><img src="./data-mask-abstraction.png"></p>
+<p><img src="_devel/data-mask-abstraction.png"></p>
 <p>In <a href="#fig-abstraction" class="quarto-xref">Figure 1</a>, we an abstract a <code>SummarizedExperiment</code> object (top portion) into three distinct data masks (the bottom portion) that represent different evaluation contexts for our object. We are either evaluating on the <code>assay_mask</code>, <code>rowData_mask</code>, or the <code>colData_mask</code>.</p>
 <div class="section level4">
 <h4 id="top-level-of-the-mask">Top level of the mask<a class="anchor" aria-label="anchor" href="#top-level-of-the-mask"></a>
 </h4>
 <p>Data will be lazily bound to the top level of each mask “as is” from the <code>SummarizedExperiment</code> object’s data context.</p>
 <p>For example, the <code>se</code> bindings in the top level may look like this:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rlang.r-lib.org" class="external-link">rlang</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">shared_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/env.html" class="external-link">new_environment</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rlang.r-lib.org" class="external-link">rlang</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>Attaching package<span class="sc">:</span> <span class="st">'rlang'</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>The following object is masked from <span class="st">'package:Biobase'</span><span class="sc">:</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    exprs</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">shared_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/env.html" class="external-link">new_environment</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    .nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>,</span>
 <span>    .ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span>
@@ -205,7 +196,7 @@
 <span>  condition <span class="op">=</span> <span class="op">!</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/defusing-advanced.html" class="external-link">quo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">[[</span><span class="st">"condition"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Furthermore, each of these top level environments will have access to each other via a <strong>pronoun</strong> created by <code><a href="https://rlang.r-lib.org/reference/as_data_mask.html" class="external-link">rlang::as_data_pronoun</a></code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># assay mask access to rowData and colData</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/env_bind.html" class="external-link">env_bind</a></span><span class="op">(</span></span>
 <span>  <span class="va">assay_mask_top</span>,</span>
@@ -230,7 +221,7 @@
 <h4 id="middle-level-of-the-mask">Middle level of the mask<a class="anchor" aria-label="anchor" href="#middle-level-of-the-mask"></a>
 </h4>
 <p>Here, we will lazily bind expressions that will mold the data to an expected length as if the user were working with a vector from a tibble. We will also be binding symbols for the other two environments, such that all parts of <code>se</code> are available regardless of which mask we are evaluating in.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define some helper function</span></span>
 <span><span class="va">quo_helper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">env</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/force.html" class="external-link">force</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>
@@ -244,7 +235,7 @@
 </h5>
 <p>The expected output for the assay context would be as if the user unwrapped the <code>se</code> object into a full tibble. Thus each vector should be length <code>.nrow * .ncol</code> or equal to 20 in this example.</p>
 <p>Here is an example of making all values from <code>se</code> available in the assay mask.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assay_mask_mid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="va">assay_mask_top</span><span class="op">)</span></span>
 <span><span class="va">quo_assay</span> <span class="op">&lt;-</span> <span class="fu">quo_helper</span><span class="op">(</span><span class="va">assay_mask_top</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/env_bind.html" class="external-link">env_bind_lazy</a></span><span class="op">(</span></span>
@@ -272,7 +263,7 @@
 <h5 id="rowdata-mask-moldings">rowData mask moldings<a class="anchor" aria-label="anchor" href="#rowdata-mask-moldings"></a>
 </h5>
 <p>I am still debating on the proper way to represent data within this context (and the colData context). For now I have settled on this expectation. Data represented here should be as if the user has unwrapped the <code>se</code> object and then nested by the rowData columns.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rowData_mask_mid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="va">rowData_mask_top</span><span class="op">)</span></span>
 <span><span class="va">quo_rowData</span> <span class="op">&lt;-</span> <span class="fu">quo_helper</span><span class="op">(</span><span class="va">rowData_mask_top</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/env_bind.html" class="external-link">env_bind_lazy</a></span><span class="op">(</span></span>
@@ -293,7 +284,7 @@
 <h5 id="coldata-mask-moldings">colData mask moldings<a class="anchor" aria-label="anchor" href="#coldata-mask-moldings"></a>
 </h5>
 <p>Following the logic from the previous section, Data represeted here should be as if the user unwrapped the <code>se</code> object and then nested by the colData columns.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">colData_mask_mid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="va">colData_mask_top</span><span class="op">)</span></span>
 <span><span class="va">quo_colData</span> <span class="op">&lt;-</span> <span class="fu">quo_helper</span><span class="op">(</span><span class="va">colData_mask_top</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/env_bind.html" class="external-link">env_bind_lazy</a></span><span class="op">(</span></span>
@@ -314,7 +305,7 @@
 <h4 id="bottom-level-of-the-mask">Bottom level of the mask<a class="anchor" aria-label="anchor" href="#bottom-level-of-the-mask"></a>
 </h4>
 <p>I am still debating if this portion of the mask is required. In the current construction, we bind these values to active Binding functions, that simply force the evaluation of the lazily bound expressions defined earlier.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># helper function</span></span>
 <span><span class="va">force_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span>, <span class="va">env</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rlang.r-lib.org/reference/new_function.html" class="external-link">new_function</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">pairlist</a></span><span class="op">(</span><span class="op">)</span>, body <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/name.html" class="external-link">as.name</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span>, env <span class="op">=</span> <span class="va">env</span><span class="op">)</span></span>
@@ -326,7 +317,7 @@
 <span><span class="va">all_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"counts"</span>, <span class="st">"logcounts"</span>,</span>
 <span>               <span class="st">"gene"</span>, <span class="st">"length"</span>, <span class="st">"direction"</span>,</span>
 <span>               <span class="st">"sample"</span>, <span class="st">"condition"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assay_mask_bot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="va">assay_mask_mid</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/env_bind.html" class="external-link">env_bind_active</a></span><span class="op">(</span></span>
 <span>  <span class="va">assay_mask_bot</span>,</span>
@@ -348,10 +339,10 @@
 <div class="section level4">
 <h4 id="creating-rlang-data-masks">Creating <code>rlang</code> data masks<a class="anchor" aria-label="anchor" href="#creating-rlang-data-masks"></a>
 </h4>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#test expression</span></span>
 <span><span class="va">my_tibble_expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/expr.html" class="external-link">expr</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  <span class="fu">tibble</span><span class="op">(</span></span>
 <span>    counts <span class="op">=</span> <span class="va">counts</span>,</span>
 <span>    length <span class="op">=</span> <span class="va">length</span>,</span>
 <span>    condition <span class="op">=</span> <span class="va">condition</span></span>
@@ -360,61 +351,61 @@
 <div class="section level5">
 <h5 id="assay-mask">assay mask<a class="anchor" aria-label="anchor" href="#assay-mask"></a>
 </h5>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assay_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/as_data_mask.html" class="external-link">new_data_mask</a></span><span class="op">(</span><span class="va">assay_mask_bot</span>, top <span class="op">=</span> <span class="va">shared_env</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/eval_tidy.html" class="external-link">eval_tidy</a></span><span class="op">(</span><span class="va">my_tibble_expr</span>, <span class="va">assay_mask</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># A tibble: 20 × 3</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>   counts length condition</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>    <span class="sc">&lt;</span>int<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a> <span class="dv">1</span>     <span class="dv">16</span>      <span class="dv">3</span> cntrl    </span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a> <span class="dv">2</span>      <span class="dv">5</span>     <span class="dv">51</span> cntrl    </span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a> <span class="dv">3</span>     <span class="dv">12</span>     <span class="dv">24</span> cntrl    </span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a> <span class="dv">4</span>     <span class="dv">15</span>     <span class="dv">32</span> cntrl    </span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a> <span class="dv">5</span>      <span class="dv">9</span>     <span class="dv">49</span> cntrl    </span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a> <span class="dv">6</span>     <span class="dv">19</span>      <span class="dv">3</span> cntrl    </span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a> <span class="dv">7</span>      <span class="dv">6</span>     <span class="dv">51</span> cntrl    </span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a> <span class="dv">8</span>      <span class="dv">4</span>     <span class="dv">24</span> cntrl    </span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a> <span class="dv">9</span>      <span class="dv">2</span>     <span class="dv">32</span> cntrl    </span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="dv">10</span>      <span class="dv">7</span>     <span class="dv">49</span> cntrl    </span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="dv">11</span>     <span class="dv">14</span>      <span class="dv">3</span> drug     </span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="dv">12</span>     <span class="dv">10</span>     <span class="dv">51</span> drug     </span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="dv">13</span>     <span class="dv">11</span>     <span class="dv">24</span> drug     </span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="dv">14</span>     <span class="dv">20</span>     <span class="dv">32</span> drug     </span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="dv">15</span>     <span class="dv">13</span>     <span class="dv">49</span> drug     </span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="dv">16</span>      <span class="dv">8</span>      <span class="dv">3</span> drug     </span>
-<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="dv">17</span>     <span class="dv">17</span>     <span class="dv">51</span> drug     </span>
-<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="dv">18</span>      <span class="dv">1</span>     <span class="dv">24</span> drug     </span>
-<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="dv">19</span>     <span class="dv">18</span>     <span class="dv">32</span> drug     </span>
-<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="dv">20</span>      <span class="dv">3</span>     <span class="dv">49</span> drug     </span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># A tibble: 20 × 3</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>   counts length condition</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>    <span class="sc">&lt;</span>int<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a> <span class="dv">1</span>     <span class="dv">16</span>      <span class="dv">3</span> cntrl    </span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a> <span class="dv">2</span>      <span class="dv">5</span>     <span class="dv">51</span> cntrl    </span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a> <span class="dv">3</span>     <span class="dv">12</span>     <span class="dv">24</span> cntrl    </span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a> <span class="dv">4</span>     <span class="dv">15</span>     <span class="dv">32</span> cntrl    </span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a> <span class="dv">5</span>      <span class="dv">9</span>     <span class="dv">49</span> cntrl    </span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a> <span class="dv">6</span>     <span class="dv">19</span>      <span class="dv">3</span> cntrl    </span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a> <span class="dv">7</span>      <span class="dv">6</span>     <span class="dv">51</span> cntrl    </span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a> <span class="dv">8</span>      <span class="dv">4</span>     <span class="dv">24</span> cntrl    </span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a> <span class="dv">9</span>      <span class="dv">2</span>     <span class="dv">32</span> cntrl    </span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="dv">10</span>      <span class="dv">7</span>     <span class="dv">49</span> cntrl    </span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="dv">11</span>     <span class="dv">14</span>      <span class="dv">3</span> drug     </span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a><span class="dv">12</span>     <span class="dv">10</span>     <span class="dv">51</span> drug     </span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a><span class="dv">13</span>     <span class="dv">11</span>     <span class="dv">24</span> drug     </span>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a><span class="dv">14</span>     <span class="dv">20</span>     <span class="dv">32</span> drug     </span>
+<span id="cb19-18"><a href="#cb19-18" tabindex="-1"></a><span class="dv">15</span>     <span class="dv">13</span>     <span class="dv">49</span> drug     </span>
+<span id="cb19-19"><a href="#cb19-19" tabindex="-1"></a><span class="dv">16</span>      <span class="dv">8</span>      <span class="dv">3</span> drug     </span>
+<span id="cb19-20"><a href="#cb19-20" tabindex="-1"></a><span class="dv">17</span>     <span class="dv">17</span>     <span class="dv">51</span> drug     </span>
+<span id="cb19-21"><a href="#cb19-21" tabindex="-1"></a><span class="dv">18</span>      <span class="dv">1</span>     <span class="dv">24</span> drug     </span>
+<span id="cb19-22"><a href="#cb19-22" tabindex="-1"></a><span class="dv">19</span>     <span class="dv">18</span>     <span class="dv">32</span> drug     </span>
+<span id="cb19-23"><a href="#cb19-23" tabindex="-1"></a><span class="dv">20</span>      <span class="dv">3</span>     <span class="dv">49</span> drug     </span></code></pre></div>
 </div>
 <div class="section level5">
 <h5 id="rowdata-mask">rowData mask<a class="anchor" aria-label="anchor" href="#rowdata-mask"></a>
 </h5>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rowData_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/as_data_mask.html" class="external-link">new_data_mask</a></span><span class="op">(</span><span class="va">rowData_mask_bot</span>, top <span class="op">=</span> <span class="va">shared_env</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/eval_tidy.html" class="external-link">eval_tidy</a></span><span class="op">(</span><span class="va">my_tibble_expr</span>, <span class="va">rowData_mask</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># A tibble: 5 × 3</span></span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  counts    length condition</span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="sc">&lt;</span>list<span class="sc">&gt;</span>     <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>list<span class="sc">&gt;</span>   </span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="dv">1</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>      <span class="dv">3</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="dv">2</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">51</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="dv">3</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">24</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="dv">4</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">32</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="dv">5</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">49</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># A tibble: 5 × 3</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  counts    length condition</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="sc">&lt;</span>list<span class="sc">&gt;</span>     <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>list<span class="sc">&gt;</span>   </span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="dv">1</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>      <span class="dv">3</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="dv">2</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">51</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="dv">3</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">24</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="dv">4</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">32</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="dv">5</span> <span class="sc">&lt;</span>int [<span class="dv">4</span>]<span class="sc">&gt;</span>     <span class="dv">49</span> <span class="sc">&lt;</span>chr [<span class="dv">4</span>]<span class="sc">&gt;</span></span></code></pre></div>
 </div>
 <div class="section level5">
 <h5 id="coldata-mask">colData mask<a class="anchor" aria-label="anchor" href="#coldata-mask"></a>
 </h5>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">colData_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/as_data_mask.html" class="external-link">new_data_mask</a></span><span class="op">(</span><span class="va">colData_mask_bot</span>, top <span class="op">=</span> <span class="va">shared_env</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rlang.r-lib.org/reference/eval_tidy.html" class="external-link">eval_tidy</a></span><span class="op">(</span><span class="va">my_tibble_expr</span>, <span class="va">colData_mask</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># A tibble: 4 × 3</span></span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  counts    length    condition</span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="sc">&lt;</span>list<span class="sc">&gt;</span>    <span class="er">&lt;</span>list<span class="sc">&gt;</span>    <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="dv">1</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> cntrl    </span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="dv">2</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> cntrl    </span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="dv">3</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> drug     </span>
-<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="dv">4</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> drug     </span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="co"># A tibble: 4 × 3</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  counts    length    condition</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="sc">&lt;</span>list<span class="sc">&gt;</span>    <span class="er">&lt;</span>list<span class="sc">&gt;</span>    <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="dv">1</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> cntrl    </span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="dv">2</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> cntrl    </span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="dv">3</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> drug     </span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="dv">4</span> <span class="sc">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> <span class="er">&lt;</span>int [<span class="dv">5</span>]<span class="sc">&gt;</span> drug     </span></code></pre></div>
 </div>
 </div>
 </div>
@@ -438,7 +429,7 @@
 <code>dplyr</code> verbs<a class="anchor" aria-label="anchor" href="#dplyr-verbs"></a>
 </h2>
 <p>This section is to discuss how the various dplyr verbs would work under these abstractions</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="va">tibble_expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/expr.html" class="external-link">expr</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -466,24 +457,24 @@
 </h3>
 <p><code>filter</code> is easy in theory to implement, but certain filters of a tidy dataset cannot recover a valid <code>SummarizedExperiment</code> object.</p>
 <p>For example, consider this <code>mutate.data.frame</code> call:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">assay_ctx</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># A tibble: 2 × 7</span></span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  counts logcounts gene  length direction sample condition</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>   <span class="sc">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">16</span>      <span class="fl">2.77</span> g1         <span class="dv">3</span> <span class="sc">-</span>         s1     cntrl    </span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="dv">2</span>      <span class="dv">3</span>      <span class="fl">1.10</span> g5        <span class="dv">49</span> <span class="sc">+</span>         s4     drug     </span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># A tibble: 2 × 7</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  counts logcounts gene  length direction sample condition</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>   <span class="sc">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">16</span>      <span class="fl">2.77</span> g1         <span class="dv">3</span> <span class="sc">-</span>         s1     cntrl    </span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="dv">2</span>      <span class="dv">3</span>      <span class="fl">1.10</span> g5        <span class="dv">49</span> <span class="sc">+</span>         s4     drug     </span></code></pre></div>
 <p>the closest equivalent for <code>se</code> would be:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co"># A SummarizedExperiment-tibble abstraction: 4 × 9</span></span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="co"># [90mFeatures=2 | Samples=2 | Assays=counts, logcounts[0m</span></span>
-<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>  .feature .sample counts logcounts sample condition gene  length direction</span>
-<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    </span>
-<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="dv">1</span> row_a    col_A       <span class="dv">16</span>      <span class="fl">2.77</span> s1     cntrl     g1         <span class="dv">3</span> <span class="sc">-</span>        </span>
-<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="dv">2</span> row_e    col_A        <span class="dv">9</span>      <span class="fl">2.20</span> s1     cntrl     g5        <span class="dv">49</span> <span class="sc">+</span>        </span>
-<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="dv">3</span> row_a    col_D        <span class="dv">8</span>      <span class="fl">2.08</span> s4     drug      g1         <span class="dv">3</span> <span class="sc">-</span>        </span>
-<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a><span class="dv">4</span> row_e    col_D        <span class="dv">3</span>      <span class="fl">1.10</span> s4     drug      g5        <span class="dv">49</span> <span class="sc">+</span>        </span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co"># A SummarizedExperiment-tibble Abstraction: 2 × 2</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  .features .samples <span class="sc">|</span> counts logcounts <span class="sc">|</span> gene  length direction <span class="sc">|</span> sample</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">|</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">|</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>     <span class="er">|</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span> </span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="dv">1</span> row_a     col_A    <span class="sc">|</span>     <span class="dv">16</span>      <span class="fl">2.77</span> <span class="sc">|</span> g1         <span class="dv">3</span> <span class="sc">-</span>         <span class="er">|</span> s1    </span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="dv">2</span> row_e     col_A    <span class="sc">|</span>      <span class="dv">9</span>      <span class="fl">2.20</span> <span class="sc">|</span> g5        <span class="dv">49</span> <span class="sc">+</span>         <span class="er">|</span> s1    </span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="dv">3</span> row_a     col_D    <span class="sc">|</span>      <span class="dv">8</span>      <span class="fl">2.08</span> <span class="sc">|</span> g1         <span class="dv">3</span> <span class="sc">-</span>         <span class="er">|</span> s4    </span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a><span class="dv">4</span> row_e     col_D    <span class="sc">|</span>      <span class="dv">3</span>      <span class="fl">1.10</span> <span class="sc">|</span> g5        <span class="dv">49</span> <span class="sc">+</span>         <span class="er">|</span> s4    </span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a><span class="co"># ℹ 1 more variable: condition &lt;chr&gt;</span></span></code></pre></div>
 <p>Thus I think it would make sense to error if the user attempts to filter in the assay context and inform them that a valid <code>SummarizedExperiment</code> object cannot be returned. To perform such filters, the user should convert to a tibble explicitly first.</p>
 </div>
 <div class="section level3">
@@ -507,13 +498,11 @@
 </div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
+  </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/jtlandis/biocmask/" class="external-link">Browse source code</a></li>
+<li><a href="https://www.github.com/jtlandis/biocmask/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -545,23 +534,20 @@
 
 
 
-  </div>
+  </aside>
 </div>
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by <a href="https://github.com/jtlandis" class="external-link">Justin Landis</a>, <a href="https://mikelove.github.io" class="external-link">Michael Love</a>.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by <a href="https://github.com/jtlandis" class="external-link">Justin Landis</a>, <a href="https://mikelove.github.io" class="external-link">Michael Love</a>.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 
