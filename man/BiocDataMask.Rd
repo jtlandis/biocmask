@@ -36,8 +36,13 @@ environment.
 }
 \examples{
 # note: this R6 class is not exported
-mask <- biocmask$new(iris, .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+\dontrun{
+mask <- biocmask$new(iris,
+                     .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
 mask$eval(quote(Sepal.Width))
+}
+
+
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

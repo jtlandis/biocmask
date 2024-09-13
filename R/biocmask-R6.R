@@ -113,8 +113,13 @@ add_bind <- function(.expr, .env_expr,
 #' @return an R6 object of class `biocmask`
 #' @examples
 #' # note: this R6 class is not exported
-#' mask <- biocmask$new(iris, .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+#' \dontrun{
+#' mask <- biocmask$new(iris,
+#'                      .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
 #' mask$eval(quote(Sepal.Width))
+#' }
+#' 
+#' 
 biocmask <- R6::R6Class(
   "biocmask",
   cloneable = FALSE,
