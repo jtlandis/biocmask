@@ -30,6 +30,21 @@ enforce_named <- function(exprs) {
 #' @param .ctx_default default context to eval within
 #' @param .ctx_opt optional contexts to eval within
 #' @return a quosure with attribute `biocmask:::ctx`.
+#' @examples
+#' 
+#' # in biocmask the default context is "assays"
+#' # and optional contexts are "rows" and "cols"
+#' quos <- biocmask_quos(
+#'   foo = bar,
+#'   ctx2(foo = bar),
+#'   ctx3(foo = bar),
+#'   .ctx_default = "ctx1",
+#'   .ctx_opt = c("ctx2", "ctx3")
+#' )
+#' attr(quos[[1]], "biocmask:::ctx")
+#' attr(quos[[2]], "biocmask:::ctx")
+#' attr(quos[[3]], "biocmask:::ctx")
+#' 
 #' @export
 biocmask_quos <- function(..., .named = TRUE, .ctx_default = NULL, .ctx_opt = NULL) {
   # browser()

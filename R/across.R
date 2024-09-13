@@ -182,6 +182,7 @@ biocmask_across_setup <- function(cols, fns, names, mask, ctx,
 #' the following functions were taken verbatim from the `dplyr` package such 
 #' that behaviors of `across()` were consistent between `dplyr` and `biocmask`
 #' @keywords internal 
+#' @noRD
 expr_substitute <-function (expr, old, new) 
 {
   expr <- duplicate(expr)
