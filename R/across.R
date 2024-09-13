@@ -192,7 +192,7 @@ expr_substitute <- function(expr, old, new)
   expr
 }
 
-#' @rdname dplyr_across_internals
+# @rdname dplyr_across_internals
 node_walk_replace <- function(node, old, new) {
   while (!is_null(node)) {
     switch(typeof(node_car(node)),
@@ -205,7 +205,7 @@ node_walk_replace <- function(node, old, new) {
   }
 }
 
-#' @rdname dplyr_across_internals
+# @rdname dplyr_across_internals
 as_across_expr <- function(fn, var) {
   if (is_inlinable_lambda(fn)) {
     arg <- names(formals(fn))[[1]]
@@ -217,12 +217,12 @@ as_across_expr <- function(fn, var) {
   }
 }
 
-#' @rdname dplyr_across_internals
+# @rdname dplyr_across_internals
 is_inlinable_lambda <- function(x) {
   is_function(x) && identical(fn_env(x), empty_env())
 }
 
-#' @rdname dplyr_across_internals
+# @rdname dplyr_across_internals
 validate_fns <- function(quo, mask, error_call = caller_env()) {
   sentinel_env <- empty_env()
   this <- current_env()
@@ -259,7 +259,7 @@ validate_fns <- function(quo, mask, error_call = caller_env()) {
   }
 }
 
-#' @rdname dplyr_across_internals
+# @rdname dplyr_across_internals
 is_inlinable_function <- function(x) 
 {
   if (!is_function(x)) {
@@ -275,7 +275,7 @@ is_inlinable_function <- function(x)
   TRUE
 }
 
-#' @rdname dplyr_across_internals
+# @rdname dplyr_across_internals
 is_inlinable_formula <- function(x) {
   if (!is_formula(x, lhs = FALSE)) {
     return(FALSE)

@@ -121,7 +121,7 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
 }
 
 
-#' @describeIn group_by-SummarizedExperiment Ungroup a SummarizedExperiment object
+#' @describeIn group_by.SummarizedExperiment Ungroup a SummarizedExperiment object
 #' 
 #' @param x A SummarizedExperiment object
 #' @param ... [contextual expressions][biocmask::biocmask-context] specifying 
