@@ -102,13 +102,13 @@ vec_chop_assays <- function(.data, .indices) {
 
 vec_chop_assays_row <- function(.data, .indices) {
   map(attr(.indices, "biocmask:::row_chop_ind"),
-      function(.i, .data) .data[.i,,drop = TRUE],
+      function(.i, .data) .data[.i,,drop = FALSE],
       .data = .data)
 }
 
 vec_chop_assays_col <- function(.data, .indices) {
   map(attr(.indices, "biocmask:::col_chop_ind"),
-      function(.i, .data) .data[,.i,drop = TRUE],
+      function(.i, .data) .data[,.i,drop = FALSE],
       .data = .data)
 }
 
