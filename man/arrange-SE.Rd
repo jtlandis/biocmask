@@ -19,6 +19,9 @@ order.}
 \item{.by_group}{If \code{TRUE}, will sort first by grouping variable. Applies to
 grouped data frames only.}
 }
+\value{
+an object inheriting SummarizedExperiment class
+}
 \description{
 \code{arrange()} orders either the rows or columns of a \code{SummarizedExperiment}
 object. Note, to guarentee a valid \code{SummarizedExperiment} is returned,

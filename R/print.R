@@ -13,6 +13,8 @@ sep_ <- function(n) {
 
 class_vec_phantom <- S7::new_S3_class("vec_phantom")
 
+#' @rdname biocmask-printing
+#' @export
 vec_phantom <- function(x) {
   vctrs::new_vctr(
     seq_len(length.out = length(x)),
@@ -62,13 +64,17 @@ pillar_shaft.vec_phantom <- function(x, ...) {
 #' To print S4 objects in a tibble, `biocmask` hacks a custom
 #' integer vector built from [`vctrs`][vctrs::new_vctr] where 
 #' the S4 object lives in an attribute named "phantomData". 
+#' You can create your own S4 phantom vector with `vec_phantom()`.
+#' This function is not used outside of printing for `biocmask`
 #' 
-#' The default method for formatting a `vec_phantom` is to call
+#' The default method for formatting a `vec_phantom()` is to call
 #' [`showAsCell()`][S4Vectors::showAsCell].
 #' 
 #' @param x The S4 object
 #' @param ... other arguments passed from [`pillar_shaft`][pillar::pillar_shaft]
-#' 
+#' @returns 
+#' `biocmask_pillar_format` -> formatted version of your S4 vector
+#' `vec_phantom` -> integer vector with arbitrary object in `phatomData` attribute.
 #' @export
 biocmask_pillar_format <- function(x, ...) {
   UseMethod("biocmask_pillar_format")

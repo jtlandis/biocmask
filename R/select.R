@@ -19,7 +19,7 @@
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> one or more selection 
 #' expressions. Supports wrapping expressions within the 
 #' <[`biocmask-contexts`][biocmask::biocmask-context]>.
-#' 
+#' @return an object inheriting SummarizedExperiment class
 #' @examples
 #' 
 #' 
@@ -52,7 +52,7 @@ select.SummarizedExperiment <- function(.data, ...) {
   .env <- caller_env()
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::dplyr_verb", "select")
-  quos <- biocmask_quos(...)
+  quos <- biocmask_quos(..., .ctx_default = "assays", .ctx_opt = c("rows", "cols"))
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   nms  <- names(quos)
   

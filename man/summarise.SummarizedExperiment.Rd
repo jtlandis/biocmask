@@ -17,6 +17,9 @@ are recycled to the length of the ungrouped dimension. When FALSE, all
 outputs are expected to be scalar values and all columns in ungrouped
 dimensions are dropped.}
 }
+\value{
+an object inheriting SummarizedExperiment class
+}
 \description{
 Summarize SummarizedExperiment
 }

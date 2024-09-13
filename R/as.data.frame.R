@@ -3,6 +3,7 @@
 #' @title create data.frame
 #' @param x `SummarizedExperiment` object
 #' @param ... unused arguments
+#' @return a data.frame object
 #' @export
 as.data.frame.SummarizedExperiment <- function(x, ...) {
   nc <- ncol(x)

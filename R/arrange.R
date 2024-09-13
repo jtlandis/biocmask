@@ -11,6 +11,7 @@
 #' `.by_group` argument.
 #' 
 #' @inheritParams dplyr::arrange
+#' @return an object inheriting SummarizedExperiment class
 #' @examples
 #' 
 #' #arrange within rows/cols contexts separately
@@ -38,7 +39,7 @@ arrange.SummarizedExperiment <- function(.data, ..., .by_group = FALSE) {
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "arrange")
-  quos <- biocmask_quos(...)
+  quos <- biocmask_quos(..., .ctx_default = "assays", .ctx_opt = c("rows", "cols"))
   if (.by_group) {
     quos <- c(biocmask_quos(!!!biocmask_curr_groups(.data)), quos)
   }

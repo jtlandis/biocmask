@@ -2,8 +2,28 @@
 #' @title `biocmask` Data Mask Manager
 #' @name BiocmaskManager
 #' @description
-#' This object organizes serveral biocmasks, allowing expressions to be 
-#' evaluated in different contexts.
+#' This object organizes serveral [biocmasks][biocmask::BiocDataMask], allowing
+#' expressions to be evaluated in different contexts. This object is the return
+#' value of [`new_biocmask()`][biocmask::new_biocmask]
+#' 
+#' The "connectedness" of each mask managed by this object is dependent on the
+#' developer. The biocmasks passed to `.mask` argument may stem from the same
+#' shared environment, or may have cyclical relationships.
+#' @return An R6 object inheriting `biocmask_manager`.
+#' @example 
+#'  
+#' manager <- new_biocmask(se_simple)
+#' manager$ctx
+#' q <- biocmask_quos(counts_1 = counts + 1, rows(d = direction),
+#'                    cols(is_drug = condition=="drug"),
+#'                    .ctx_default = "assays",
+#'                    .ctx_opt = c("rows", "cols"))
+#' manager$eval(q[[1]])
+#' manager$results()
+#' manager$eval(q[[2]])
+#' manager$results()
+#' 
+#' 
 biocmask_manager <- R6::R6Class(
   "biocmask_manager",
   public = list(
@@ -25,10 +45,9 @@ biocmask_manager <- R6::R6Class(
     #' @description
     #' eval an expression in the current context 
     #' @param quo a quosure or quoted expression
-    #' @param name the resulting name to bind
     #' @param env an environment
     #' @return returns evaluated `quo` in the form of a chop
-    eval = function(quo, name, env = caller_env()) {
+    eval = function(quo, env = caller_env()) {
       mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
       # expand across into more biocmask_quos
       quos <- expand_across(quo, mask = self, error_call = caller_call())

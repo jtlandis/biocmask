@@ -11,6 +11,7 @@ NULL
 #' are recycled to the length of the ungrouped dimension. When FALSE, all 
 #' outputs are expected to be scalar values and all columns in ungrouped 
 #' dimensions are dropped.
+#' @return an object inheriting SummarizedExperiment class
 #' @examples
 #' 
 #' # outputs in assay context may be either
@@ -45,7 +46,7 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "summarise")
-  quos <- biocmask_quos(...)
+  quos <- biocmask_quos(..., .ctx_default = "assays", .ctx_opt = c("rows", "cols"))
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   if (! "assays" %in% ctxs) {
     abort(

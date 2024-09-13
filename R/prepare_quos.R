@@ -27,12 +27,17 @@ enforce_named <- function(exprs) {
 #' mask context it should be evaluate in.
 #' @param ... rlang dots, supports splicing an quoting
 #' @param .named should resulting expressions be named?
-#' @noRd
-biocmask_quos <- function(..., .named = TRUE) {
+#' @param .ctx_default default context to eval within
+#' @param .ctx_opt optional contexts to eval within
+#' @return a quosure with attribute `biocmask:::ctx`.
+#' @export
+biocmask_quos <- function(..., .named = TRUE, .ctx_default = NULL, .ctx_opt = NULL) {
   # browser()
   dots <- quos(...) |>
     as.list()
-  ctx_opt <- c("cols", "rows")
+  .ctx_default <- .ctx_default %||% abort("`.ctx_default` must be specified!")
+  .ctx_opt <- .ctx_opt %||% abort("`.ctx_opt` must be specified!")
+  # ctx_opt <- c("cols", "rows")
   nms <- rlang::names2(dots)
   is_nms <- nms != ""
   for (i in seq_along(dots)) {
@@ -56,7 +61,7 @@ biocmask_quos <- function(..., .named = TRUE) {
     }
     
     dots[[i]] <- biocmask_quo(.expr, env = .env,
-                              ctx = "assays",
+                              ctx = .ctx_default,
                               is_named = is_nms[i], 
                               name = nms[i])
   } 

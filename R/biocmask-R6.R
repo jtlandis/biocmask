@@ -119,8 +119,9 @@ biocmask <- R6::R6Class(
     #' @param .data a named list like object to create a mask
     #' @param .indices the indices that will be used to chop `.data`
     #' @param .env an environment that the resulting mask will be built from.
-    initialize = function(.data, .indices = NULL, .env) {
-      private$.shared_env <- .env
+    initialize = function(.data, .indices = NULL, .env_bot, .env_top = .env_bot) {
+      private$.shared_env <- .env_bot
+      private$.top_env <- .env_top
       private$.data <- .data
       private$.indices <- .indices
       private$init_current_group_info()
@@ -195,7 +196,7 @@ biocmask <- R6::R6Class(
     #' @param quo a quosure to evaluate
     #' @param env an environment to search after mask
     eval = function(quo, env = caller_env()) {
-      mask <- new_data_mask(private$env_mask_bind, top = top_env)
+      mask <- new_data_mask(private$env_mask_bind, top = private$.top_env)
       eval_tidy(quo, data = mask, env = env)
     }
   ),
@@ -359,6 +360,7 @@ biocmask <- R6::R6Class(
     .env_size = NULL,
 
     .shared_env = NULL,
+    .top_env = NULL, # should at least inherit from `baseenv()`
     #' holds grouping information
     #' for this object
     env_current_group_info = NULL,
@@ -377,9 +379,11 @@ biocmask <- R6::R6Class(
 #' A more specialized version of the biocmask R6 object for the 
 #' assays list object. This includes chopping and unchopping 
 #' of matrix like objects.
+#' @return an object inheriting [`biocmask`][biocmask::BiocDataMask].
 biocmask_assay <- R6::R6Class(
   "biocmask_assay",
-  inherit = biocmask,
+  inherit = biocmask, 
+  cloneable = F,
   public = list(
     #' @description
     #' Create a biocmask from `.data`. `.data` is chopped by
@@ -389,8 +393,8 @@ biocmask_assay <- R6::R6Class(
     #' @param .indices the indices that will be used to chop `.data`
     #' @param .env an environment that the resulting mask will be built from.
     #' @param .nrow,.ncol the number of rows and columns of each element of `.data` respectively
-    initialize = function(.data, .indices, .env, .nrow, .ncol) {
-      super$initialize(.data, .indices, .env)
+    initialize = function(.data, .indices, .env_bot, .env_top = .env_bot, .nrow, .ncol) {
+      super$initialize(.data, .indices = .indices, .env_bot = .env_bot, .env_top = .env_top)
       env_bind(
         private$env_current_group_info,
         .nrow = .nrow,

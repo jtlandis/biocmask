@@ -3,7 +3,7 @@
 \docType{package}
 \name{biocmask-package}
 \alias{biocmask-package}
-\title{biocmask: Create data masks for SE dplyr functions}
+\title{biocmask: Create S4 BioConductor data masks for dplyr functions}
 \description{
 The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
 }
@@ -12,6 +12,7 @@ Useful links:
 \itemize{
   \item \url{https://github.com/jtlandis/biocmask}
   \item \url{https://jtlandis.github.io/biocmask}
+  \item Report bugs at \url{https://www.github.com/jtlandis/biocmask/issues}
 }
 
 }
@@ -20,7 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Michael Love \email{michaelisaiahlove@gmail.com}
+  \item Michael Love \email{michaelisaiahlove@gmail.com} (\href{https://orcid.org/0000-0001-8401-0545}{ORCID})
 }
 
 }

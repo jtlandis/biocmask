@@ -17,7 +17,7 @@
 i.e. the number of groups may change.}
 }
 \value{
-SummarizedExperiment Object
+an object inheriting SummarizedExperiment class
 }
 \description{
 The \code{filter()} function is sused to subset an object, returing the observations

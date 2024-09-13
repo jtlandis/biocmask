@@ -5,6 +5,7 @@
 #' Create a biocmask for an object
 #' @param obj Dispatch Object
 #' @param ... Not used
+#' @return a biocmask_manager R6 class object
 #' @export
 new_biocmask <- function(obj, ...) {
   UseMethod("new_biocmask")
@@ -21,15 +22,18 @@ new_biocmask.SummarizedExperiment <- function(obj, ...) {
   
   mask_assay <- biocmask_assay$new(assays(obj),
                                    get_group_indices(groups, expanded, "assay"),
-                                   .env = shared_ctx_env,
                                    .nrow = nr,
-                                   .ncol = nc)
+                                   .ncol = nc,
+                                   .env_bot = shared_ctx_env,
+                                   .env_top = top_env)
   mask_rows <- biocmask$new(prepend_rownames(rowData(obj), column = ".features"),
                             get_group_indices(groups, expanded, "rowData"),
-                            .env = shared_ctx_env)
+                            .env_bot = shared_ctx_env,
+                            .env_top = top_env)
   mask_cols <- biocmask$new(prepend_rownames(colData(obj), column = ".samples"),
                             get_group_indices(groups, expanded, "colData"),
-                            .env = shared_ctx_env)
+                            .env_bot = shared_ctx_env,
+                            .env_top = top_env)
   
   extended_environments <- connect_masks(mask_assays = mask_assay,
                                          mask_rows = mask_rows,

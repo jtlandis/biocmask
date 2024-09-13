@@ -6,9 +6,9 @@
 #' Mutate a SummarizedExperiment object under an data mask. Unlike a few other
 #' `dplyr` implementations, all contextual evaluations of `mutate()` for
 #' `SummarizedExperiment` are valid.
-#' @param .data a SummarizedExperiment object
+#' @param .data an objecting inheriting SummarizedExperiment class
 #' @param ... expressions to evaluate
-#' @return SummarizedExperiment object
+#' @return an object inheriting SummarizedExperiment class
 #' @examples
 #' 
 #' mutate(se_simple,
@@ -30,7 +30,7 @@ mutate.SummarizedExperiment <- function(.data, ...) {
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "mutate")
-  quos <- biocmask_quos(...)
+  quos <- biocmask_quos(..., .ctx_default = "assays", .ctx_opt = c("rows", "cols"))
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   nms  <- names(quos)
   mask <- biocmask_evaluate(mask, quos, ctxs, nms, .env, .matrix = TRUE)

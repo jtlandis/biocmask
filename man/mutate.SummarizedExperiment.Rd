@@ -7,12 +7,12 @@
 \method{mutate}{SummarizedExperiment}(.data, ...)
 }
 \arguments{
-\item{.data}{a SummarizedExperiment object}
+\item{.data}{an objecting inheriting SummarizedExperiment class}
 
 \item{...}{expressions to evaluate}
 }
 \value{
-SummarizedExperiment object
+an object inheriting SummarizedExperiment class
 }
 \description{
 Mutate a SummarizedExperiment object under an data mask. Unlike a few other

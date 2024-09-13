@@ -11,6 +11,9 @@ new_biocmask(obj, ...)
 
 \item{...}{Not used}
 }
+\value{
+a biocmask_manager R6 class object
+}
 \description{
 Create a biocmask for an object
 }

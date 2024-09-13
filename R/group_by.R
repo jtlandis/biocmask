@@ -37,7 +37,7 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "group_by")
-  quos <- biocmask_quos(...)
+  quos <- biocmask_quos(..., .ctx_default = "assays", .ctx_opt = c("rows", "cols"))
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   if (any(err <- ctxs %in% "assays")) {
     abort(

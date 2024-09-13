@@ -17,7 +17,7 @@
 #' @param .preserve Relevant when the .data input is grouped. If .preserve = FALSE
 #' (the default), the grouping structure is recalculated based on the resulting data,
 #' i.e. the number of groups may change.
-#' @return SummarizedExperiment Object
+#' @return an object inheriting SummarizedExperiment class
 #' @examples
 #' # example code
 #' filter(se_simple,
@@ -44,7 +44,7 @@ filter.SummarizedExperiment <- function(.data, ..., .preserve = FALSE) {
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "filter")
-  quos <- biocmask_quos(...)
+  quos <- biocmask_quos(..., .ctx_default = "assays", .ctx_opt = c("rows", "cols"))
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
   if (any(err <- ctxs %in% "assays")) {
     abort(

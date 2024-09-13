@@ -13,6 +13,9 @@
 expressions. Supports wrapping expressions within the
 <\code{\link[=biocmask-context]{biocmask-contexts}}>.}
 }
+\value{
+an object inheriting SummarizedExperiment class
+}
 \description{
 Select one or more values from each context. By default omitting an expression
 for a context is the same as selecting NOTHING from that context.

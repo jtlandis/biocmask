@@ -12,6 +12,9 @@
 
 \item{...}{unused arguments}
 }
+\value{
+a data.frame object
+}
 \description{
 create data.frame
 }
