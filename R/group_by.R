@@ -15,7 +15,7 @@ group_data.SummarizedExperiment <- function(.data) {
   metadata(.data)[["group_data"]]
 }
 
-#' @title group_by SummarizedExperiment
+#' @title apply groups to SummarizedExperiments
 #' @description
 #' create grouping variables about the rowData and colData of a 
 #' SummarizedExperiment object. Unlike the `data.frame` method
@@ -28,6 +28,7 @@ group_data.SummarizedExperiment <- function(.data) {
 #' existing groups.
 #' @return SummarizedExperiment object
 #' @examples
+#' 
 #' group_by(se_simple, rows(direction), cols(condition))
 #' 
 #' @export
