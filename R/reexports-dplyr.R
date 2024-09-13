@@ -2,6 +2,11 @@
 # The following functions should
 # be available to users from our package
 
+#' @name reexports
+#' @returns 
+#' exported functions available from `biocmask`
+NULL
+
 #' @export
 dplyr::arrange
 

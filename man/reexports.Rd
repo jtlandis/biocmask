@@ -25,6 +25,9 @@
 \alias{group_vars}
 \alias{ungroup}
 \title{Objects exported from other packages}
+\value{
+exported functions available from \code{biocmask}
+}
 \keyword{internal}
 \description{
 These objects are imported from other packages. Follow the links

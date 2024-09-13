@@ -1,4 +1,6 @@
 
+#' @returns 
+#' API for using S4 classes with rlang data masks
 #' @keywords internal
 "_PACKAGE"
 

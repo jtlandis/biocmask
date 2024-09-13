@@ -35,11 +35,11 @@ environment.
 }
 \examples{
 # note: this R6 class is not exported at this moment
-\donttest{
-mask <- biocmask$new(iris,
+
+mask <- getNamespace("biocmask")$biocmask$new(iris,
                      .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
 mask$eval(quote(Sepal.Width))
-}
+
 
 
 }
