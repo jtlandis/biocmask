@@ -73,15 +73,18 @@ pillar_shaft.vec_phantom <- function(x, ...) {
 #' @param x The S4 object
 #' @param ... other arguments passed from [`pillar_shaft`][pillar::pillar_shaft]
 #' @examples
-#' ilist <- IRanges::IntegerList(list(c(1L,2L,3L),c(5L,6L)))
-#' phantom <- vec_phantom(ilist)
-#' pillar::pillar_shaft(phantom)
 #' 
-#' biocmask_pillar_format.CompressedIntegerList <- function(x) {
-#'  sprintf("Int: [%i]", lengths(x))
+#' if(require("IRanges)) {
+#'   ilist <- IRanges::IntegerList(list(c(1L,2L,3L),c(5L,6L)))
+#'   phantom <- vec_phantom(ilist)
+#'   pillar::pillar_shaft(phantom)
+#'   
+#'   biocmask_pillar_format.CompressedIntegerList <- function(x) {
+#'    sprintf("Int: [%i]", lengths(x))
+#'   }
+#'   pillar::pillar_shaft(phantom)
+#'   rm(biocmask_pillar_format.CompressedIntegerList)
 #' }
-#' pillar::pillar_shaft(phantom)
-#' rm(biocmask_pillar_format.CompressedIntegerList)
 #' 
 #' @returns 
 #' `biocmask_pillar_format` -> formatted version of your S4 vector
