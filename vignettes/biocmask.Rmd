@@ -60,7 +60,13 @@ from each context for computation:
 ```{r eval=FALSE}
 airway$sizeFactor <- runif(8, .9, 1.1)
 airway |>
-  mutate(scaled_counts = t(t(.assays_asis$counts) / .cols_asis$sizeFactor),
+  mutate(scaled_counts = t(t(counts) / .cols_asis$sizeFactor),
+         rows(mean_scaled_counts = rowMeans(.assays_asis$scaled_counts)))
+
+airway |>
+  #identical as before, but let the `.cols$` pronoun reshape
+  # the data to fit the assays context
+  mutate(scaled_counts = counts / .cols$sizeFactor,
          rows(mean_scaled_counts = rowMeans(.assays_asis$scaled_counts)))
 ```
 
@@ -68,7 +74,10 @@ Alternatively we could have used *purrr* to compute row sums:
 
 ```{r eval=FALSE}
 airway |>
-  mutate(scaled_counts = t(t(.assays_asis$counts) / .cols_asis$sizeFactor),
+  mutate(scaled_counts = counts / .cols$sizeFactor,
+         # the non-"_asis" pronouns will try to reshape the data for the
+         # current context. You may expect a list of slices from `.assays$`
+         # and a replicated list
          rows(mean_scaled_counts = purrr::map_dbl(.assays$counts, sum)))
 ```
 
