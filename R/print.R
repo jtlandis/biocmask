@@ -100,14 +100,14 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
   row_slice <- if (nr < 2 * n) {
     seq_len(nr)
   } else {
-    c(1:n, (nr - n + 1):nr)
+    c(seq_len(n), (nr - n + 1):nr)
   }
   
   onc <- nc <- ncol(x)
   col_slice <- if (nc < 2 * n) {
     seq_len(nc)
   } else {
-    c(1:n, (nc - n + 1):nc)
+    c(seq_len(n), (nc - n + 1):nc)
   }
   # get first 5 and last 5 rows and cols
   x_ <- x[row_slice, col_slice]
@@ -140,7 +140,7 @@ print.SummarizedExperiment <- function(x, n = 10, ...) {
     seq_len(nn)
   } else {
     c(
-      1:top_n,
+      seq_len(top_n),
       (nn - bot_n + 1):nn
     )
   }
@@ -189,7 +189,7 @@ ctl_new_rowid_pillar.SE_abstraction <- function(controller,
       return(NULL)
     }
     out <- map(set_names(template), function(.x) "")
-    top_half <- 1:val
+    top_half <- seq_len(val)
     bot_half <- rev(seq_len(nrow(controller) - (val + 1L)))
     data <- if (length(bot_half)) {
       spec <- sprintf("n-%i", bot_half)

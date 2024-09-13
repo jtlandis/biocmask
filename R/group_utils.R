@@ -22,7 +22,7 @@ expand_groups2 <- function(.rows, .cols) {
     out[[".cols::.indices_group_id"]]
   )
   out <- out[o,]
-  out$.group_id <- 1:n
+  out$.group_id <- seq_len(n)
   out
 }
 
@@ -129,7 +129,7 @@ create_groups <- function(.data, .rename = ".indices") {
     vec_group_loc() |>
     unnest(key) |>
     rename("{.rename}" := loc) |>
-    mutate("{.rename}_group_id" := 1:n())
+    mutate("{.rename}_group_id" := seq_len(n()))
 }
 
 biocmask_groups <- function(row_groups = NULL, col_groups = NULL) {
