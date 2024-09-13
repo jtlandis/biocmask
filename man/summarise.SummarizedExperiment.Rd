@@ -38,7 +38,7 @@ se_simple |>
 se_simple |>
   group_by(rows(direction)) |>
   summarise(col_sums = list(colSums(counts)),
-            .retain = FALSE) 
+            .retain = FALSE)
 
 # using an `across()` function will help
 # nest ungrouped dimensions
@@ -47,5 +47,5 @@ se_simple |>
   summarise(col_sums = list(colSums(counts)),
             cols(across(everything(), list)),
              .retain = FALSE)
- 
+
 }

@@ -33,21 +33,21 @@ Unlike other dplyr verbs, \code{arrange()} largely ignores grouping. The
 \examples{
 
 #arrange within rows/cols contexts separately
-dplyr::arrange(se_simple,
+arrange(se_simple,
         rows(direction),
         cols(dplyr::desc(condition)))
 
 # access assay data to compute arrangement
-dplyr::arrange(se_simple, 
+arrange(se_simple, 
         rows(rowSums(.assays_asis$counts)),
         cols(colSums(.assays_asis$counts)))
 
 # assay context is disabled
-dplyr::arrange(se_simple, counts) |> try()
+arrange(se_simple, counts) |> try()
 
 # convert to `data.frame` first
 as.data.frame(se_simple) |>
-  dplyr::arrange(counts)
+  arrange(counts)
 
 
 }

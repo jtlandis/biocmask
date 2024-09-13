@@ -2,7 +2,6 @@
 % Please edit documentation in R/biocmask-package.R
 \docType{package}
 \name{biocmask-package}
-\alias{biocmask}
 \alias{biocmask-package}
 \title{biocmask: Create S4 BioConductor data masks for dplyr functions}
 \description{

@@ -4,7 +4,7 @@
 #' @description
 #' This object organizes serveral biocmasks, allowing
 #' expressions to be evaluated in different contexts. This object is the return
-#' value of [`new_biocmask()`][biocmask::new_biocmask]
+#' value of [`new_biocmask_manager()`][biocmask::new_biocmask_manager]
 #' 
 #' The "connectedness" of each mask managed by this object is dependent on the
 #' developer. The biocmasks passed to `.mask` argument may stem from the same

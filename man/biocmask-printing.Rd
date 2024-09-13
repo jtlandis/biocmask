@@ -35,14 +35,17 @@ The default method for formatting a \code{vec_phantom()} is to call
 \code{\link[S4Vectors:show-utils]{showAsCell()}}.
 }
 \examples{
-ilist <- IRanges::IntegerList(list(c(1L,2L,3L),c(5L,6L)))
-phantom <- vec_phantom(ilist)
-pillar::pillar_shaft(phantom)
 
-biocmask_pillar_format.CompressedIntegerList <- function(x) {
- sprintf("Int: [\%i]", lengths(x))
+if(require("IRanges")) {
+  ilist <- IRanges::IntegerList(list(c(1L,2L,3L),c(5L,6L)))
+  phantom <- vec_phantom(ilist)
+  pillar::pillar_shaft(phantom)
+  
+  biocmask_pillar_format.CompressedIntegerList <- function(x) {
+   sprintf("Int: [\%i]", lengths(x))
+  }
+  pillar::pillar_shaft(phantom)
+  rm(biocmask_pillar_format.CompressedIntegerList)
 }
-pillar::pillar_shaft(phantom)
-rm(biocmask_pillar_format.CompressedIntegerList)
 
 }

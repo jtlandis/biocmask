@@ -29,7 +29,7 @@ new_biocmask_manager <- function(obj, ...) {
   UseMethod("new_biocmask_manager")
 }
 
-#' @rdname new_biocmask
+#' @rdname new_biocmask_manager
 #' @export
 new_biocmask_manager.SummarizedExperiment <- function(obj, ...) {
   groups <- group_details(obj)

@@ -74,7 +74,7 @@ pillar_shaft.vec_phantom <- function(x, ...) {
 #' @param ... other arguments passed from [`pillar_shaft`][pillar::pillar_shaft]
 #' @examples
 #' 
-#' if(require("IRanges)) {
+#' if(require("IRanges")) {
 #'   ilist <- IRanges::IntegerList(list(c(1L,2L,3L),c(5L,6L)))
 #'   phantom <- vec_phantom(ilist)
 #'   pillar::pillar_shaft(phantom)

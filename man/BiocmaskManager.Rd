@@ -8,9 +8,9 @@
 An R6 object inheriting \code{biocmask_manager}
 }
 \description{
-This object organizes serveral \link[=BiocDataMask]{biocmasks}, allowing
+This object organizes serveral biocmasks, allowing
 expressions to be evaluated in different contexts. This object is the return
-value of \code{\link[=new_biocmask]{new_biocmask()}}
+value of \code{\link[=new_biocmask_manager]{new_biocmask_manager()}}
 
 The "connectedness" of each mask managed by this object is dependent on the
 developer. The biocmasks passed to \code{.mask} argument may stem from the same

@@ -85,44 +85,44 @@ add_bind <- function(.expr, .env_expr,
 ## due to challenges in passing BiocCheck, no longer documenting non-exported
 ## objects
 
-# @title `biocmask` Data Mask Object
-# @name BiocDataMask
-# @description
-# An R6 Object that tracks bindings of a list-like object.
-# This includes DFrame objects. There are several inherited
-# environments that the data is stored within.
-# 
-# Environments:
-# 
-# .shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
-# 
-# * .shared_env : environment provided at initialization. This may be shared
-#                 with multiple other BiocDataMasks.
-# * curr_group  : Currently not used.
-# * foreign     : space to put foreign bindings, i.e. object unrelated to `.data`
-#                 provided at initialization. This space is currently used to
-#                 place the pronouns into related contexts.
-# * lazy        : A strict lazy binding to the data within `.data`. This binding
-#                 is made only at initialization.
-# * chops       : lazy data but chopped into list by `.indices`. New bindings 
-#                 for this BiocDataMask context are expected to be in a 
-#                 "chopped" format and are assigned here.
-# * active_mask : An active binding to chops in which the proper list index is
-#                 used depending on the current group context. The current group
-#                 context is at this moment determined by the .shared_env NOT
-#                 the curr_group. I have plans to remove the curr_group
-#                 environment.
-#
-# @return an R6 object of class `biocmask`
-# @examples
-# # note: this R6 class is not exported
-# \donttest{
-# mask <- biocmask$new(iris,
-#                      .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
-# mask$eval(quote(Sepal.Width))
-# }
-# 
-# 
+#' @title `biocmask` Data Mask Object
+#' @name biocmask
+#' @description
+#' An R6 Object that tracks bindings of a list-like object.
+#' This includes DFrame objects. There are several inherited
+#' environments that the data is stored within.
+#' 
+#' Environments:
+#' 
+#' .shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
+#' 
+#' * .shared_env : environment provided at initialization. This may be shared
+#'                 with multiple other BiocDataMasks.
+#' * curr_group  : Currently not used.
+#' * foreign     : space to put foreign bindings, i.e. object unrelated to `.data`
+#'                 provided at initialization. This space is currently used to
+#'                 place the pronouns into related contexts.
+#' * lazy        : A strict lazy binding to the data within `.data`. This binding
+#'                 is made only at initialization.
+#' * chops       : lazy data but chopped into list by `.indices`. New bindings 
+#'                 for this BiocDataMask context are expected to be in a 
+#'                 "chopped" format and are assigned here.
+#' * active_mask : An active binding to chops in which the proper list index is
+#'                 used depending on the current group context. The current group
+#'                 context is at this moment determined by the .shared_env NOT
+#'                 the curr_group. I have plans to remove the curr_group
+#'                 environment.
+#'
+#' @return an R6 object of class `biocmask`
+#' @examples
+#' # note: this R6 class is not exported at this moment
+#' \donttest{
+#' mask <- biocmask$new(iris,
+#'                      .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+#' mask$eval(quote(Sepal.Width))
+#' }
+#' 
+#' 
 biocmask <- R6::R6Class(
   "biocmask",
   cloneable = FALSE,
