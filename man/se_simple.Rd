@@ -34,8 +34,16 @@
 \usage{
 se_simple
 }
+\value{
+a \code{SummarizedExperiment} object
+}
 \description{
 A small data SummarizedExperiment Object of 20 observations, 5 rows and 4
 columns.
+}
+\examples{
+SummarizedExperiment::assays(se_simple)
+SummarizedExperiment::rowData(se_simple)
+SummarizedExperiment::colData(se_simple)
 }
 \keyword{datasets}

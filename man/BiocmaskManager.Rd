@@ -5,7 +5,7 @@
 \alias{biocmask_manager}
 \title{\code{biocmask} Data Mask Manager}
 \value{
-An R6 object inheriting \code{biocmask_manager}.
+An R6 object inheriting \code{biocmask_manager}
 }
 \description{
 This object organizes serveral \link[=BiocDataMask]{biocmasks}, allowing
@@ -15,25 +15,6 @@ value of \code{\link[=new_biocmask]{new_biocmask()}}
 The "connectedness" of each mask managed by this object is dependent on the
 developer. The biocmasks passed to \code{.mask} argument may stem from the same
 shared environment, or may have cyclical relationships.
-}
-\examples{
- 
-manager <- new_biocmask(se_simple)
-manager$ctx
-q <- biocmask_quos(counts_1 = counts + 1,
-                   cols(is_drug = condition=="drug"),
-                   .ctx_default = "assays",
-                   .ctx_opt = c("rows", "cols"))
-manager$eval(q[[1]])
-manager$results()
-#evaluating second quo without switching contexts will error
-manager$eval(q[[2]]) |> try()
-manager$ctx <- "cols"
-manager$ctx
-manager$eval(q[[2]])
-manager$results()
-
-
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

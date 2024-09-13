@@ -7,6 +7,23 @@
 #' @param ... Not used
 #' @return a biocmask_manager R6 class object
 #' @seealso [biocmask::BiocmaskManager]
+#' @examples
+#'  
+#' manager <- new_biocmask(se_simple)
+#' manager$ctx
+#' q <- biocmask_quos(counts_1 = counts + 1,
+#'                    cols(is_drug = condition=="drug"),
+#'                    .ctx_default = "assays",
+#'                    .ctx_opt = c("rows", "cols"))
+#' manager$eval(q[[1]])
+#' manager$results()
+#' #evaluating second quo without switching contexts will error
+#' manager$eval(q[[2]]) |> try()
+#' manager$ctx <- "cols"
+#' manager$ctx
+#' manager$eval(q[[2]])
+#' manager$results()
+#' 
 #' @export
 new_biocmask <- function(obj, ...) {
   UseMethod("new_biocmask")

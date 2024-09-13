@@ -16,7 +16,6 @@ group_data.SummarizedExperiment <- function(.data) {
 }
 
 #' @title group_by SummarizedExperiment
-#' @name group_by-SummarizedExperiment
 #' @description
 #' create grouping variables about the rowData and colData of a 
 #' SummarizedExperiment object. Unlike the `data.frame` method
@@ -28,6 +27,9 @@ group_data.SummarizedExperiment <- function(.data) {
 #' @param .add When `FALSE`, the default, `group_by()` will override
 #' existing groups.
 #' @return SummarizedExperiment object
+#' @examples
+#' group_by(se_simple, rows(direction), cols(condition))
+#' 
 #' @export
 group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # browser()

@@ -36,6 +36,9 @@ An object of class \code{NULL} of length 0.
 
 .cols_asis
 }
+\value{
+access to specific values behind the rlang pronoun
+}
 \description{
 \code{biocmask} utilizes its own version of \code{rlang::.data} pronouns. These may be
 used to gain access to other evaluation contexts for a managed set of

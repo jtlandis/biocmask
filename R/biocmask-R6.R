@@ -396,6 +396,7 @@ biocmask <- R6::R6Class(
 #' assays list object. This includes chopping and unchopping 
 #' of matrix like objects.
 #' @return an object inheriting [`biocmask`][biocmask::BiocDataMask].
+#' @noRd
 biocmask_assay <- R6::R6Class(
   "biocmask_assay",
   inherit = biocmask, 
@@ -420,47 +421,9 @@ biocmask_assay <- R6::R6Class(
       private$.nrow <- .nrow
       private$.ncol <- .ncol
       
-      # private$.cached_unchop_ind <- switch(
-      #   attr(.indices, "type") %||% "none",
-      #   rowcol = {
-      #     map2(
-      #       .indices$.rows,
-      #       .indices$.cols,
-      #       mat_index,
-      #       nrows = .nrow
-      #     )
-      #   },
-      #   row = {
-      #     map(
-      #       .indices$.rows,
-      #       mat_index,
-      #       cols_ind = seq_len(.ncol),
-      #       nrows = .nrow
-      #     )
-      #   },
-      #   col = {
-      #     n <- nrow(.data)
-      #     map(
-      #       .indices$.cols,
-      #       mat_index,
-      #       cols_ind = seq_len(.ncol),
-      #       nrows = .nrow
-      #     )
-      #   })
+  
 
     },
-    # @description
-    # evaluates a quoted expression within a new datamask, forces results into
-    # a matrix of the expected size for the group.
-    # @param quo a quosure to evaluate
-    # @param env an environment to search after mask
-    #eval = function(quo, env = caller_env()) {
-    #   quo <- quo_set_expr(quo, expr(matrix(!!quo, nrow = `biocmask:::ctx:::nrow`, ncol = `biocmask:::ctx:::ncol`)))
-    #   super$eval(quo, env = env)
-    #   # mask <- new_data_mask(private$env_mask_bind, top = top_env)
-    #   # eval_tidy(quo, data = mask, env = env)
-    # },
-    
     #' @description
     #' unchop data within the mask, returns a matrix
     #' @param name name of binding to retrieve and unchop
@@ -481,14 +444,6 @@ biocmask_assay <- R6::R6Class(
       )
     }
   ),
-  # active = list(
-  #   environments = function() {
-  #     out <- super$environments
-  #     out@env_row_ctx <- private$.env_row_ctx
-  #     out@env_col_ctx <- private$.env_col_ctx
-  #     out
-  #   }
-  # ),
   private = list(
     get_chop_fun = function() {
       .indices <- private$.indices
