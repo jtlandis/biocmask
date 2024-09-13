@@ -24,3 +24,19 @@ This returns a list of quosures where each quosure
 contains an attribute \code{biocmask:::ctx} indicating which
 mask context it should be evaluate in.
 }
+\examples{
+
+# in biocmask the default context is "assays"
+# and optional contexts are "rows" and "cols"
+quos <- biocmask_quos(
+  foo = bar,
+  ctx2(foo = bar),
+  ctx3(foo = bar),
+  .ctx_default = "ctx1",
+  .ctx_opt = c("ctx2", "ctx3")
+)
+attr(quos[[1]], "biocmask:::ctx")
+attr(quos[[2]], "biocmask:::ctx")
+attr(quos[[3]], "biocmask:::ctx")
+
+}
