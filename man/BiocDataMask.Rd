@@ -66,7 +66,7 @@ foreign bindings}
 Create a biocmask from \code{.data}. \code{.data} is chopped by
 \code{.indices}, and environments are built from \code{.env}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask$new(.data, .indices = NULL, .env)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask$new(.data, .indices = NULL, .env_bot, .env_top = .env_bot)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -76,7 +76,9 @@ Create a biocmask from \code{.data}. \code{.data} is chopped by
 
 \item{\code{.indices}}{the indices that will be used to chop \code{.data}}
 
-\item{\code{.env}}{an environment that the resulting mask will be built from.}
+\item{\code{.env_bot}}{an environment that the resulting mask will be built from.}
+
+\item{\code{.env_top}}{an environment that \code{.env_bot} inherits from}
 }
 \if{html}{\out{</div>}}
 }

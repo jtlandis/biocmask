@@ -118,7 +118,8 @@ biocmask <- R6::R6Class(
     #' 
     #' @param .data a named list like object to create a mask
     #' @param .indices the indices that will be used to chop `.data`
-    #' @param .env an environment that the resulting mask will be built from.
+    #' @param .env_bot an environment that the resulting mask will be built from.
+    #' @param .env_top an environment that `.env_bot` inherits from
     initialize = function(.data, .indices = NULL, .env_bot, .env_top = .env_bot) {
       private$.shared_env <- .env_bot
       private$.top_env <- .env_top
@@ -391,7 +392,8 @@ biocmask_assay <- R6::R6Class(
     #' 
     #' @param .data a named list like object to create a mask
     #' @param .indices the indices that will be used to chop `.data`
-    #' @param .env an environment that the resulting mask will be built from.
+    #' @param .env_bot an environment that the resulting mask will be built from.
+    #' @param .env_top an environment that `.env_bot` inherits from
     #' @param .nrow,.ncol the number of rows and columns of each element of `.data` respectively
     initialize = function(.data, .indices, .env_bot, .env_top = .env_bot, .nrow, .ncol) {
       super$initialize(.data, .indices = .indices, .env_bot = .env_bot, .env_top = .env_top)

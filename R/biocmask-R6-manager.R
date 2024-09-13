@@ -10,16 +10,20 @@
 #' developer. The biocmasks passed to `.mask` argument may stem from the same
 #' shared environment, or may have cyclical relationships.
 #' @return An R6 object inheriting `biocmask_manager`.
-#' @example 
+#' @examples
 #'  
 #' manager <- new_biocmask(se_simple)
 #' manager$ctx
-#' q <- biocmask_quos(counts_1 = counts + 1, rows(d = direction),
+#' q <- biocmask_quos(counts_1 = counts + 1,
 #'                    cols(is_drug = condition=="drug"),
 #'                    .ctx_default = "assays",
 #'                    .ctx_opt = c("rows", "cols"))
 #' manager$eval(q[[1]])
 #' manager$results()
+#' #evaluating second quo without switching contexts will error
+#' manager$eval(q[[2]]) |> try()
+#' manager$ctx <- "cols"
+#' manager$ctx
 #' manager$eval(q[[2]])
 #' manager$results()
 #' 

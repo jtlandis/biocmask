@@ -45,6 +45,7 @@
 #' @importFrom purrr pmap
 #' @importFrom purrr reduce
 #' @importFrom purrr walk
+#' @importFrom rlang .env
 #' @importFrom S4Vectors metadata
 #' @importFrom S4Vectors metadata<-
 #' @importFrom S7 method

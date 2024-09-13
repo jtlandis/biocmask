@@ -4,6 +4,9 @@
 \alias{BiocDataMask-assays}
 \alias{biocmask_assay}
 \title{\code{biocmask} for SummarizedExperiment \code{assays()}}
+\value{
+an object inheriting \code{\link[=BiocDataMask]{biocmask}}.
+}
 \description{
 A more specialized version of the biocmask R6 object for the
 assays list object. This includes chopping and unchopping
@@ -17,7 +20,6 @@ of matrix like objects.
 \itemize{
 \item \href{#method-biocmask_assay-new}{\code{biocmask_assay$new()}}
 \item \href{#method-biocmask_assay-unchop}{\code{biocmask_assay$unchop()}}
-\item \href{#method-biocmask_assay-clone}{\code{biocmask_assay$clone()}}
 }
 }
 \if{html}{\out{
@@ -37,7 +39,14 @@ of matrix like objects.
 Create a biocmask from \code{.data}. \code{.data} is chopped by
 \code{.indices}, and environments are built from \code{.env}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_assay$new(.data, .indices, .env, .nrow, .ncol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_assay$new(
+  .data,
+  .indices,
+  .env_bot,
+  .env_top = .env_bot,
+  .nrow,
+  .ncol
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -47,7 +56,9 @@ Create a biocmask from \code{.data}. \code{.data} is chopped by
 
 \item{\code{.indices}}{the indices that will be used to chop \code{.data}}
 
-\item{\code{.env}}{an environment that the resulting mask will be built from.}
+\item{\code{.env_bot}}{an environment that the resulting mask will be built from.}
+
+\item{\code{.env_top}}{an environment that \code{.env_bot} inherits from}
 
 \item{\code{.nrow, .ncol}}{the number of rows and columns of each element of \code{.data} respectively}
 }
@@ -67,23 +78,6 @@ unchop data within the mask, returns a matrix
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{name of binding to retrieve and unchop}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-biocmask_assay-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-biocmask_assay-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_assay$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
 }
 \if{html}{\out{</div>}}
 }

@@ -4,9 +4,36 @@
 \alias{BiocmaskManager}
 \alias{biocmask_manager}
 \title{\code{biocmask} Data Mask Manager}
+\value{
+An R6 object inheriting \code{biocmask_manager}.
+}
 \description{
-This object organizes serveral biocmasks, allowing expressions to be
-evaluated in different contexts.
+This object organizes serveral \link[=BiocDataMask]{biocmasks}, allowing
+expressions to be evaluated in different contexts. This object is the return
+value of \code{\link[=new_biocmask]{new_biocmask()}}
+
+The "connectedness" of each mask managed by this object is dependent on the
+developer. The biocmasks passed to \code{.mask} argument may stem from the same
+shared environment, or may have cyclical relationships.
+}
+\examples{
+ 
+manager <- new_biocmask(se_simple)
+manager$ctx
+q <- biocmask_quos(counts_1 = counts + 1,
+                   cols(is_drug = condition=="drug"),
+                   .ctx_default = "assays",
+                   .ctx_opt = c("rows", "cols"))
+manager$eval(q[[1]])
+manager$results()
+#evaluating second quo without switching contexts will error
+manager$eval(q[[2]]) |> try()
+manager$ctx <- "cols"
+manager$ctx
+manager$eval(q[[2]])
+manager$results()
+
+
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -73,15 +100,13 @@ provides a sequence for iterate over the groups
 \subsection{Method \code{eval()}}{
 eval an expression in the current context
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$eval(quo, name, env = caller_env())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$eval(quo, env = caller_env())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{quo}}{a quosure or quoted expression}
-
-\item{\code{name}}{the resulting name to bind}
 
 \item{\code{env}}{an environment}
 }

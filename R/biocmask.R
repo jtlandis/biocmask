@@ -6,12 +6,13 @@
 #' @param obj Dispatch Object
 #' @param ... Not used
 #' @return a biocmask_manager R6 class object
+#' @seealso [biocmask::BiocmaskManager]
 #' @export
 new_biocmask <- function(obj, ...) {
   UseMethod("new_biocmask")
 }
 
-#' @rdname biocmask
+#' @rdname new_biocmask
 #' @export
 new_biocmask.SummarizedExperiment <- function(obj, ...) {
   groups <- group_details(obj)
@@ -57,9 +58,9 @@ biocmask_evaluate <- function(mask, quos, ctxs, nams, env, .matrix = FALSE) {
     {
       for(i in seq_len(n_quo)) {
         quo <- quos[[i]]
-        nm <- nams[i]
+        #nm <- nams[i]
         mask$ctx <- ctxs[[i]]
-        mask$eval(quo, name = nm, env = env)
+        mask$eval(quo, env = env)
       }
     },
     error = function(cnd) {
