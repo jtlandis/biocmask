@@ -8,12 +8,12 @@ NULL
 #' @param ... expressions to summarize the object
 #' @param .retain logical value. When TRUE (the default), ungrouped dimensions
 #' are retained in the resulting SummarizedExperiment object and scalar outputs
-#' are recycled to the length of the ungrouped dimension. When FALSE, all 
-#' outputs are expected to be scalar values and all columns in ungrouped 
+#' are recycled to the length of the ungrouped dimension. When FALSE, all
+#' outputs are expected to be scalar values and all columns in ungrouped
 #' dimensions are dropped.
 #' @return an object inheriting SummarizedExperiment class
 #' @examples
-#' 
+#'
 #' # outputs in assay context may be either
 #' # length 1, or the length of the ungrouped
 #' # dimension while .retain = TRUE
@@ -21,14 +21,14 @@ NULL
 #'   group_by(rows(direction)) |>
 #'   summarise(col_sums = colSums(counts),
 #'             sample = sample(1:20, 1L))
-#' 
+#'
 #' # .retain = FALSE will drop ungrouped dimensions and
 #' # outputs of assay context should be length 1.
 #' se_simple |>
 #'   group_by(rows(direction)) |>
 #'   summarise(col_sums = list(colSums(counts)),
-#'             .retain = FALSE) 
-#' 
+#'             .retain = FALSE)
+#'
 #' # using an `across()` function will help
 #' # nest ungrouped dimensions
 #' se_simple |>
@@ -36,13 +36,13 @@ NULL
 #'   summarise(col_sums = list(colSums(counts)),
 #'             cols(across(everything(), list)),
 #'              .retain = FALSE)
-#'  
+#'
 #' @export
 summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
 
   .env <- caller_env()
   .groups <- metadata(.data)[["group_data"]]
-  mask <- new_biocmask.SummarizedExperiment(obj = .data)
+  mask <- new_biocmask_manager.SummarizedExperiment(obj = .data)
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "summarise")
@@ -143,14 +143,14 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
       col_data <- replace(colData(.data), names(col_data), col_data)
     }
   }
-  
+
   new_metadata <- metadata(.data)
   if (group_type(.groups) != "none") {
     new_metadata$group_data <- biocmask_groups(
       row_data[group_vars_$row_groups],
       col_data[group_vars_$col_groups])
   }
-  
+
   if (".features" %in% names(row_data)) {
     row_names <- row_data$.features
     row_data$.features <- NULL
@@ -159,7 +159,7 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
     col_names <- col_data$.samples
     col_data$.samples <- NULL
   }
-  
+
   #we should have some type of value to view from
   # assays as it was enforced earlier.
   assay_data <- assert_chops_size(assay_chops,
@@ -172,7 +172,7 @@ summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
       nrow = .nrow,
       ncol = .ncol
     )
-  
+
   out <- SummarizedExperiment(assays = assay_data,
                        rowData = row_data,
                        colData = col_data,

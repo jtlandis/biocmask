@@ -1,6 +1,6 @@
 
 #' @title New Biocmask
-#' @name new_biocmask
+#' @name new_biocmask_manager
 #' @description
 #' Create a biocmask for an object
 #' @param obj Dispatch Object
@@ -9,7 +9,7 @@
 #' @seealso [biocmask::BiocmaskManager]
 #' @examples
 #'  
-#' manager <- new_biocmask(se_simple)
+#' manager <- new_biocmask_manager(se_simple)
 #' manager$ctx
 #' q <- biocmask_quos(counts_1 = counts + 1,
 #'                    cols(is_drug = condition=="drug"),
@@ -25,13 +25,13 @@
 #' manager$results()
 #' 
 #' @export
-new_biocmask <- function(obj, ...) {
-  UseMethod("new_biocmask")
+new_biocmask_manager <- function(obj, ...) {
+  UseMethod("new_biocmask_manager")
 }
 
 #' @rdname new_biocmask
 #' @export
-new_biocmask.SummarizedExperiment <- function(obj, ...) {
+new_biocmask_manager.SummarizedExperiment <- function(obj, ...) {
   groups <- group_details(obj)
   expanded <- expand_groups2(groups$row_groups, groups$col_groups)
   nr <- nrow(obj)

@@ -2,7 +2,7 @@
 #' @title `biocmask` Data Mask Manager
 #' @name BiocmaskManager
 #' @description
-#' This object organizes serveral [biocmasks][biocmask::BiocDataMask], allowing
+#' This object organizes serveral biocmasks, allowing
 #' expressions to be evaluated in different contexts. This object is the return
 #' value of [`new_biocmask()`][biocmask::new_biocmask]
 #' 

@@ -26,7 +26,7 @@
 mutate.SummarizedExperiment <- function(.data, ...) {
   # browser()
   .env <- caller_env()
-  mask <- new_biocmask.SummarizedExperiment(obj = .data)
+  mask <- new_biocmask_manager.SummarizedExperiment(obj = .data)
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "mutate")

@@ -39,7 +39,7 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
   # force any computations to occur on ungrouped data
   .groups <- metadata(.data)[["group_data"]]
   metadata(.data)[["group_data"]] <- NULL
-  mask <- new_biocmask.SummarizedExperiment(obj = .data)
+  mask <- new_biocmask_manager.SummarizedExperiment(obj = .data)
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
   poke_ctx_local("biocmask:::dplyr_verb", "group_by")
