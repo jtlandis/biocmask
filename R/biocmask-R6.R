@@ -109,8 +109,15 @@ add_bind <- function(.expr, .env_expr,
 #'                 context is at this moment determined by the .shared_env NOT
 #'                 the curr_group. I have plans to remove the curr_group
 #'                 environment.
+#'
+#' @return an R6 object of class `biocmask`
+#' @examples
+#' # note: this R6 class is not exported
+#' mask <- biocmask$new(iris, .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+#' mask$eval(quote(Sepal.Width))
 biocmask <- R6::R6Class(
   "biocmask",
+  cloneable = FALSE,
   public = list(
     #' @description
     #' Create a biocmask from `.data`. `.data` is chopped by
@@ -384,7 +391,7 @@ biocmask <- R6::R6Class(
 biocmask_assay <- R6::R6Class(
   "biocmask_assay",
   inherit = biocmask, 
-  cloneable = F,
+  cloneable = FALSE,
   public = list(
     #' @description
     #' Create a biocmask from `.data`. `.data` is chopped by

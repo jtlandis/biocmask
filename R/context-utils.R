@@ -11,6 +11,17 @@
 #' that attempt to coerce the underlying data into a format that is appropriate
 #' for the current context. Indicating TRUE will instead bind the underlying data
 #' as is.
+#' @return function called for its side-effects
+#' @examples
+#' 
+#' # cols
+#' mutate(se_simple,
+#'        cols(is_drug = condition=="drug"),
+#'        #bind a different context
+#'        effect = col_ctx(counts + (is_drug * rbinom(n(), 20, .3))),
+#'        # access via pronoun
+#'        rows(sum = rowSums(.assays_asis$effect)))
+#' 
 NULL
 
 #' @rdname biocmask-context 

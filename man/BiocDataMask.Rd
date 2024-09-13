@@ -4,6 +4,9 @@
 \alias{BiocDataMask}
 \alias{biocmask}
 \title{\code{biocmask} Data Mask Object}
+\value{
+an R6 object of class \code{biocmask}
+}
 \description{
 An R6 Object that tracks bindings of a list-like object.
 This includes DFrame objects. There are several inherited
@@ -31,6 +34,11 @@ the curr_group. I have plans to remove the curr_group
 environment.
 }
 }
+\examples{
+# note: this R6 class is not exported
+mask <- biocmask$new(iris, .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+mask$eval(quote(Sepal.Width))
+}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
@@ -56,7 +64,6 @@ foreign bindings}
 \item \href{#method-biocmask-unchop}{\code{biocmask$unchop()}}
 \item \href{#method-biocmask-results}{\code{biocmask$results()}}
 \item \href{#method-biocmask-eval}{\code{biocmask$eval()}}
-\item \href{#method-biocmask-clone}{\code{biocmask$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -163,23 +170,6 @@ evaluates a quoted expression within a new datamask
 \item{\code{quo}}{a quosure to evaluate}
 
 \item{\code{env}}{an environment to search after mask}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-biocmask-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-biocmask-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
 }
 \if{html}{\out{</div>}}
 }

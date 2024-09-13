@@ -27,6 +27,9 @@ that attempt to coerce the underlying data into a format that is appropriate
 for the current context. Indicating TRUE will instead bind the underlying data
 as is.}
 }
+\value{
+function called for its side-effects
+}
 \description{
 Contextual user-facing helper function for dplyr verbs with SummarizedExperiment
 objects. These functions are intended to be used as the top level call to
@@ -43,4 +46,15 @@ Specify a single expression to evaluate in another context
 Specify a single expression to evaluate in another context
 
 Specify a single expression to evaluate in another context
+}
+\examples{
+
+# cols
+mutate(se_simple,
+       cols(is_drug = condition=="drug"),
+       #bind a different context
+       effect = col_ctx(counts + (is_drug * rbinom(n(), 20, .3))),
+       # access via pronoun
+       rows(sum = rowSums(.assays_asis$effect)))
+
 }
