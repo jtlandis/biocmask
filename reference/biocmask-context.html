@@ -25,7 +25,7 @@ Specify a single expression to evaluate in another context"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">biocmask</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@ Specify a single expression to evaluate in another context"></head><body>
     <div class="ref-description section level2">
     <p>Contextual user-facing helper function for dplyr verbs with SummarizedExperiment
 objects. These functions are intended to be used as the top level call to
-any dplyr verbs <code>...</code> argument, similar to that of <code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across()</a></code>/<code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">if_any()</a></code>/<code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">if_all()</a></code>.</p>
+any dplyr verbs <code>...</code> argument, similar to that of <code>across()</code>/<code>if_any()</code>/<code>if_all()</code>.</p>
 <p>Specifies that the following expressions should be evaluated within the
 colData context.</p>
 <p>Specifies that the following expressions should be evaluated within the
@@ -104,7 +104,7 @@ as is.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">se_simple</span>,</span></span>
 <span class="r-in"><span>       <span class="fu">cols</span><span class="op">(</span>is_drug <span class="op">=</span> <span class="va">condition</span><span class="op">==</span><span class="st">"drug"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>       <span class="co">#bind a different context</span></span></span>
-<span class="r-in"><span>       effect <span class="op">=</span> <span class="fu">col_ctx</span><span class="op">(</span><span class="va">counts</span> <span class="op">+</span> <span class="op">(</span><span class="va">is_drug</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">20</span>, <span class="fl">.3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>       effect <span class="op">=</span> <span class="fu">col_ctx</span><span class="op">(</span><span class="va">counts</span> <span class="op">+</span> <span class="op">(</span><span class="va">is_drug</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span>, <span class="fl">20</span>, <span class="fl">.3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts effect <span style="color: #949494;">|</span> gene  length direction <span style="color: #949494;">|</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span></span>
