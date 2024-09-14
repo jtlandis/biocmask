@@ -1,7 +1,3 @@
----
-format: md
----
-
 # `biocmask`
 
 `biocmask` provides efficient abstractions to the *SummarizedExperiment* such
