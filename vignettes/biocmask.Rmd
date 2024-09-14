@@ -43,6 +43,15 @@ It supports the following operations:
 ```{r message=FALSE}
 library(airway)
 data(airway)
+```
+
+```{r echo=FALSE}
+# clean up the metadata a bit to make it easier to view
+colData(airway) <- colData(airway)[,1:4]
+rowData(airway) <- rowData(airway)[,c(1:2,4)]
+```
+
+```{r}
 library(dplyr)
 library(biocmask)
 # add content (mutate) to any of the three tables:
@@ -57,38 +66,45 @@ airway |>
 The operations can span contexts, and only the necessary data will be extracted
 from each context for computation:
 
-```{r eval=FALSE}
+```{r}
 airway$sizeFactor <- runif(8, .9, 1.1)
-airway |>
-  mutate(scaled_counts = t(t(counts) / .cols_asis$sizeFactor),
-         rows(mean_scaled_counts = rowMeans(.assays_asis$scaled_counts)))
 
+# making scaled counts, then computing row means:
 airway |>
-  #identical as before, but let the `.cols$` pronoun reshape
-  # the data to fit the assays context
   mutate(scaled_counts = counts / .cols$sizeFactor,
-         rows(mean_scaled_counts = rowMeans(.assays_asis$scaled_counts)))
+         rows(ave_scl_cts = rowMeans(.assays_asis$scaled_counts)))
 ```
 
-Alternatively we could have used *purrr* to compute row sums:
+Alternatively we could have used *purrr* to compute row means:
 
-```{r eval=FALSE}
+```{r}
 airway |>
   mutate(scaled_counts = counts / .cols$sizeFactor,
          # the non-"_asis" pronouns will try to reshape the data for the
          # current context. You may expect a list of slices from `.assays$`
          # and a replicated list
-         rows(mean_scaled_counts = purrr::map_dbl(.assays$counts, sum)))
+         rows(ave_scl_cts = purrr::map_dbl(.assays$counts, mean)))
 ```
 
 See below for details on how objects are made available across contexts.
 
-We can perform grouping and summarization:
+`biocmask` also enables common grouping and summarization routines:
 
 ```{r eval=FALSE}
-airway |>
+summary <- airway |>
   group_by(rows(gene_biotype)) |>
   summarize(col_sums = colSums(counts))
+# summarize returns a SummarizedExperiment here,
+# retaining rowData and colData
+
+summary |> rowData()
+
+# visualizing the output as a tibble:
+library(tibble)
+summary |>
+  assay("col_sums") |>
+  as_tibble() |>
+  add_column(type = rowData(summary)$gene_biotype, .before=1)
 ```
 
 ## Related work
@@ -107,6 +123,20 @@ Put your diagrams here, those are great. They can go in `/images`
 ## row context
 
 ## col context
+
+```{r}
+# here the `.cols$` pronoun reshapes the data to fit the `assays` context
+airway |>
+  mutate(scaled_counts = counts / .cols$sizeFactor,
+         rows(ave_scl_cts = rowMeans(.assays_asis$scaled_counts)))
+
+# this is equivalent to the following, where we have to transpose
+# the `counts` assay data twice to enable the correct recycling
+# of the size factor vector
+airway |>
+  mutate(scaled_counts = t(t(counts) / .cols_asis$sizeFactor),
+         rows(ave_scl_cts = rowMeans(.assays_asis$scaled_counts)))
+```
 
 # Advanced features
 
