@@ -51,7 +51,7 @@ biocmask_quos <- function(..., .named = TRUE, .ctx_default = NULL, .ctx_opt = NU
   dots <- quos(...) |>
     as.list()
   .ctx_default <- .ctx_default %||% abort("`.ctx_default` must be specified!")
-  .ctx_opt <- .ctx_opt %||% abort("`.ctx_opt` must be specified!")
+  has_opt_ctx <- !is.null(.ctx_opt)
   # ctx_opt <- c("cols", "rows")
   nms <- rlang::names2(dots)
   is_nms <- nms != ""
@@ -59,7 +59,7 @@ biocmask_quos <- function(..., .named = TRUE, .ctx_default = NULL, .ctx_opt = NU
     quo <- dots[[i]]
     .env <- quo_get_env(quo)
     .expr <- quo_get_expr(quo)
-    if (is_call(.expr, .ctx_opt)) {
+    if (has_opt_ctx && is_call(.expr, .ctx_opt)) {
       ctx <- as_label(.expr[[1]])
       ctx_exprs <- as.list(.expr[-1])
       ctx_nms <- rlang::names2(ctx_exprs)
