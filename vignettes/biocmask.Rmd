@@ -40,9 +40,10 @@ It supports the following operations:
 
 ## Typical use case
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(airway)
 data(airway)
+library(dplyr)
 ```
 
 ```{r echo=FALSE}
@@ -52,7 +53,6 @@ rowData(airway) <- rowData(airway)[,c(1:2,4)]
 ```
 
 ```{r}
-library(dplyr)
 library(biocmask)
 # add content (mutate) to any of the three tables:
 # assay, colData, rowData
@@ -79,10 +79,14 @@ Alternatively we could have used *purrr* to compute row means:
 
 ```{r}
 airway |>
+  # the non-"_asis" pronouns will try to reshape the data for the
+  # current context.
+  # while in the default context (assays), the .cols$... and
+  # .rows$... pronouns return a vector of an appropriate size for
+  # matrix math.
   mutate(scaled_counts = counts / .cols$sizeFactor,
-         # the non-"_asis" pronouns will try to reshape the data for the
-         # current context. You may expect a list of slices from `.assays$`
-         # and a replicated list
+         # You may expect a list when accessing other contexts
+         # from either the rows() or cols() contexts.
          rows(ave_scl_cts = purrr::map_dbl(.assays$counts, mean)))
 ```
 
