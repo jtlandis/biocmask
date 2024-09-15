@@ -1,4 +1,9 @@
 
+abort_invalid_quo <- function() {
+  abort("`biocmask_manager$eval()` requires quosure from `biocmask_quosures()`",
+        class = "biocmask_invalid_quo")
+}
+
 #' @title `biocmask` Data Mask Manager
 #' @name BiocmaskManager
 #' @description
@@ -41,7 +46,7 @@ biocmask_manager <- R6::R6Class(
       quos <- expand_across(quo, mask = self, error_call = caller_call())
       for (k in seq_along(quos)) {
         quo <- quos[[k]]
-        quo_data <- attr(quo, "biocmask:::data")
+        quo_data <- attr(quo, "biocmask:::data") %||% abort_invalid_quo()
         chop_out <- biocmask_manager_eval(
           quo = quo,
           env = env,
