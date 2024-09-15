@@ -47,6 +47,7 @@ top_env <- new_environment(
     vec_rep = vctrs::vec_rep,
     vec_rep_each = vctrs::vec_rep_each,
     vec_c = vctrs::vec_c,
+    splice = splice,
     # skip = skip,
     poke_ctx = poke_ctx,
     poke_ctx_local = poke_ctx_local,
