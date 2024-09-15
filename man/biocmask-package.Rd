@@ -3,12 +3,12 @@
 \docType{package}
 \name{biocmask-package}
 \alias{biocmask-package}
-\title{biocmask: Create S4 BioConductor data masks for dplyr functions}
+\title{biocmask: Data masks for SummarizedExperiment enabling dplyr-like manipulation}
 \value{
 API for using S4 classes with rlang data masks
 }
 \description{
-The package provides `rlang` data masks for SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
+The package provides `rlang` data masks for the SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
 }
 \seealso{
 Useful links:
