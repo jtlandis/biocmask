@@ -98,7 +98,7 @@ vec_chop_assays <- function(.data, .indices) {
   map2(
     attr(.indices, "biocmask:::row_chop_ind"),
     attr(.indices, "biocmask:::col_chop_ind"),
-    function(.x, .y, .data) .data[.x, .y], .data = .data
+    function(.x, .y, .data) .data[.x, .y, drop = FALSE], .data = .data
   )
 }
 

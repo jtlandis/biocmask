@@ -18,7 +18,7 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
         col_ind <- attr(.indices, "biocmask:::col_chop_ind") |>
           .subset(chops)
         tryCatch({
-          as_is <- as_is[,order(list_unchop(col_ind))]
+          as_is <- as_is[,order(list_unchop(col_ind)), drop = FALSE]
         },
         error = function(cnd) {
           if (!inherits(data_chop[[1]], "matrix")) 
@@ -70,7 +70,7 @@ connect_assays_to_cols <- function(mask_assays, mask_cols) {
         row_ind <- attr(.indices, "biocmask:::row_chop_ind") |>
           .subset(chops)
         tryCatch({
-          as_is <- as_is[order(list_unchop(row_ind)),]
+          as_is <- as_is[order(list_unchop(row_ind)),, drop = FALSE]
         },
         error = function(cnd) {
           if (!inherits(data_chop[[1]], "matrix")) 
