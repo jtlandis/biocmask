@@ -33,9 +33,9 @@ test_that("correct number of groups for ungrouped and grouped `se_simple`", {
   expect_identical(bm$n_groups, 1L)
   expect_identical(gbm$n_groups, 4L) # rows(+, -), cols(condition, treatment)
   gbm$ctx <- "rows"
-  expect_identical(bm$n_groups, 2L)
+  expect_identical(gbm$n_groups, 2L)
   gbm$ctx <- "cols"
-  expect_identical(bm$n_groups, 2L)
+  expect_identical(gbm$n_groups, 2L)
   gbm$ctx <- "assays"
 })
 
