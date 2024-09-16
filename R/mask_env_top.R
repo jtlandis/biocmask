@@ -300,7 +300,11 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       env = shared_ctx_env
     )
   )
-  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), shared_ctx_env)
+  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), 
+                                   shared_ctx_env)
+  shared_ctx_env$cur_group_id <- new_function(pairlist(),
+                                              quote(`biocmask:::ctx:::group_id`),
+                                              shared_ctx_env)
   shared_ctx_env$set_group_id <- env_group_id(shared_ctx_env)
   shared_ctx_env
 }
