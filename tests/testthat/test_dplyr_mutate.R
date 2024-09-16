@@ -26,8 +26,8 @@ test_that("mutate works - with groups", {
   )
   expect_identical(assay(res, "foo") |> unname(),
                    matrix(c(
-                     rep(c(1L,3L,3L,1L,3L), 2),
-                     rep(c(2L,4L,4L,2L,4L), 2)
+                     rep(c(1L,2L,2L,1L,2L), 2),
+                     rep(c(3L,4L,4L,3L,4L), 2)
                    ), nrow = 5, ncol = 4))
   expect_identical(rowData(res)[["foo"]], c(1L, 2L, 2L, 1L, 2L))
   expect_identical(colData(res)[["foo"]], c(1L, 1L, 2L, 2L))

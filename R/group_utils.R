@@ -16,12 +16,14 @@ expand_groups2 <- function(.rows, .cols) {
   attr(out, "row.names") <- c(NA_integer_, -n)
   class(out) <- c("tbl_df", "tbl", "data.frame")
   
-  
-  o <- order(
-    out[[".rows::.indices_group_id"]],
-    out[[".cols::.indices_group_id"]]
-  )
-  out <- out[o,]
+  # due to this ordering here, I had introduced an unexpected  
+  # column-wise ordering of assays. I have changed it and commented 
+  # it out and also revered to the original intent of row-wise ordering.
+  # o <- order(
+  #   out[[".cols::.indices_group_id"]],
+  #   out[[".rows::.indices_group_id"]]
+  # )
+  # out <- out[o,]
   out$.group_id <- seq_len(n)
   out
 }

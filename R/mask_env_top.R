@@ -104,7 +104,7 @@ biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows
       c_nrow <- vec_rep(sum(c_nrow), Nc) #?
       c_nsiz <- c_nrow * c_ncol
       list(
-        assays = lapply(g_ind, function(i) Nc*(r_ind-1L) + i),
+        assays = lapply(g_ind, function(i) Nr*(r_ind-1L) + i),
         rows = vec_rep(list(r_ind), Nc),
         cols = g_ind,
         .nrow = as.list(c_nrow),
@@ -143,7 +143,7 @@ env_group_id <- function(env) {
 prepare_shared_ctx_env <- function(groups, expanded) {
 
   ind_d <- attr(groups, "obj_dim")
-  # browser()
+  
   inf_assay <- biocmask_group_ids2(groups, expanded, "assays")
   inf_rows <- biocmask_group_ids2(groups, expanded, "rows")
   inf_cols <- biocmask_group_ids2(groups, expanded, "cols")
