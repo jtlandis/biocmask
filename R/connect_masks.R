@@ -8,7 +8,27 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
   env_asis <- new.env(hash = TRUE, parent = env_mask_bind, size = size)
   env_pronoun <- new.env(hash = TRUE, parent = env_asis, size = size)
   fun_asis <- add_bind(
-    quote(do.call("cbind", .subset(!!name_sym, `biocmask:::assays:::current_chops`))),
+    quote({
+      #assumes !!name_sym is a matrix, if the user transforms a value in
+      # assays to a non-matrix, and trys to access it, it may be incorrect
+      chops <- `biocmask:::assays:::current_chops`
+      data_chop <- .subset(!!name_sym, chops)
+      as_is <- do.call("cbind", data_chop)
+      if (length(chops) > 1) {
+        col_ind <- attr(.indices, "biocmask:::col_chop_ind") |>
+          .subset(chops)
+        tryCatch({
+          as_is <- as_is[,order(list_unchop(col_ind))]
+        },
+        error = function(cnd) {
+          if (!inherits(data_chop[[1]], "matrix")) 
+            abort("could not reconstruct 'asis' representation. underlying data was not a matrix",
+                  call = NULL)
+          abort("unexpected error", parent = cnd, call = NULL)
+        })
+      }
+      as_is
+    }),
     # should be evaluated within the chopped context, cannot guarantee groupings
     .env_expr = mask_assays$environments@env_data_chop,
     .env_bind = env_asis,
