@@ -29,7 +29,7 @@ Imports:
     utils,
     methods
 Depends: 
-    R (>= 2.10)
+    R (>= 4.4.0)
 Suggests:
     devtools,
     knitr,
@@ -37,7 +37,6 @@ Suggests:
     testthat,
     airway,
     IRanges
-LazyData: true
 URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
 BugReports: https://www.github.com/jtlandis/biocmask/issues
 biocViews: Annotation, GenomeAnnotation, Transcriptomics
