@@ -4,18 +4,21 @@
 \alias{summarise.SummarizedExperiment}
 \title{Summarize SummarizedExperiment}
 \usage{
-\method{summarise}{SummarizedExperiment}(.data, ..., .retain = TRUE)
+\method{summarise}{SummarizedExperiment}(.data, ..., .retain = c("auto", "ungrouped", "none"))
 }
 \arguments{
 \item{.data}{a SummarizedExperiment object,}
 
 \item{...}{expressions to summarize the object}
 
-\item{.retain}{logical value. When TRUE (the default), ungrouped dimensions
-are retained in the resulting SummarizedExperiment object and scalar outputs
-are recycled to the length of the ungrouped dimension. When FALSE, all
-outputs are expected to be scalar values and all columns in ungrouped
-dimensions are dropped.}
+\item{.retain}{This argument controls how \code{rowData()} or \code{colData()} is retained
+after summarizing. When "auto" (the default), \code{.retain} behavior depends on
+the groupings of \code{.data}. When exactly one dimension is grouped, "auto"
+behaves like "ungrouped-dim", and "none" otherwise. When "ungrouped-dim",
+the ungrouped dimension's data are retained in the resulting
+\code{SummarizedExperiment} object and scalar outputs are recycled to the length
+of the ungrouped dimension. When "none", all outputs are expected to be
+scalar and only computed values are retained in \code{rowData()} and \code{colData()}}
 }
 \value{
 an object inheriting SummarizedExperiment class
@@ -27,18 +30,18 @@ Summarize SummarizedExperiment
 
 # outputs in assay context may be either
 # length 1, or the length of the ungrouped
-# dimension while .retain = TRUE
+# dimension while .retain = "auto"/"ungrouped-dim"
 se_simple |>
   group_by(rows(direction)) |>
   summarise(col_sums = colSums(counts),
             sample = sample(1:20, 1L))
 
-# .retain = FALSE will drop ungrouped dimensions and
+# .retain = "none" will drop ungrouped dimensions and
 # outputs of assay context should be length 1.
 se_simple |>
   group_by(rows(direction)) |>
   summarise(col_sums = list(colSums(counts)),
-            .retain = FALSE)
+            .retain = "none")
 
 # using an `across()` function will help
 # nest ungrouped dimensions
@@ -46,6 +49,6 @@ se_simple |>
   group_by(rows(direction)) |>
   summarise(col_sums = list(colSums(counts)),
             cols(across(everything(), list)),
-             .retain = FALSE)
+             .retain = "none")
 
 }
