@@ -11,7 +11,7 @@ test_that("arrange works - ungrouped", {
     arrange(
       se_simple,
       rows(length),
-      cols(desc(sample))
+      cols(dplyr::desc(sample))
     )
   )
   
@@ -29,7 +29,7 @@ test_that("arrange works - grouped", {
     arrange(
       gse,
       rows(length),
-      cols(desc(sample))
+      cols(dplyr::desc(sample))
     )
   )
   
@@ -37,19 +37,23 @@ test_that("arrange works - grouped", {
                    c("-","+","+","-","+"))
   expect_identical(colData(res)[["condition"]],
                    c("drug","drug", "cntrl","cntrl"))
-  
+})
+
+test_that("arrange works - grouped .by_group = TRUE", {  
+  browser()
+  gse <- group_by(se_simple, rows(direction), cols(condition))
   # testing .by_group = TRUE
-  res <- expect_no_error(
+  res <- 
     arrange(
       gse,
       rows(length),
-      cols(desc(sample)),
+      cols(dplyr::desc(sample)),
       .by_group = TRUE
     )
-  )
+  
   
   expect_identical(rowData(res)[["direction"]],
-                   c("-","-","+","+","+"))
+                   c("+","+","+","-","-"))
   expect_identical(colData(res)[["condition"]],
                    c("cntrl","cntrl","drug","drug"))
 })

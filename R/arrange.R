@@ -65,12 +65,12 @@ arrange.SummarizedExperiment <- function(.data, ..., .by_group = FALSE) {
   type <- ""
   if (!is_empty(results$rows)) {
     type <- "row"
-    ro <- exec("order", splice(results$rows))
+    ro <- exec("order", splice(results$rows), method = "radix")
   }
   
   if (!is_empty(results$cols)) {
     type <- paste0(type, "col")
-    co <- exec("order", splice(results$cols))
+    co <- exec("order", splice(results$cols), method = "radix")
   }
   
   out <- switch(type,
