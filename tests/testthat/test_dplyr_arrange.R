@@ -43,13 +43,15 @@ test_that("arrange works - grouped .by_group = TRUE", {
   
   gse <- group_by(se_simple, rows(direction), cols(condition))
   # testing .by_group = TRUE
-  res <- 
+  res <- expect_no_error(
     arrange(
       gse,
       rows(length),
       cols(dplyr::desc(sample)),
       .by_group = TRUE
     )
+  )
+    
   
   
   expect_identical(rowData(res)[["direction"]],
