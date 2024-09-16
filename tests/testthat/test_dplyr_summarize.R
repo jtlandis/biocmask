@@ -15,7 +15,7 @@ test_that("summarize works - no groups", {
   expect_identical(dim(res), c(1L, 1L))
 })
 
-test_that("summarize works - groups", {
+test_that("summarize works - groups: rows", {
   
   gse <- group_by(se_simple, rows(direction))
   
@@ -23,11 +23,26 @@ test_that("summarize works - groups", {
     summarize(
       gse,
       sum = sum(counts),
-      rows(sum = sum(length)),
+      rows(sum = sum(.assays_asis$counts)),
       cols(sum = colSums(.assays_asis$counts))
     )
   )
   
-  #outputs should be 1 x 1
-  expect_identical(dim(res), c(1L, 1L))
+  expect_identical(dim(res), c(2L, 4L))
+})
+
+test_that("summarize works - groups: cols", {
+  
+  gse <- group_by(se_simple, cols(condition))
+  
+  res <- expect_no_error(
+    summarize(
+      gse,
+      sum = sum(counts),
+      rows(sum = rowSums(.assays_asis$counts)),
+      cols(sum = sum(.assays_asis$counts))
+    )
+  )
+  
+  expect_identical(dim(res), c(5L, 2L))
 })
