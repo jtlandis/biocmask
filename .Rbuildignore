@@ -1,12 +1,14 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^data-raw$
-^presentations
+presentations
 src
 \.github
 README_files
 README.qmd
 README.pdf
 ^.*\.Rproj$
-_devel
-pkgdown
+^_devel$
+^pkgdown$
+vignettes/.*_files
+vignettes/.*html
