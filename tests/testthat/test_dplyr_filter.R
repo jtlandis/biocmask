@@ -1,5 +1,5 @@
 
-test_check("filter works - no groups", {
+test_that("filter works - no groups", {
   
   expect_error(
     filter(se_simple, counts >= 20),

@@ -40,7 +40,7 @@ test_that("arrange works - grouped", {
 })
 
 test_that("arrange works - grouped .by_group = TRUE", {  
-  browser()
+  
   gse <- group_by(se_simple, rows(direction), cols(condition))
   # testing .by_group = TRUE
   res <- 
