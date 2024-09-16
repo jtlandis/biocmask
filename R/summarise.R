@@ -6,28 +6,31 @@ NULL
 #' @title Summarize SummarizedExperiment
 #' @param .data a SummarizedExperiment object,
 #' @param ... expressions to summarize the object
-#' @param .retain logical value. When TRUE (the default), ungrouped dimensions
-#' are retained in the resulting SummarizedExperiment object and scalar outputs
-#' are recycled to the length of the ungrouped dimension. When FALSE, all
-#' outputs are expected to be scalar values and all columns in ungrouped
-#' dimensions are dropped.
+#' @param .retain This argument controls how `rowData()` or `colData()` is retained
+#' after summarizing. When "auto" (the default), `.retain` behavior depends on 
+#' the groupings of `.data`. When exactly one dimension is grouped, "auto"
+#' behaves like "ungrouped-dim", and "none" otherwise. When "ungrouped-dim", 
+#' the ungrouped dimension's data are retained in the resulting 
+#' `SummarizedExperiment` object and scalar outputs are recycled to the length 
+#' of the ungrouped dimension. When "none", all outputs are expected to be
+#' scalar and only computed values are retained in `rowData()` and `colData()`
 #' @return an object inheriting SummarizedExperiment class
 #' @examples
 #'
 #' # outputs in assay context may be either
 #' # length 1, or the length of the ungrouped
-#' # dimension while .retain = TRUE
+#' # dimension while .retain = "auto"/"ungrouped-dim"
 #' se_simple |>
 #'   group_by(rows(direction)) |>
 #'   summarise(col_sums = colSums(counts),
 #'             sample = sample(1:20, 1L))
 #'
-#' # .retain = FALSE will drop ungrouped dimensions and
+#' # .retain = "none" will drop ungrouped dimensions and
 #' # outputs of assay context should be length 1.
 #' se_simple |>
 #'   group_by(rows(direction)) |>
 #'   summarise(col_sums = list(colSums(counts)),
-#'             .retain = FALSE)
+#'             .retain = "none")
 #'
 #' # using an `across()` function will help
 #' # nest ungrouped dimensions
@@ -35,13 +38,20 @@ NULL
 #'   group_by(rows(direction)) |>
 #'   summarise(col_sums = list(colSums(counts)),
 #'             cols(across(everything(), list)),
-#'              .retain = FALSE)
+#'              .retain = "none")
 #'
 #' @export
-summarise.SummarizedExperiment <- function(.data, ..., .retain = TRUE) {
+summarise.SummarizedExperiment <- function(.data, ...,
+                                           .retain = c("auto",
+                                                       "ungrouped", "none")) {
 
   .env <- caller_env()
   .groups <- metadata(.data)[["group_data"]]
+  .retain <- match.arg(.retain, choices = c("auto", "ungrouped", "none"))
+  .retain <- switch(.retain,
+                    auto = !is.null(.groups),
+                    ungrouped = TRUE,
+                    none = FALSE)
   mask <- new_biocmask_manager.SummarizedExperiment(obj = .data)
   poke_ctx_local("biocmask:::caller_env", .env)
   poke_ctx_local("biocmask:::manager", mask)
