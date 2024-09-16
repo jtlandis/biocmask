@@ -87,7 +87,7 @@ biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows
       r_ncol <- vec_rep(sum(r_ncol), Nr)
       r_nsiz <- r_nrow * r_ncol
       list(
-        assays = lapply(g_ind, function(i) Nr*(i-1L) + c_ind),
+        assays = lapply(g_ind, function(i) Nr *(c_ind - 1) + i),
         rows = g_ind,
         cols = vec_rep(list(c_ind), Nr),
         .nrow = as.list(r_nrow),
@@ -104,7 +104,7 @@ biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows
       c_nrow <- vec_rep(sum(c_nrow), Nc) #?
       c_nsiz <- c_nrow * c_ncol
       list(
-        assays = lapply(g_ind, function(i) Nr*(r_ind-1L) + i),
+        assays = lapply(g_ind, function(i) Nr*(i-1L) + r_ind),
         rows = vec_rep(list(r_ind), Nc),
         cols = g_ind,
         .nrow = as.list(c_nrow),
