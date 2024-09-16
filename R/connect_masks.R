@@ -184,7 +184,18 @@ connect_rows_to_cols <- function(mask_rows, mask_cols) {
   # bind
   fun_asis <- add_bind(
     # row data may be grouped. use vctrs::vec_c to concatenate vectors
-    quote(vec_c(splice(.subset(!!name_sym, `biocmask:::rows:::current_chops`)))),
+    quote({
+      
+      # browser();vec_c(splice(.subset(!!name_sym, `biocmask:::rows:::current_chops`)))
+      chops <- `biocmask:::rows:::current_chops`
+      data_chop <- .subset(!!name_sym, chops)
+      as_is <- vec_c(splice(data_chop))
+      if (length(chops) > 1) {
+        ind <- .subset(.indices, chops) |>
+          splice() |> vec_c()
+        as_is <- vec_slice(as_is, order(ind, method = "radix"))
+      }
+      as_is }),
     .env_expr = mask_rows$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
@@ -218,7 +229,18 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
   # bind
   fun_asis <- add_bind(
     # col data may be grouped. use vctrs::vec_c to concatenate vectors
-    quote(vec_c(splice(.subset(!!name_sym, `biocmask:::cols:::current_chops`)))),
+    quote({
+      
+      # browser();vec_c(splice(.subset(!!name_sym, `biocmask:::cols:::current_chops`))))
+      chops <- `biocmask:::cols:::current_chops`
+      data_chop <- .subset(!!name_sym, chops)
+      as_is <- vec_c(splice(data_chop))
+      if (length(chops) > 1) {
+        ind <- .subset(.indices, chops) |>
+          splice() |> vec_c()
+        as_is <- vec_slice(as_is, order(ind, method = "radix"))
+      }
+      as_is }),
     .env_expr = mask_cols$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"

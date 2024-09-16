@@ -46,3 +46,19 @@ test_that("summarize works - groups: cols", {
   
   expect_identical(dim(res), c(5L, 2L))
 })
+
+test_that("summarize works - groups: rows,cols", {
+  gse <- group_by(se_simple, rows(direction), cols(condition))
+  
+  res <- expect_no_error(
+    summarize(
+      gse,
+      sum = sum(counts),
+      rows(sum = sum(.assays_asis$counts)),
+      cols(sum = sum(.assays_asis$counts))
+    )
+  )
+  
+  expect_identical(dim(res), c(2L, 2L))
+  
+})

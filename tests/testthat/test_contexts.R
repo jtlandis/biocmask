@@ -158,3 +158,71 @@ test_that("cols context: non-'asis' pronouns coerce data -> list vec", {
     all(vapply(res$rows[-1], identical, y = res$rows[[1]], FUN.VALUE = TRUE))
   )
 })
+
+small <- SummarizedExperiment(
+  assays = list(
+    x = matrix(1:12, 3, 4, dimnames = list(rownames = c("A", "B", "C"),
+                                      colnames = c("D", "E", "F", "G")))),
+    rowData = data.frame(y = c(1L, 2L, 1L)),
+    colData = data.frame(z = c(1L, 2L, 2L, 1L))
+)
+
+test_that("assays groups ordered by rows", {
+  res <- summarise(
+    group_by(small, rows(y), cols(z)),
+    check = cur_group_id()
+  )
+
+  expect_identical(
+    assay(res, "check"), matrix(1:4, 2, 2)
+  )
+  
+})
+
+test_that("assay pronouns reconstruct correct order", {
+  res <- summarize(
+    group_by(small, rows(y), cols(z)),
+    check = list(x),
+    rows(check = list(.assays_asis$x)),
+    cols(check = list(.assays_asis$x))
+  )
+  # we should expect rownames for rows$check to be split by group
+  expect_identical(lapply(rowData(res)$check, rownames), list(c("A","C"), "B"))
+  # we should expect rownames for cols$check to be in correct order
+  expect_identical(lapply(colData(res)$check, rownames), list(c("A","B","C"),
+                                                              c("A","B","C")))
+  
+  # we should expect colnames for rows$check to be in correct order
+  expect_identical(lapply(rowData(res)$check, colnames),
+                   list(c("D","E","F","G"),
+                        c("D","E","F","G")))
+  # we should expect colnames for cols$check to be split by group
+  expect_identical(lapply(colData(res)$check, colnames),
+                   list(c("D","G"),c("E","F")))
+})
+
+
+test_that("rows pronouns reconstruct correct order", {
+  res <- summarize(
+    group_by(small, rows(y), cols(z)),
+    check = list(.rows_asis$.features),
+    rows(check = list(.features)),
+    cols(check = list(.rows_asis$.features))
+  )
+  
+  expect_identical(rowData(res)$check, list(c("A", "C"), "B"))
+  expect_identical(colData(res)$check, list(c("A","B","C"), c("A","B","C")))
+})
+
+test_that("cols pronouns reconstruct correct order", {
+  res <- summarize(
+    group_by(small, rows(y), cols(z)),
+    check = list(.cols_asis$.samples),
+    rows(check = list(.cols_asis$.samples)),
+    cols(check = list(.samples))
+  )
+  
+  expect_identical(rowData(res)$check, list(c("D","E","F","G"),
+                                            c("D","E","F","G")))
+  expect_identical(colData(res)$check, list(c("D","G"), c("E","F")))
+})
