@@ -1,5 +1,5 @@
 ---
-title: "`biocmask` Usage Guide"
+title: "biocmask Usage Guide"
 author:
     - name: Justin Landis
       orcid: 0000-0001-5501-4934
@@ -7,8 +7,6 @@ author:
       orcid: 0000-0001-8401-0545
 date: "`r format(Sys.time(), '%m/%d/%Y')`"
 output: rmarkdown::html_document
-abstract: >
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor velit lectus, nec hendrerit metus aliquet sit amet. Integer in porta quam. Quisque sit amet lectus orci. Sed vel eros justo. Aliquam erat volutpat. Sed ac nibh finibus, tempor enim id, pellentesque tortor. Nullam congue egestas sapien sed vestibulum. Aliquam erat volutpat. Duis gravida dignissim orci eu sodales. Proin non ullamcorper metus.
 bibliography: library.bib
 vignette: |
   %\VignetteIndexEntry{biocmask Usage Guide}
@@ -52,10 +50,10 @@ colData(airway) <- colData(airway)[,1:4]
 rowData(airway) <- rowData(airway)[,c(1:2,4)]
 ```
 
-```{r}
+```{r message=FALSE}
 library(biocmask)
-# add content (mutate) to any of the three tables:
-# assay, colData, rowData
+# add data (mutate) to any of the three tables,
+# assay, colData, rowData,
 # ...using contextual helpers cols() and rows()
 airway |>
   mutate(log_counts = log1p(counts),
@@ -71,19 +69,17 @@ airway$sizeFactor <- runif(8, .9, 1.1)
 
 # making scaled counts, then computing row means:
 airway |>
-  mutate(scaled_counts = counts / .cols$sizeFactor,
+  mutate(scaled_counts = counts / .cols$sizeFactor, #
          rows(ave_scl_cts = rowMeans(.assays_asis$scaled_counts)))
 ```
+
+Calling `.cols` in the assay context produces an object of the matching size and
+orientation to the other assay data.
 
 Alternatively we could have used *purrr* to compute row means:
 
 ```{r}
 airway |>
-  # the non-"_asis" pronouns will try to reshape the data for the
-  # current context.
-  # while in the default context (assays), the .cols$... and
-  # .rows$... pronouns return a vector of an appropriate size for
-  # matrix math.
   mutate(scaled_counts = counts / .cols$sizeFactor,
          # You may expect a list when accessing other contexts
          # from either the rows() or cols() contexts.
@@ -114,10 +110,14 @@ summary |>
 
 ## Related work
 
-* these
-* are
-* some
-* others
+We note that `biocmask` is highly related to other *tidyomics* projects including:
+
+* tidySummarizedExperiment
+* plyranges
+* DFplyr
+* and more.
+
+Here we have focused on the design principles of ...
 
 # Manipulating *SummarizedExperiment* with `biocmask`
 
@@ -125,9 +125,16 @@ Put your diagrams here, those are great. They can go in `/images`
 
 ## assay context
 
-## row context
+a little about assay
 
-## col context
+## rows context
+
+a little about rows
+
+## cols context
+
+I thought we might re-use this example, of the new way and the "old way" of
+dividing out a vector along the columns:
 
 ```{r}
 # here the `.cols$` pronoun reshapes the data to fit the `assays` context
