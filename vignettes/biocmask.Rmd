@@ -122,18 +122,60 @@ We note that `biocmask` is highly related to other *tidyomics* projects includin
 Here we have focused on the design principles of ...
 
 # Manipulating *SummarizedExperiment* with `biocmask`
+<!-- copied from README -->
+<!-- unsure if it is better here or in README -->
+The `SummarizedExperiment` object contains three main components/"contexts" that we mask, 
+the `assays()`, `rowData()`[^1] and `colData()`.
 
-Put your diagrams here, those are great. They can go in `/images`
+[^1]: At this moment `rowRanges()` is not supported in `biocmask` but may become
+its own pronoun in the future.
+
+![Simplified view of data masking structure. Figure made with [Biorender](https://biorender.com)](man/figures/Overview-bindings.png)
+
+\
+`biocmask` provides variables as-is to data **within their current contexts** enabling you 
+to call S4 methods on S4 objects with `dplyr` verbs. If you require access to
+variables _outside the context_, you may use 
+pronouns made available through `biocmask` to specify where to find those 
+variables.
+
+![Simplified view of reshaping pronouns. Arrows indicates to where the pronoun provides access. For each pronoun listed, there is an `_asis` variant that returns underlying data without reshaping it to fit the context. Figure made with [Biorender](https://biorender.com)](man/figures/Overview-pronouns.png)
+
+\
+
+The `.assays`, `.rows` and `.cols` pronouns outputs depends on the evaluating 
+context. Users should expect that the underlying data returned from `.rows` or
+`.cols` pronouns in the _**assays context**_ is a vector, replicated to match 
+size of the assay context.
+\
+Alternatively, using a pronoun in either the `rows()` or `cols()` 
+contexts will likely return a list equal in length to either `nrows(rowData())`
+or `nrows(colData())`.
 
 ## assay context
-
-a little about assay
+<!-- taken from the presentation -->
+* Default evaluation context
+* `.assays` $\to$ contextual pronoun, returns list of the matrix, sliced by the dimension it was referenced from.
+* `.assays_asis` $\to$ pronoun to direct bindings in `assays()`
+* `assay_ctx(expr, asis = FALSE)` $\to$ short hand to bind the assay context in front of the current context.
 
 ## rows context
 
-a little about rows
+* `rows(...)` $\to$ sentinel function call to indicate evaluation context.
+* `.rows` $\to$ contextual pronoun
+  * within assay context: `.rows$foo` is an alias for `vctrs::vec_rep(foo, times = ncol())`
+  * within colData context: `.rows$foo` is an alias for `vctrs::vec_rep(list(foo), times = n())`
+* `.rows_asis` $\to$ pronoun to direct bindings in `rowData()`
+* `row_ctx(expr, asis = FALSE)` $\to$ shorthand to bind the rowData context in front of the current context
 
 ## cols context
+
+* `cols(...)` $\to$ sentinel function call to indicate evaluation context.
+* `.cols` $\to$ contextual pronoun
+  * within assay context: `.cols$foo` is an alias for `vctrs::vec_rep_each(foo, times = nrow())`
+  * within rowData context: `.rows$foo` is an alias for `vctrs::vec_rep(list(foo), times = n())`
+* `.cols_asis` $\to$ pronoun to direct bindings in `colData()`
+* `col_ctx(expr, asis = FALSE)` $\to$ shorthand to bind the colData context in front of the current context
 
 I thought we might re-use this example, of the new way and the "old way" of
 dividing out a vector along the columns:
@@ -154,11 +196,105 @@ airway |>
 
 # Advanced features
 
-What is super cool and you want to show advanced users
+## Object integrity
+
+`biocmask` provides an opinionated framework for how `dplyr` verbs should interact
+with `SummarizedExperiment` objects. In general, `biocmask` will not allow any
+operations that it could not guarantee a valid return object.
+
+It is for this reason that `arrange()`,  `filter()` and `group_by()` do not 
+allow operations in the default assay context, as this would likely break the
+assumed structure of a `SummarizedExperiment` object.
+
+## `group_by()`
+
+`biocmask` also supports `group_by` operations allowing users to query information
+with `dplyr::n()` or `dplyr::cur_group_id()`. However due to the linked structure
+of a `SummarizedExperiment` object and `biocmask` providing multiple evaluation 
+contexts, grouping operations would be complex and return values would be 
+potentionally ambiguous.
+
+It is for this reason that groupings are themselves **contextual**. The assay 
+context is dependently linked to both the groupings of the rows and cols contexts
+but, the grouping of rows is ignored when viewed from the cols context and 
+similarly the grouping of cols is ignored when viewed from the rows context.
+In this way, we have chosen to make the groupings of rows and cols independent
+from each other when crossing contexts. The below figure attempts to show how
+groupings are conditionally dropped for the scope of an evaluation.
+
+![](man/figures/contextual_groups.png)
+
+To further motivate this choice, suppose we did not drop grouping values when
+considering the below scenario. You have a small
+5 by 4 `SummarizedExperiment` object. Both of the `rowData()` and `colData()` 
+are grouped such that there are 2 grouping variables, totaling in 4 groups across
+the assays.
+
+```{r eval=FALSE}
+group_by(se_simple, rows(direction), cols(condition)) |>
+  mutate(rows(data_from_cols = .cols$condition))
+```
+
+The above syntax implies we wish to move data from the `colData()` into the 
+`rowData()`. From a previously established conventions, we would expect the 
+output to be an alias for `vctrs::vec_rep(list(condition), times = n())`.\
+Additionally the `rows()` sentinal will expect that the output of `.cols$condition`
+will need to match the size of the evaluation context.
+\
+Unfortunately, this becomes extremely difficult to resolve with the current 
+conventions. Should the output of the `rhs` return a list equal to the number
+of groups of the column context? If yes, we would need to consider the size stability
+of the output context! Assuming that `rowData()` has at least one group with three
+elements, there is no guarentee it would fit (this also makes a poor assumption
+that the elements of `rowData()` somehow correspond to the groups of `colData()`).
+Thus we would be left with wrapping the data in a list and replicating to the 
+appropriate size. When its all said and done, we have a list of lists, which
+would be painful to work with. For this reason the only groupings present in
+the `rowData()` context are the groupings in `rowData()`, and similarly for
+the `colData()` context.
+
+## Printing
+
+Since `biocmask` aims to leave the input data as-is when possible, we have considered
+providing support for printing `S4Vectors` within a `tibble()`. To be clear, 
+`biocmask` **will not** allow you to put `S4Vectors` inside a `tibble()`, but 
+will allow for `S4Vectors` to be printed with `pillar()`, the formatting engine
+behind `tibble()` pretty printing.
+
+To enable this behavior, before any data is reported to the user, we proxy any
+`S4Vector` with a custom `vctrs_vctr` object with `biocmask::vec_phantom()`. In
+truth, the `vec_phantom` object is a simple integer vector with a "phantomData"
+attribute. This allows us to carry along `S4Vector` through `pillar()`'s printing
+pipeline until it is time to print the column.
+
+The `pillar_shaft()` method for `vec_phantom` will format the S4 data with
+`biocmask_pillar_format()` generic, which by default calls
+`S4Vectors::showAsCell()`. Users are free to create their own methods for S4
+vectors that differ from `S4Vectors::showAsCell()` if they like, as seen in
+``?`biocmask-printing` ``
 
 # Troubleshooting and best practices
 
-Any tips on how to get started, or how to write things most efficiently?
+while `biocmask` takes inspiration from the data masks used in `dplyr`, they 
+are unfortunately more complex. This means there is some overhead in creating
+the evaluation mask per dplyr verb. Try to reduce the number of `dplyr` verb calls
+and instead increase the content of each verb. For example instead of doing:
+
+```{r eval=false}
+.data |>
+  mutate(foo = bar) |>
+  mutate(baz = foo^2)
+```
+
+do the following
+
+```{r eval = false}
+.data |>
+  mutate(
+    foo = bar,
+    baz = foo^2
+  )
+```
 
 # Community and support
 
