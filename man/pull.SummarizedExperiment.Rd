@@ -13,6 +13,8 @@
 
 \item{name}{ignored argument. Due to the range of data types a
 \code{SummarizedExperiment} this argument is not supported}
+
+\item{...}{unused argument}
 }
 \value{
 an element from either the assays, rowData, or colData of a

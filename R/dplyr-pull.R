@@ -7,6 +7,7 @@
 #' @param var A variable as specified by [dplyr::pull][dplyr::pull]
 #' @param name ignored argument. Due to the range of data types a 
 #' `SummarizedExperiment` this argument is not supported
+#' @param ... unused argument
 #' @return an element from either the assays, rowData, or colData of a 
 #' `SummarizedExperiment` object
 #' @examples
@@ -25,6 +26,7 @@
 #' @export
 pull.SummarizedExperiment <- function(.data, var = -1, name = NULL, ...) {
   # browser()
+  rlang::check_dots_empty()
   .env <- caller_env()
   quos <- biocmask_quos({{ var }}, .ctx_default = "assays",
                         .ctx_opt = c("rows", "cols"))

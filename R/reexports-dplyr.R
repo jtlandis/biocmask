@@ -23,6 +23,9 @@ dplyr::summarise
 dplyr::select
 
 #' @export
+dplyr::pull
+
+#' @export
 dplyr::group_by
 
 #' @export
