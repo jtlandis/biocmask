@@ -10,6 +10,38 @@ ambiguity in outcomes.
 
 ***Note:***  This package is still under active development as of Fall 2024.
 
+# data masking `SummarizedExperiment`
+
+\
+The `SummarizedExperiment` object contains three main components/"contexts" that we mask, 
+the `assays()`, `rowData()`[^1] and `colData()`.
+
+[^1]: At this moment `rowRanges()` is not supported in `biocmask` but may become
+its own pronoun in the future.
+
+![Simplified view of data masking structure. Figure made with [Biorender](https://biorender.com)](man/figures/Overview-bindings.png)
+
+\
+`biocmask` provides variables as-is to data **within their current contexts** enabling you 
+to call S4 methods on S4 objects with `dplyr` verbs. If you require access to
+variables _outside the context_, you may use 
+pronouns made available through `biocmask` to specify where to find those 
+variables.
+
+![Simplified view of reshaping pronouns. Arrows indicates to where the pronoun provides access. For each pronoun listed, there is an `_asis` variant that returns underlying data without reshaping it to fit the context. Figure made with [Biorender](https://biorender.com)](man/figures/Overview-pronouns.png)
+
+\
+
+The `.assays`, `.rows` and `.cols` pronouns outputs depends on the evaluating 
+context. Users should expect that the underlying data returned from `.rows` or
+`.cols` pronouns in the _**assays context**_ is a vector, replicated to match 
+size of the assay context.
+\
+Alternatively, using a pronoun in either the `rows()` or `cols()` 
+contexts will likely return a list equal in length to either `nrows(rowData())`
+or `nrows(colData())`.
+
+
 # Feedback
 
 We would love to hear your feedback. Please post to 
