@@ -1,6 +1,6 @@
 Package: biocmask
 Title: Data masks for SummarizedExperiment enabling dplyr-like manipulation
-Version: 0.99.9
+Version: 0.99.10
 Authors@R: c(
     person("Justin", "Landis", email = "jtlandis314@gmail.com", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0001-5501-4934")),
@@ -36,7 +36,8 @@ Suggests:
     rmarkdown,
     testthat,
     airway,
-    IRanges
+    IRanges,
+    here
 LazyData: true
 URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
 BugReports: https://www.github.com/jtlandis/biocmask/issues
