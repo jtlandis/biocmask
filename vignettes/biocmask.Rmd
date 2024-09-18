@@ -34,7 +34,9 @@ It supports the following operations:
 
 * `mutate`
 * `select`
-* ...
+* `summarize`
+* `filter`
+* `arrange`
 
 ## Typical use case
 

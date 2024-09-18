@@ -17,6 +17,7 @@
 #' @importFrom dplyr groups
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
+#' @importFrom dplyr pull
 #' @importFrom dplyr reframe
 #' @importFrom dplyr rename
 #' @importFrom dplyr rename_with
