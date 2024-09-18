@@ -120,7 +120,11 @@ We note that `biocmask` is highly related to other *tidyomics* projects includin
 * DFplyr
 * and more.
 
-Here we have focused on the design principles of ...
+Here we have focused on the design principles of function *endomorphism*
+(returning the same object that was input), avoiding ambiguity through strictly
+defined behavior (potentially at the expense of longer code), and allowing
+the user the convenience of multiple expressions for the same result, some of
+which may have improved computational performance.
 
 # Manipulating *SummarizedExperiment* with `biocmask`
 <!-- copied from README -->
@@ -134,12 +138,9 @@ its own pronoun in the future.
 ```{r}
 #| fig.cap: Simplified view of data masking structure. Figure made with [Biorender](https://biorender.com)
 #| echo: false
-knitr::include_graphics(here::here("man/figures/Overview-bindings.png"))
+knitr::include_graphics("../man/figures/Overview-bindings.png")
 ```
 
-![](man/figures/Overview-bindings.png)
-
-\
 `biocmask` provides variables as-is to data **within their current contexts** enabling you 
 to call S4 methods on S4 objects with `dplyr` verbs. If you require access to
 variables _outside the context_, you may use 
@@ -149,16 +150,16 @@ variables.
 ```{r}
 #| echo: false
 #| fig.cap: Simplified view of reshaping pronouns. Arrows indicates to where the pronoun provides access. For each pronoun listed, there is an `_asis` variant that returns underlying data without reshaping it to fit the context. Figure made with [Biorender](https://biorender.com)
-knitr::include_graphics(here::here("man/figures/Overview-pronouns.png"))
+knitr::include_graphics("../man/figures/Overview-pronouns.png")
 ```
-
-\
 
 The `.assays`, `.rows` and `.cols` pronouns outputs depends on the evaluating 
 context. Users should expect that the underlying data returned from `.rows` or
 `.cols` pronouns in the _**assays context**_ is a vector, replicated to match 
 size of the assay context.
+
 \
+
 Alternatively, using a pronoun in either the `rows()` or `cols()` 
 contexts will likely return a list equal in length to either `nrows(rowData())`
 or `nrows(colData())`.
@@ -188,21 +189,21 @@ or `nrows(colData())`.
 * `.cols_asis` $\to$ pronoun to direct bindings in `colData()`
 * `col_ctx(expr, asis = FALSE)` $\to$ shorthand to bind the colData context in front of the current context
 
-I thought we might re-use this example, of the new way and the "old way" of
-dividing out a vector along the columns:
+## Multiple expressions enabled via `biocmask`
+
+We can compare two ways of dividing out a vector from `colData` along the
+columns of `assay` data:
 
 ```{r}
 # here the `.cols$` pronoun reshapes the data to fit the `assays` context
 airway |>
-  mutate(scaled_counts = counts / .cols$sizeFactor,
-         rows(ave_scl_cts = rowMeans(.assays_asis$scaled_counts)))
+  mutate(scaled_counts = counts / .cols$sizeFactor)
 
 # this is equivalent to the following, where we have to transpose
 # the `counts` assay data twice to enable the correct recycling
 # of the size factor vector
 airway |>
-  mutate(scaled_counts = t(t(counts) / .cols_asis$sizeFactor),
-         rows(ave_scl_cts = rowMeans(.assays_asis$scaled_counts)))
+  mutate(scaled_counts = t(t(counts) / .cols_asis$sizeFactor))
 ```
 
 # Advanced features
@@ -236,9 +237,8 @@ groupings are conditionally dropped for the scope of an evaluation.
 ```{r}
 #| echo: false
 #| fig.cap: When evaluating in row context, groupings along `colData()` are temporarily ignored. Figure created with [Biorender](https://biorender.com)
-knitr::include_graphics(here::here("man/figures/contextual_groups.png"))
+knitr::include_graphics("../man/figures/contextual_groups.png")
 ```
-
 
 To further motivate this choice, suppose we did not drop grouping values when
 considering the below scenario. You have a small
@@ -256,7 +256,7 @@ The above syntax implies we wish to move data from the `colData()` into the
 output to be an alias for `vctrs::vec_rep(list(condition), times = n())`.\
 Additionally the `rows()` sentinal will expect that the output of `.cols$condition`
 will need to match the size of the evaluation context.
-\
+
 Unfortunately, this becomes extremely difficult to resolve with the current 
 conventions. Should the output of the `rhs` return a list equal to the number
 of groups of the column context? If yes, we would need to consider the size stability
@@ -270,6 +270,15 @@ the `rowData()` context are the groupings in `rowData()`, and similarly for
 the `colData()` context.
 
 ## Printing
+
+Motivated by the `show`/`print` function in *tidySummarizedExperiment*, we
+visualize the data as if it was tabular. Also following the example of
+*tidySummarizedExperiment*, `biocmask` offers the option to turn off this and
+return to the default `show` method for *SummarizedExperiment*:
+
+```{r eval=FALSE}
+options("restore_SingleCellExperiment_show" = TRUE)
+```
 
 Since `biocmask` aims to leave the input data as-is when possible, we have considered
 providing support for printing `S4Vectors` within a `tibble()`. To be clear, 
@@ -314,7 +323,19 @@ do the following
 
 # Community and support
 
-I can put stuff in here
+Please feel free to post questions about `biocmask` to:
+
+* the [Bioconductor support site](https://support.bioconductor.org/)
+* as an [Issue](https://github.com/jtlandis/biocmask/issues) on GitHub
+* in the `#tidiness_in_bioc` channel on the *community-bioc* Slack
+
+For code contributions:
+
+* For small fixes, feel free to post a PR on GitHub
+* For larger structural changes to the package code, please reach out to the
+  development team first through one of the above channels.
+
+Thanks for your interest in `biocmask`!
 
 # Session info
 
