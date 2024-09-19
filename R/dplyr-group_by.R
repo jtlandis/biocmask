@@ -128,12 +128,13 @@ group_by.SummarizedExperiment <- function(.data, ..., .add = FALSE) {
 #' which columns to ungroup. Omitting `...` ungroups the entire object.
 #' @export
 ungroup.SummarizedExperiment <- function(x, ...) {
-  quos <- biocmask_quos(..., .named = FALSE)
+  quos <- biocmask_quos(..., .named = FALSE, .ctx_default = "assays",
+                        .ctx_opt = c("rows", "cols"))
   curr_groups <- metadata(x)[["group_data"]]
   if (is_empty(curr_groups)) return(x)
   n_quo <- length(quos)
   if (n_quo==0L) {
-    metadata(x)[["group_data"]] <- NULL
+    metadata(x)["group_data"] <- NULL
     return(x)
   }
   ctxs <- vapply(quos, attr, FUN.VALUE = "", which = "biocmask:::ctx")
