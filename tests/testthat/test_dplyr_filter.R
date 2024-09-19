@@ -29,3 +29,21 @@ test_that("filter works - with groups", {
   # still works regardless
   expect_identical(dim(res), c(3L, 2L))
 })
+
+test_that("endomorphism", {
+  
+  res <- se_simple |>
+    filter(rows(length > 30),
+           cols(sample %in% c("s2", "s3")))
+  
+  endo <- local({
+    row_sub <- rowData(se_simple)[["length"]] > 30
+    col_sub <- colData(se_simple)[["sample"]] %in% c("s2","s3")
+    se_simple[row_sub, col_sub]
+  })
+  
+  expect_identical(res, endo)
+ 
+  # make a test for groups?
+  
+})
