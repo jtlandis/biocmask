@@ -56,7 +56,7 @@ Landis</h4>
                                     <h4 data-toc-skip class="author">Michael
 Love</h4>
                         
-            <h4 data-toc-skip class="date">09/18/2024</h4>
+            <h4 data-toc-skip class="date">09/19/2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jtlandis/biocmask/blob/main/vignettes/biocmask.Rmd" class="external-link"><code>vignettes/biocmask.Rmd</code></a></small>
       <div class="d-none name"><code>biocmask.Rmd</code></div>
@@ -158,7 +158,7 @@ means:</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>scaled_counts <span class="op">=</span> <span class="va">counts</span> <span class="op">/</span> <span class="va">.cols</span><span class="op">$</span><span class="va">sizeFactor</span>,</span>
 <span>         <span class="co"># You may expect a list when accessing other contexts</span></span>
 <span>         <span class="co"># from either the rows() or cols() contexts.</span></span>
-<span>         <span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span>ave_scl_cts <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">.assays</span><span class="op">$</span><span class="va">counts</span>, <span class="va">mean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>         <span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span>ave_scl_cts <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">.assays</span><span class="op">$</span><span class="va">scaled_counts</span>, <span class="va">mean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A RangedSummarizedExperiment-tibble Abstraction: 63,677 × 8</span></span></span>
 <span><span class="co">##     .features   .samples <span style="color: #949494;">|</span> counts scaled_counts <span style="color: #949494;">|</span> gene_id gene_name gene_biotype</span></span>
 <span><span class="co">##     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
@@ -183,32 +183,33 @@ routines:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">summary</span> <span class="op">&lt;-</span> <span class="va">airway</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span><span class="va">gene_biotype</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>col_sums <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>col_sums <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>,</span>
+<span>            <span class="co"># may rename rows with .features</span></span>
+<span>            <span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span>.features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gene_biotype</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># summarize returns a SummarizedExperiment here,</span></span>
 <span><span class="co"># retaining rowData and colData</span></span>
 <span></span>
 <span><span class="va">summary</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 30 rows and 1 column</span></span>
-<span><span class="co">##               gene_biotype</span></span>
-<span><span class="co">##                &lt;character&gt;</span></span>
-<span><span class="co">## 1           protein_coding</span></span>
-<span><span class="co">## 2               pseudogene</span></span>
-<span><span class="co">## 3     processed_transcript</span></span>
-<span><span class="co">## 4                antisense</span></span>
-<span><span class="co">## 5                  lincRNA</span></span>
-<span><span class="co">## ...                    ...</span></span>
-<span><span class="co">## 26         IG_C_pseudogene</span></span>
-<span><span class="co">## 27               TR_D_gene</span></span>
-<span><span class="co">## 28         IG_J_pseudogene</span></span>
-<span><span class="co">## 29  3prime_overlapping_n..</span></span>
-<span><span class="co">## 30    processed_pseudogene</span></span></code></pre>
+<span><span class="co">##                                    gene_biotype</span></span>
+<span><span class="co">##                                     &lt;character&gt;</span></span>
+<span><span class="co">## protein_coding                   protein_coding</span></span>
+<span><span class="co">## pseudogene                           pseudogene</span></span>
+<span><span class="co">## processed_transcript       processed_transcript</span></span>
+<span><span class="co">## antisense                             antisense</span></span>
+<span><span class="co">## lincRNA                                 lincRNA</span></span>
+<span><span class="co">## ...                                         ...</span></span>
+<span><span class="co">## IG_C_pseudogene                 IG_C_pseudogene</span></span>
+<span><span class="co">## TR_D_gene                             TR_D_gene</span></span>
+<span><span class="co">## IG_J_pseudogene                 IG_J_pseudogene</span></span>
+<span><span class="co">## 3prime_overlapping_ncrna 3prime_overlapping_n..</span></span>
+<span><span class="co">## processed_pseudogene       processed_pseudogene</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visualizing the output as a tibble:</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="va">summary</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="st">"col_sums"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html" class="external-link">add_column</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">summary</span><span class="op">)</span><span class="op">$</span><span class="va">gene_biotype</span>, .before<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">col_sums</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"type"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 30 × 9</span></span></span>
 <span><span class="co">##    type        SRR1039508 SRR1039509 SRR1039512 SRR1039513 SRR1039516 SRR1039517</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -280,9 +281,9 @@ context</strong></em> is a vector, replicated to match size of the assay
 context.</p>
 <p><br></p>
 <p>Alternatively, using a pronoun in either the <code><a href="../reference/biocmask-context.html">rows()</a></code> or
-<code><a href="../reference/biocmask-context.html">cols()</a></code> contexts will likely return a list equal in length
-to either <code>nrows(rowData())</code> or
-<code>nrows(colData())</code>.</p>
+<code><a href="../reference/biocmask-context.html">cols()</a></code> contexts will return a list equal in length to
+either <code>nrows(rowData())</code> or <code>nrows(colData())</code>
+respectively.</p>
 <div class="section level3">
 <h3 id="assay-context">assay context<a class="anchor" aria-label="anchor" href="#assay-context"></a>
 </h3>
@@ -293,7 +294,16 @@ to either <code>nrows(rowData())</code> or
 <code>.assays</code>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
 contextual pronoun, returns list of the matrix, sliced by the dimension
-it was referenced from.</li>
+it was referenced from.
+<ul>
+<li>within the rowData context: <code>.assays$foo</code> is an alias for
+<code>lapply(seq_len(nrow()), \(i, x) x[i,,drop=FALSE], x = foo)</code>
+</li>
+<li>within the colData context: <code>.assays$foo</code> is an alias for
+<code>lapply(seq_len(ncol()), \(i, x) x[,i,drop=FALSE], x = foo)</code>
+</li>
+</ul>
+</li>
 <li>
 <code>.assays_asis</code>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
@@ -455,20 +465,18 @@ both the groupings of the rows and cols contexts but, the grouping of
 rows is ignored when viewed from the cols context and similarly the
 grouping of cols is ignored when viewed from the rows context. In this
 way, we have chosen to make the groupings of rows and cols independent
-from each other when crossing contexts. The below figure attempts to
-show how groupings are conditionally dropped for the scope of an
-evaluation.</p>
+between each other. The below figure attempts to show how groupings are
+conditionally dropped for the scope of an evaluation.</p>
 <div class="float">
 <img src="../reference/figures/contextual_groups.png" alt="When evaluating in row context, groupings along colData() are temporarily ignored. Figure created with Biorender"><div class="figcaption">When evaluating in row context, groupings along
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> are temporarily ignored. Figure created with <a href="https://biorender.com" class="external-link">Biorender</a>
 </div>
 </div>
 <p>To further motivate this choice, suppose we did not drop grouping
-values when considering the below scenario. You have a small 5 by 4
-<code>SummarizedExperiment</code> object. Both of the
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> and <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> are grouped such that
-there are 2 grouping variables, totaling in 4 groups across the
-assays.</p>
+values. Assume you have a small 5 by 4 <code>SummarizedExperiment</code>
+object. Both of the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> and <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code>
+are grouped such that there are 2 groups in both <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code>
+and <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> totaling in 4 groups across the assays.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">se_simple</span>, <span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span><span class="va">direction</span><span class="op">)</span>, <span class="fu"><a href="../reference/biocmask-context.html">cols</a></span><span class="op">(</span><span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span>data_from_cols <span class="op">=</span> <span class="va">.cols</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -481,19 +489,24 @@ Additionally the <code><a href="../reference/biocmask-context.html">rows()</a></
 output of <code>.cols$condition</code> will need to match the size of
 the evaluation context.</p>
 <p>Unfortunately, this becomes extremely difficult to resolve with the
-current conventions. Should the output of the <code>rhs</code> return a
-list equal to the number of groups of the column context? If yes, we
-would need to consider the size stability of the output context!
-Assuming that <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> has at least one group with three
-elements, there is no guarentee it would fit (this also makes a poor
-assumption that the elements of <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> somehow
-correspond to the groups of <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code>). Thus we would be
-left with wrapping the data in a list and replicating to the appropriate
-size. When its all said and done, we have a list of lists, which would
-be painful to work with. For this reason the only groupings present in
-the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> context are the groupings in
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code>, and similarly for the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code>
-context.</p>
+current conventions. Without dropping the <code><a href="../reference/biocmask-context.html">cols()</a></code> groupings,
+each <code><a href="../reference/biocmask-context.html">rows()</a></code> grouping is evaluated equal to the number of
+groups in <code><a href="../reference/biocmask-context.html">cols()</a></code>. At first glance, this may seem desirable,
+but the problem arises when considering how theses outputs across groups
+should be stored per group of <code><a href="../reference/biocmask-context.html">rows()</a></code>. For example, should
+the output of the <code>.cols$condition</code> return a list equal to
+the number of groups of the column context? If yes, we would need to
+consider the size stability of the output context! Assuming that
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> has at least one group with three elements, there
+is no guarentee it would fit (this also makes a poor assumption that the
+elements of <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> somehow correspond to the groups of
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code>). Thus we would be left with wrapping all the
+results in a list and replicating to the appropriate size. When its all
+said and done, we would have a list of lists, which is difficult to
+reason about, potentionally unexpected and painful to work with. For
+this reason the only groupings present in the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code>
+context are the groupings in <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code>, and similarly for
+the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> context.</p>
 </div>
 <div class="section level3">
 <h3 id="printing">Printing<a class="anchor" aria-label="anchor" href="#printing"></a>
@@ -527,6 +540,70 @@ Users are free to create their own methods for S4 vectors that differ
 from <code><a href="https://rdrr.io/pkg/S4Vectors/man/show-utils.html" class="external-link">S4Vectors::showAsCell()</a></code> if they like, as seen in
 <code><a href="../reference/biocmask-printing.html">?`biocmask-printing`</a></code></p>
 </div>
+<div class="section level3">
+<h3 id="renaming-rows-or-columns">renaming rows or columns<a class="anchor" aria-label="anchor" href="#renaming-rows-or-columns"></a>
+</h3>
+<p>Inspired by <code>tidySummarizedExperiment</code>,
+<code>biocmask</code> provides access to the rownames and colnames of a
+<code>SummarizedExperiment</code> object by installing
+<code>.features</code> and <code>.samples</code> into the
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> and <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> contexts respectively.
+These are special in that assigning a value to <code>.features</code> in
+the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> context or <code>.samples</code> in the
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> context does not create a new column, but changes
+the rownames or colnames of the resulting object.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">se_simple</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span></span>
+<span><span class="co">##     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> gene  length direction <span style="color: #949494;">|</span> sample</span></span>
+<span><span class="co">##     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">## <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s1    </span></span>
+<span><span class="co">## <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s1    </span></span>
+<span><span class="co">## <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s1    </span></span>
+<span><span class="co">## <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s1    </span></span>
+<span><span class="co">## <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s1    </span></span>
+<span><span class="co">##   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>     <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>            <span style="color: #949494;">…</span>    </span></span>
+<span><span class="co">## <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s4    </span></span>
+<span><span class="co">## <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s4    </span></span>
+<span><span class="co">## <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s4    </span></span>
+<span><span class="co">## <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s4    </span></span>
+<span><span class="co">## <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s4    </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ n = 20</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 1 more variable: condition &lt;chr&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># moving data to rownames and colnames</span></span>
+<span><span class="va">se_simple</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    orig_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span></span>
+<span>      <span class="st">"%s-%s"</span>,</span>
+<span>      <span class="co"># .features is installed in the rows() context</span></span>
+<span>      <span class="va">.rows</span><span class="op">$</span><span class="va">.features</span>,</span>
+<span>      <span class="co"># .samples is installed in the cols() context</span></span>
+<span>      <span class="va">.cols</span><span class="op">$</span><span class="va">.samples</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/biocmask-context.html">rows</a></span><span class="op">(</span>.features <span class="op">=</span> <span class="va">gene</span>,</span>
+<span>         <span class="co"># deleting rowData column</span></span>
+<span>         gene <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/biocmask-context.html">cols</a></span><span class="op">(</span>.samples <span class="op">=</span> <span class="va">sample</span>,</span>
+<span>         <span class="co"># deleting colData column</span></span>
+<span>         sample <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span></span>
+<span><span class="co">##     .features .samples <span style="color: #949494;">|</span> counts logcounts orig_names  <span style="color: #949494;">|</span> length direction <span style="color: #949494;">|</span></span></span>
+<span><span class="co">##     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">  1</span> g1        s1       <span style="color: #949494;">|</span>     14      2.64 row_1-col_1 <span style="color: #949494;">|</span>      1 -         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">  2</span> g2        s1       <span style="color: #949494;">|</span>     19      2.94 row_2-col_1 <span style="color: #949494;">|</span>     24 +         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">  3</span> g3        s1       <span style="color: #949494;">|</span>     16      2.77 row_3-col_1 <span style="color: #949494;">|</span>     60 +         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">  4</span> g4        s1       <span style="color: #949494;">|</span>     11      2.40 row_4-col_1 <span style="color: #949494;">|</span>     39 -         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">  5</span> g5        s1       <span style="color: #949494;">|</span>     18      2.89 row_5-col_1 <span style="color: #949494;">|</span>     37 +         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">##   <span style="color: #949494;">…</span>  <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>              <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>       <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>          </span></span>
+<span><span class="co">## <span style="color: #949494;">n-4</span> g1        s4       <span style="color: #949494;">|</span>      9      2.20 row_1-col_4 <span style="color: #949494;">|</span>      1 -         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">n-3</span> g2        s4       <span style="color: #949494;">|</span>      4      1.39 row_2-col_4 <span style="color: #949494;">|</span>     24 +         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">n-2</span> g3        s4       <span style="color: #949494;">|</span>     20      3.00 row_3-col_4 <span style="color: #949494;">|</span>     60 +         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">n-1</span> g4        s4       <span style="color: #949494;">|</span>      3      1.10 row_4-col_4 <span style="color: #949494;">|</span>     39 -         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;">n  </span> g5        s4       <span style="color: #949494;">|</span>      5      1.61 row_5-col_4 <span style="color: #949494;">|</span>     37 +         <span style="color: #949494;">|</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ n = 20</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 1 more variable: condition &lt;chr&gt;</span></span></span></code></pre>
+</div>
 </div>
 <div class="section level2">
 <h2 id="troubleshooting-and-best-practices">Troubleshooting and best practices<a class="anchor" aria-label="anchor" href="#troubleshooting-and-best-practices"></a>
@@ -537,12 +614,12 @@ means there is some overhead in creating the evaluation mask per dplyr
 verb. Try to reduce the number of <code>dplyr</code> verb calls and
 instead increase the content of each verb. For example instead of
 doing:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">.data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="va">bar</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>baz <span class="op">=</span> <span class="va">foo</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>do the following</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">.data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    foo <span class="op">=</span> <span class="va">bar</span>,</span>
@@ -574,7 +651,7 @@ to the development team first through one of the above channels.</li>
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">##  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
@@ -586,7 +663,7 @@ to the development team first through one of the above channels.</li>
 <span><span class="co">##  collate  en_US.UTF-8</span></span>
 <span><span class="co">##  ctype    en_US.UTF-8</span></span>
 <span><span class="co">##  tz       UTC</span></span>
-<span><span class="co">##  date     2024-09-18</span></span>
+<span><span class="co">##  date     2024-09-19</span></span>
 <span><span class="co">##  pandoc   3.2 @ /usr/bin/ (via rmarkdown)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
@@ -595,7 +672,7 @@ to the development team first through one of the above channels.</li>
 <span><span class="co">##  airway               * 1.24.0     <span style="color: #555555;">2024-05-02</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.19 (R 4.4.1)</span></span></span>
 <span><span class="co">##  Biobase              * 2.64.0     <span style="color: #555555;">2024-04-30</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.19 (R 4.4.1)</span></span></span>
 <span><span class="co">##  BiocGenerics         * 0.50.0     <span style="color: #555555;">2024-04-30</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.19 (R 4.4.1)</span></span></span>
-<span><span class="co">##  biocmask             * 0.99.10    <span style="color: #555555;">2024-09-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">##  biocmask             * 0.99.10    <span style="color: #555555;">2024-09-19</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
 <span><span class="co">##  bslib                  0.8.0      <span style="color: #555555;">2024-07-29</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">##  cachem                 1.1.0      <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">##  cli                    3.6.3      <span style="color: #555555;">2024-06-21</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
