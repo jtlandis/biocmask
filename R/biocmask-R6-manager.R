@@ -1,7 +1,7 @@
-
 abort_invalid_quo <- function() {
   abort("`biocmask_manager$eval()` requires quosure from `biocmask_quosures()`",
-        class = "biocmask_invalid_quo")
+    class = "biocmask_invalid_quo"
+  )
 }
 
 #' @title `biocmask` Data Mask Manager
@@ -10,13 +10,13 @@ abort_invalid_quo <- function() {
 #' This object organizes serveral biocmasks, allowing
 #' expressions to be evaluated in different contexts. This object is the return
 #' value of [`new_biocmask_manager()`][biocmask::new_biocmask_manager]
-#' 
+#'
 #' The "connectedness" of each mask managed by this object is dependent on the
 #' developer. The biocmasks passed to `.mask` argument may stem from the same
 #' shared environment, or may have cyclical relationships.
 #' @return An R6 object inheriting `biocmask_manager`
-#' 
-#' 
+#'
+#'
 biocmask_manager <- R6::R6Class(
   "biocmask_manager",
   public = list(
@@ -36,7 +36,7 @@ biocmask_manager <- R6::R6Class(
       seq_len(private$.ctx_env[["biocmask:::n_groups"]])
     },
     #' @description
-    #' eval an expression in the current context 
+    #' eval an expression in the current context
     #' @param quo a quosure or quoted expression
     #' @param env an environment
     #' @return returns evaluated `quo` in the form of a chop
@@ -54,17 +54,18 @@ biocmask_manager <- R6::R6Class(
           mask = mask,
           private = private
         )
-        name <- if (quo_data$is_named) 
+        name <- if (quo_data$is_named) {
           quo_data$name
-        else
+        } else {
           as_label(quo_get_expr(quo))
+        }
         mask$bind(name = name, value = chop_out)
       }
       invisible(self)
     },
     #' @description
     #' collects the evaluated results with biocmasks
-    #' @return named list for each mask containing named list of evaluated 
+    #' @return named list for each mask containing named list of evaluated
     #' expressions.
     results = function() {
       lapply(private$.masks, function(m) m$results())
@@ -74,7 +75,10 @@ biocmask_manager <- R6::R6Class(
     #' @field ctx get and set the current context
     ctx = function(ctx) {
       if (!missing(ctx)) {
-        private$.ctx_env[["biocmask:::ctx"]] <- match.arg(ctx, c("assays", "rows", "cols"))
+        private$.ctx_env[["biocmask:::ctx"]] <- match.arg(
+          ctx,
+          c("assays", "rows", "cols")
+        )
       }
       private$.ctx_env[["biocmask:::ctx"]]
     },
@@ -138,17 +142,17 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
 ## write documentation for something that isn't used until we actual
 ## use it...
 # setOldClass("biocmask_manager")
-# 
+#
 # setMethod("assays", signature = "biocmask_manager",
 #           definition = function(x, withDimnames = TRUE, ...) {
 #             x$masks[["assays"]]$ptype
 #           })
-# 
+#
 # setMethod("rowData", signature = "biocmask_manager",
 #           definition = function(x, withDimnames = TRUE, ...) {
 #             x$masks[["rows"]]$ptype
 #           })
-# 
+#
 # setMethod("colData", signature = "biocmask_manager",
 #           definition = function(x, withDimnames = TRUE, ...) {
 #             x$masks[["cols"]]$ptype
