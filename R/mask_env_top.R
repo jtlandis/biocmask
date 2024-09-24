@@ -143,49 +143,49 @@ env_group_id <- function(env) {
 prepare_shared_ctx_env <- function(groups, expanded) {
 
   ind_d <- attr(groups, "obj_dim")
-  
+
   inf_assay <- biocmask_group_ids2(groups, expanded, "assays")
   inf_rows <- biocmask_group_ids2(groups, expanded, "rows")
   inf_cols <- biocmask_group_ids2(groups, expanded, "cols")
 
-  assay_group_id = list(
+  assay_group_id <- list(
     assays = inf_assay[["assays"]],
     rows = inf_rows[["assays"]],
     cols = inf_cols[["assays"]]
   )
-  rows_group_id = list(
+  rows_group_id <- list(
     assays = inf_assay[["rows"]],
     rows = inf_rows[["rows"]],
     cols = inf_cols[["rows"]]
   )
-  cols_group_id = list(
+  cols_group_id <- list(
     assays = inf_assay[["cols"]],
     rows = inf_rows[["cols"]],
     cols = inf_cols[["cols"]]
   )
-  ctx_group_id = list(
+  ctx_group_id <- list(
     assays = inf_assay[["assays"]],
     rows = inf_rows[["rows"]],
     cols = inf_cols[["cols"]]
   )
 
-  nrow_info = list(
+  nrow_info <- list(
     assays = inf_assay[[".nrow"]],
     rows = inf_rows[[".nrow"]],
     cols = inf_cols[[".nrow"]]
   )
-  ncol_info = list(
+  ncol_info <- list(
     assays = inf_assay[[".ncol"]],
     rows = inf_rows[[".ncol"]],
     cols = inf_cols[[".ncol"]]
   )
-  nsize_info = list(
+  nsize_info <- list(
     assays = inf_assay[[".nsize"]],
     rows = inf_rows[[".nsize"]],
     cols = inf_cols[[".nsize"]]
   )
   # this may be incorrect???
-  nsize_ctx = list(
+  nsize_ctx <- list(
     assays = inf_assay[[".nsize"]],
     rows = inf_rows[[".nrow"]],
     # is .ncol refering to size of output?
@@ -234,7 +234,7 @@ prepare_shared_ctx_env <- function(groups, expanded) {
     ),
     parent = bot_env
   )
-  
+
   # set of active bindings to retrieve above info dynamically
   env_bind_active(
     shared_ctx_env,
@@ -257,7 +257,7 @@ prepare_shared_ctx_env <- function(groups, expanded) {
              .subset2(`biocmask:::ctx:::group_id`)),
       env = shared_ctx_env
     ),
-    # rowData indices for current group 
+    # rowData indices for current group
     `biocmask:::rows:::current_chops` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::rows:::group_chop_ids`, `biocmask:::ctx`) |>
@@ -300,7 +300,7 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       env = shared_ctx_env
     )
   )
-  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), 
+  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`),
                                    shared_ctx_env)
   shared_ctx_env$cur_group_id <- new_function(pairlist(),
                                               quote(`biocmask:::ctx:::group_id`),
