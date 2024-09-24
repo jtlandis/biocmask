@@ -1,4 +1,8 @@
 
+## biocmask 0.99.12
+
+* developer subscribed to bioc-devel mailing list
+* used `<-` assignment instead of `=` in top-level functions
 
 ## biocmask 0.99.11
 

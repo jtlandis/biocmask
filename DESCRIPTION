@@ -1,6 +1,6 @@
 Package: biocmask
 Title: Data masks for SummarizedExperiment enabling dplyr-like manipulation
-Version: 0.99.11
+Version: 0.99.12
 Authors@R: c(
     person("Justin", "Landis", email = "jtlandis314@gmail.com", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0001-5501-4934")),
@@ -12,7 +12,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
-Imports: 
+Imports:
     dplyr,
     purrr,
     rlang,
@@ -28,7 +28,7 @@ Imports:
     S4Vectors,
     utils,
     methods
-Depends: 
+Depends:
     R (>= 4.4.0)
 Suggests:
     devtools,
