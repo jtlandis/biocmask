@@ -2,7 +2,9 @@
 
 `biocmask` provides efficient abstractions to the *SummarizedExperiment* such
 that using common dplyr functions feels as natural to operating on a
-*data.frame* or *tibble*. `biocmask` uses 
+*data.frame* or *tibble*. `biocmask` was built as an alternative to the 
+`tidySummarizedExperiment` package but there may be a future in which their
+conflicts are reconciled. `biocmask` uses 
 [data-masking](https://rlang.r-lib.org/reference/topic-data-mask-programming.html) 
 from the `rlang` package in order to connect dplyr functions to
 *SummarizedExperiment* slots in a manner that aims to be intuitive and avoiding
@@ -56,3 +58,5 @@ for software development questions.
 # Funding
 
 `biocmask` was supported by a EOSS cycle 6 grant from The Wellcome Trust.
+
+

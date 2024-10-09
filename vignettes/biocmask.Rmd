@@ -127,6 +127,16 @@ defined behavior (potentially at the expense of longer code), and allowing
 the user the convenience of multiple expressions for the same result, some of
 which may have improved computational performance.
 
+### A Note on `tidySummarizedExperiment`
+
+At the moment, `biocmask` and `tidySummarizedExperiment` export conflicting 
+functions as they both define `dplyr` methods for manipulating the 
+`SummarizedExperiment` class. `biocmask` exists as an alternative to 
+`tidySummarizedExperiment` and enables a unique approach to working with the
+`SummarizedExperiment` class. We advise limiting your analysis to one package 
+or another, as which methods that are available in your search path depends on
+the order in which the packages are attached leading to unexpected behaviors.
+
 # Manipulating *SummarizedExperiment* with `biocmask`
 <!-- copied from README -->
 <!-- unsure if it is better here or in README -->
