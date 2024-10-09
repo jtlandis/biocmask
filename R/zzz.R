@@ -1,5 +1,4 @@
-
-conflict_info <- paste0(
+conflict_info <- c(
     "Note that these packages are exclusive and present different APIs ",
     "for working with `SummarizedExperiment` objects. As such conflicts ",
     "and unexpected behaviors may arise!"
@@ -23,6 +22,16 @@ attaching_tidySE <- function(expr) {
   
 }
 
+you_have_loaded <- function(pkg1, pkg2) {
+  cli::cli_rule()
+  cli::cli_alert_warning(
+    paste0("you have loaded `",pkg1,"` after `",pkg2,"`\n")
+    )
+  cli::cli_text("")
+  cli::cli_text(conflict_info)
+  cli::cli_text("")
+}
+
 # a package can either be loaded, or completely attached. R only informs
 # of conflicts when the package is loaded, and when attached these can be
 # overwritten silently
@@ -31,24 +40,14 @@ attaching_tidySE <- function(expr) {
   # check if `tidySummarizedExperiment` is already loaded
   conflict <- grep("tidySummarizedExperiment", search(), value = TRUE)
   if (length(conflict)) {
-    packageStartupMessage(rule())
-    packageStartupMessage(
-        "you have loaded `biocmask` after `tidySummarizedExperiment`\n",
-        conflict_info
-        )
-    packageStartupMessage(rule())
+    packageStartupMessage(you_have_loaded("biocmask","tidySummarizedExperiment"))
   }
   # set hook for if `tidySummarizedExperiment` gets attached latter
   setHook(
     packageEvent(pkgname = "tidySummarizedExperiment",
                  event = "attach"),
     function(...) {
-      packageStartupMessage(rule())
-      packageStartupMessage(
-        "You have loaded `tidySummarizedExperiment` after `biocmask`\n",
-        conflict_info
-      )
-      packageStartupMessage(rule())
+      packageStartupMessage(you_have_loaded("tidySummarizedExperiment","biocmask"))
     }
     
   )
