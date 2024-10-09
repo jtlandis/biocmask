@@ -4,11 +4,20 @@
 \alias{vec_phantom}
 \alias{biocmask-printing}
 \alias{biocmask_pillar_format}
+\alias{show_tidy}
+\alias{use_show_tidy}
+\alias{use_show_default}
 \title{Printing within tibble with S4 objects}
 \usage{
 vec_phantom(x)
 
 biocmask_pillar_format(x, ...)
+
+show_tidy(x, ...)
+
+use_show_tidy()
+
+use_show_default()
 }
 \arguments{
 \item{x}{The S4 object}
@@ -34,6 +43,19 @@ This function is not used outside of printing for \code{biocmask}
 The default method for formatting a \code{vec_phantom()} is to call
 \code{\link[S4Vectors:show-utils]{showAsCell()}}.
 }
+\section{tidy printing}{
+
+
+By default, \code{biocmask} will not affect the show method for
+\code{SummarizedExperiment} objects. In order to use a tibble abstraction, use
+\code{use_show_tidy()} to enable or \code{use_show_default()} to disable this feature.
+These functions are called for their side effects, modifying the global
+option "show_SummarizedExperiment_as_tibble_abstraction".
+
+To show an object as the tibble abstraction regardless of the set option,
+use the S3 generic \code{show_tidy(...)}.
+}
+
 \examples{
 
 if(require("IRanges")) {
@@ -47,5 +69,16 @@ if(require("IRanges")) {
   pillar::pillar_shaft(phantom)
   rm(biocmask_pillar_format.CompressedIntegerList)
 }
+
+# default printing
+se_simple
+# use `biocmask` tibble abstraction
+use_tidy_show()
+se_simple
+# restore default print
+use_default_show()
+se_simple
+# explicitly using tibble abstraction
+show_tidy(se_simple)
 
 }

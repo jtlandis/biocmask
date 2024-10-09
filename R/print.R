@@ -70,6 +70,18 @@ pillar_shaft.vec_phantom <- function(x, ...) {
 #' The default method for formatting a `vec_phantom()` is to call
 #' [`showAsCell()`][S4Vectors::showAsCell].
 #' 
+#' @section tidy printing: 
+#' 
+#' By default, `biocmask` will not affect the show method for 
+#' `SummarizedExperiment` objects. In order to use a tibble abstraction, use
+#' `use_show_tidy()` to enable or `use_show_default()` to disable this feature.
+#' These functions are called for their side effects, modifying the global
+#' option "show_SummarizedExperiment_as_tibble_abstraction".
+#' 
+#' To show an object as the tibble abstraction regardless of the set option,
+#' use the S3 generic `show_tidy(...)`.
+#' 
+#' 
 #' @param x The S4 object
 #' @param ... other arguments passed from [`pillar_shaft`][pillar::pillar_shaft]
 #' @examples
@@ -85,6 +97,17 @@ pillar_shaft.vec_phantom <- function(x, ...) {
 #'   pillar::pillar_shaft(phantom)
 #'   rm(biocmask_pillar_format.CompressedIntegerList)
 #' }
+#' 
+#' # default printing
+#' se_simple
+#' # use `biocmask` tibble abstraction
+#' use_tidy_show()
+#' se_simple
+#' # restore default print
+#' use_default_show()
+#' se_simple
+#' # explicitly using tibble abstraction
+#' show_tidy(se_simple)
 #' 
 #' @returns 
 #' `biocmask_pillar_format` -> formatted version of your S4 vector
@@ -109,10 +132,20 @@ length.vec_phantom <- function(x, ...) {
   length(attr(x, "phantomData"))
 }
 
+#' @rdname biocmask-printing
+#' @export
+show_tidy <- function(x, ...) {
+  UseMethod("show_tidy")
+}
+
+#' @export
+show_tidy.default <- function(x, ...) {
+  show(object = x)
+}
 
 
 #' @export
-print.SummarizedExperiment <- function(x, n = 10, ...) {
+show_tidy.SummarizedExperiment <- function(x, n = 10, ...) {
   
   top_n <- ceiling(n/2)
   bot_n <- floor(n/2)
@@ -338,16 +371,28 @@ setMethod(
   f="show",
   signature="SummarizedExperiment",
   definition=function(object) {
-    if (isTRUE(x=getOption(x="restore_SummarizedExperiment_show",
+    if (isTRUE(x=getOption(x="show_SummarizedExperiment_as_tibble_abstraction",
                            default = FALSE)) 
     ) {
+      show_tidy(object)
+    } else {
       methods::getMethod(
         f = "show",
         signature = "SummarizedExperiment",
         where=asNamespace(ns = "SummarizedExperiment"))(object)
-    } else {
-      print(object)
     }
   }
 )
+
+#' @rdname biocmask-printing
+#' @export
+use_show_tidy <- function() {
+  options(show_SummarizedExperiment_as_tibble_abstraction = TRUE)
+}
+
+#' @rdname biocmask-printing
+#' @export
+use_show_default <- function() {
+  options(show_SummarizedExperiment_as_tibble_abstraction = FALSE)
+}
 
