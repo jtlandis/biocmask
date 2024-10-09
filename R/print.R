@@ -101,10 +101,10 @@ pillar_shaft.vec_phantom <- function(x, ...) {
 #' # default printing
 #' se_simple
 #' # use `biocmask` tibble abstraction
-#' use_tidy_show()
+#' use_show_tidy()
 #' se_simple
 #' # restore default print
-#' use_default_show()
+#' use_show_default()
 #' se_simple
 #' # explicitly using tibble abstraction
 #' show_tidy(se_simple)
