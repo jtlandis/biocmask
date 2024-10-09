@@ -9,7 +9,19 @@ rule <- function (pad = "-", gap = 2L) {
   paste0(rep(pad, getOption("width") - gap), collapse = "")
 }
 
-attaching_tidySE <- quote(library(tidySummarizedExperiment))
+tidySE_opt <- list(quote(tidySummarizedExperiment), "tidySummarizedExperiment")
+
+attaching_tidySE <- function(expr) {
+  if (is_call(expr, name = "library")) {
+    call <- match.call(library, call = expr)
+    out <- tidySE_opt |>
+      vapply(identical, y = call$package, logical(1)) |>
+      any()
+    return(out)
+  } 
+  FALSE
+  
+}
 
 # a package can either be loaded, or completely attached. R only informs
 # of conflicts when the package is loaded, and when attached these can be
@@ -46,8 +58,7 @@ attaching_tidySE <- quote(library(tidySummarizedExperiment))
                  event = "onLoad"),
     function(...) {
       calls <- sys.calls()
-      called_via_library <- vapply(calls, identical, y = attaching_tidySE,
-                                   logical(1))
+      called_via_library <- vapply(calls, attaching_tidySE, logical(1))
       if (!any(called_via_library)) {
         # if this callback was not executed via library(tidySummarizedExperiment)
         # then warn that biocmask dplyr methods have likely been overwritten!
