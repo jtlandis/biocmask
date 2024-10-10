@@ -1,4 +1,8 @@
 
+## biocmask 0.99.17
+
+* messages checking for conflicts use `cli::` methods for pretty printing
+
 ## biocmask 0.99.13
 
 * `print.SummarizedExperiment` has been renamed to 
