@@ -1,7 +1,8 @@
 
-## biocmask 0.99.17
+## biocmask 0.99.18
 
 * messages checking for conflicts use `cli::` methods for pretty printing
+* Vignette typo correction
 
 ## biocmask 0.99.13
 
