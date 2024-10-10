@@ -140,7 +140,7 @@ show_tidy <- function(x, ...) {
 
 #' @export
 show_tidy.default <- function(x, ...) {
-  show(object = x)
+  methods::show(object = x)
 }
 
 
