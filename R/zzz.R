@@ -1,6 +1,6 @@
 conflict_info <- c(
     "Note that these packages are exclusive and present different APIs ",
-    "for working with `SummarizedExperiment` objects. As such conflicts ",
+    "for working with {.cls SummarizedExperiment} objects. As such conflicts ",
     "and unexpected behaviors may arise!"
 )
 
@@ -22,14 +22,23 @@ attaching_tidySE <- function(expr) {
   
 }
 
-you_have_loaded <- function(pkg1, pkg2) {
-  cli::cli_rule()
-  cli::cli_alert_warning(
-    paste0("you have loaded `",pkg1,"` after `",pkg2,"`\n")
+
+
+you_have_loaded <- function(pkg1, pkg2, .class = NULL) {
+  if (!is.null(.class)) {
+    local_options(cli.message_class = .class)
+  }
+  withRestarts({
+    cli::cli_rule()
+    cli::cli_alert_warning(
+      "you have loaded {.pkg {pkg1}} after {.pkg {pkg2}}\n"
     )
-  cli::cli_text("")
-  cli::cli_text(conflict_info)
-  cli::cli_text("")
+    cli::cli_text("")
+    cli::cli_text(conflict_info)
+    cli::cli_text("")
+  },
+  muffleMessage = function() NULL)
+  
 }
 
 # a package can either be loaded, or completely attached. R only informs
@@ -40,14 +49,16 @@ you_have_loaded <- function(pkg1, pkg2) {
   # check if `tidySummarizedExperiment` is already loaded
   conflict <- grep("tidySummarizedExperiment", search(), value = TRUE)
   if (length(conflict)) {
-    packageStartupMessage(you_have_loaded("biocmask","tidySummarizedExperiment"))
+    you_have_loaded("biocmask","tidySummarizedExperiment",
+                    .class = c("packageStartupMessage", "message"))
   }
   # set hook for if `tidySummarizedExperiment` gets attached latter
   setHook(
     packageEvent(pkgname = "tidySummarizedExperiment",
                  event = "attach"),
     function(...) {
-      packageStartupMessage(you_have_loaded("tidySummarizedExperiment","biocmask"))
+      you_have_loaded("tidySummarizedExperiment","biocmask",
+                      .class = c("packageStartupMessage", "message"))
     }
     
   )
@@ -62,17 +73,18 @@ you_have_loaded <- function(pkg1, pkg2) {
         # if this callback was not executed via library(tidySummarizedExperiment)
         # then warn that biocmask dplyr methods have likely been overwritten!
         # otherwise, let the .onAttach method warn the user
-        rlang::inform(
+        cli::cli_inform(
           .frequency = "regularly", 
           .frequency_id = "tidySummarizedExperiment_loaded_after_biocmask_attach",
           class = "biocmask_loaded_conflict",
           message = c(
-            paste0(
-              "You have likely loaded `tidySummarizedExperiment` after ",
-              "`biocmask` via `tidySummarizedExperiment::...`"
+            "!" = paste0(
+              "You have likely loaded {.pkg tidySummarizedExperiment} after ",
+              "{.pkg biocmask} via {.code tidySummarizedExperiment::...}"
             ),
-            "This has likely caused `dplyr` methods from `biocmask` to be over-written!",
-            conflict_info))
+            "*" = paste(conflict_info, collapse = ""),
+            "!" = "This has likely caused {.pkg dplyr} methods from {.pkg biocmask} to be over-written!",
+            "i" = "If this wasn't your intention, consider restarting your R session"))
       }
       
     }
