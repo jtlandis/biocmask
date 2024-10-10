@@ -288,13 +288,15 @@ groupings in `rowData()`, and similarly for the `colData()` context.
 ## Printing
 
 Motivated by the `show`/`print` function in *tidySummarizedExperiment*, we
-visualize the data as if it was tabular. Also following the example of
-*tidySummarizedExperiment*, `biocmask` offers the option to turn off this and
-return to the default `show` method for *SummarizedExperiment*:
+visualize the data as if it was tabular. `biocmask` offers the option to opt-in
+on this behavior by setting the associated global option:
 
 ```{r eval=FALSE}
-options("restore_SingleCellExperiment_show" = TRUE)
+options("show_SummarizedExperiment_as_tibble_abstraction" = TRUE)
 ```
+
+Alternatively, you may use helper functions `use_show_tidy()` and 
+`use_show_default()` to enable and disable this alternative printing respectively.
 
 Since `biocmask` aims to leave the input data as-is when possible, we have considered
 providing support for printing `S4Vectors` within a `tibble()`. To be clear, 
