@@ -27,7 +27,7 @@ showAsCell()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">biocmask</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,13 @@ This function is not used outside of printing for <code>biocmask</code></p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_phantom</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">biocmask_pillar_format</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">biocmask_pillar_format</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">show_tidy</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">use_show_tidy</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">use_show_default</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -90,6 +96,19 @@ This function is not used outside of printing for <code>biocmask</code></p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>biocmask_pillar_format</code> -&gt; formatted version of your S4 vector
 <code>vec_phantom</code> -&gt; integer vector with arbitrary object in <code>phatomData</code> attribute.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="tidy-printing">tidy printing<a class="anchor" aria-label="anchor" href="#tidy-printing"></a></h2>
+
+
+
+<p>By default, <code>biocmask</code> will not affect the show method for
+<code>SummarizedExperiment</code> objects. In order to use a tibble abstraction, use
+<code>use_show_tidy()</code> to enable or <code>use_show_default()</code> to disable this feature.
+These functions are called for their side effects, modifying the global
+option "show_SummarizedExperiment_as_tibble_abstraction".</p>
+<p>To show an object as the tibble abstraction regardless of the set option,
+use the S3 generic <code>show_tidy(...)</code>.</p>
     </div>
 
     <div class="section level2">
@@ -131,6 +150,65 @@ This function is not used outside of printing for <code>biocmask</code></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     I, expand.grid, unname</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># default printing</span></span></span>
+<span class="r-in"><span><span class="va">se_simple</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts logcounts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(3): gene length direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): sample condition</span>
+<span class="r-in"><span><span class="co"># use `biocmask` tibble abstraction</span></span></span>
+<span class="r-in"><span><span class="fu">use_show_tidy</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">se_simple</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> gene  length direction <span style="color: #949494;">|</span> sample</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>     <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>            <span style="color: #949494;">…</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: condition &lt;chr&gt;</span></span>
+<span class="r-in"><span><span class="co"># restore default print</span></span></span>
+<span class="r-in"><span><span class="fu">use_show_default</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">se_simple</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts logcounts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(3): gene length direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): sample condition</span>
+<span class="r-in"><span><span class="co"># explicitly using tibble abstraction</span></span></span>
+<span class="r-in"><span><span class="fu">show_tidy</span><span class="op">(</span><span class="va">se_simple</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> gene  length direction <span style="color: #949494;">|</span> sample</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>     <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>            <span style="color: #949494;">…</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: condition &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

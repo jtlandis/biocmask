@@ -25,7 +25,7 @@ original data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">biocmask</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,74 +95,46 @@ expressions. Supports wrapping expressions within the
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># only keep assays, other contexts are dropped</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">se_simple</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts logcounts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># only keep rowData, other contexts are dropped</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">se_simple</span>, <span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> gene  length direction <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>           <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(3): gene length direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">se_simple</span>, <span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> length <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>      1 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     24 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     60 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     39 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     37 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>               <span style="color: #949494;">…</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>      1 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     24 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     60 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     39 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span>     37 <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(1): length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Note on `where()` clause, all data is available within select</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">se_simple</span>, <span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> direction <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>          <span style="color: #949494;">…</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(1): direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># within an `across()`, only a zero-length slice avialble, so the</span></span></span>
 <span class="r-in"><span><span class="co"># `where()` predicate cannot access the data</span></span></span>
@@ -170,43 +142,27 @@ expressions. Supports wrapping expressions within the
 <span class="r-in"><span>       <span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        <span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s foo"</span>, <span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> gene  length direction <span style="color: #949494;">|</span> sample</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>     <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>            <span style="color: #949494;">…</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> g1         1 -         <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> g2        24 +         <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> g3        60 +         <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> g4        39 -         <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> g5        37 +         <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: condition &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts logcounts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(3): gene length direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): sample condition</span>
 <span class="r-in"><span><span class="co"># here is an acceptable usage of the `where()` predicate</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">se_simple</span>,</span></span>
 <span class="r-in"><span>       <span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        <span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s foo"</span>, <span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> gene   length direction <span style="color: #949494;">|</span> sample</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1 foo col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> g1 foo      1 - foo     <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2 foo col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> g2 foo     24 + foo     <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3 foo col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> g3 foo     60 + foo     <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4 foo col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> g4 foo     39 - foo     <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5 foo col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> g5 foo     37 + foo     <span style="color: #949494;">|</span> s1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>    <span style="color: #949494;">…</span>    <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>     <span style="color: #949494;">…</span>  <span style="color: #949494;">…</span>       <span style="color: #949494;">…</span> <span style="color: #949494;">…</span>  <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1 foo col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> g1 foo      1 - foo     <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2 foo col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> g2 foo     24 + foo     <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3 foo col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> g3 foo     60 + foo     <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4 foo col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> g4 foo     39 - foo     <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5 foo col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> g5 foo     37 + foo     <span style="color: #949494;">|</span> s4    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: condition &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts logcounts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 foo row_2 foo row_3 foo row_4 foo row_5 foo</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(3): gene length direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): sample condition</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

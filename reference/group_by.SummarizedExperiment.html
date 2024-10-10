@@ -13,7 +13,7 @@ SummarizedExperiment must check grouping information manually."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">biocmask</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,23 +91,14 @@ existing groups.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">se_simple</span>, <span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span><span class="va">direction</span><span class="op">)</span>, <span class="fu"><a href="biocmask-context.html">cols</a></span><span class="op">(</span><span class="va">condition</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups: rows(direction), cols(condition)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .features .samples <span style="color: #949494;">|</span> counts logcounts <span style="color: #949494;">|</span> direction gene  length <span style="color: #949494;">|</span> condition</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  1</span> row_1     col_1    <span style="color: #949494;">|</span>     14      2.64 <span style="color: #949494;">|</span> -         g1         1 <span style="color: #949494;">|</span> cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  2</span> row_2     col_1    <span style="color: #949494;">|</span>     19      2.94 <span style="color: #949494;">|</span> +         g2        24 <span style="color: #949494;">|</span> cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  3</span> row_3     col_1    <span style="color: #949494;">|</span>     16      2.77 <span style="color: #949494;">|</span> +         g3        60 <span style="color: #949494;">|</span> cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  4</span> row_4     col_1    <span style="color: #949494;">|</span>     11      2.40 <span style="color: #949494;">|</span> -         g4        39 <span style="color: #949494;">|</span> cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">  5</span> row_5     col_1    <span style="color: #949494;">|</span>     18      2.89 <span style="color: #949494;">|</span> +         g5        37 <span style="color: #949494;">|</span> cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494;">…</span>   <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>             <span style="color: #949494;">…</span>        <span style="color: #949494;">…</span>    <span style="color: #949494;">…</span>          <span style="color: #949494;">…</span>         <span style="color: #949494;">…</span>     <span style="color: #949494;">…</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-4</span> row_1     col_4    <span style="color: #949494;">|</span>      9      2.20 <span style="color: #949494;">|</span> -         g1         1 <span style="color: #949494;">|</span> drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-3</span> row_2     col_4    <span style="color: #949494;">|</span>      4      1.39 <span style="color: #949494;">|</span> +         g2        24 <span style="color: #949494;">|</span> drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-2</span> row_3     col_4    <span style="color: #949494;">|</span>     20      3.00 <span style="color: #949494;">|</span> +         g3        60 <span style="color: #949494;">|</span> drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n-1</span> row_4     col_4    <span style="color: #949494;">|</span>      3      1.10 <span style="color: #949494;">|</span> -         g4        39 <span style="color: #949494;">|</span> drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">n  </span> row_5     col_4    <span style="color: #949494;">|</span>      5      1.61 <span style="color: #949494;">|</span> +         g5        37 <span style="color: #949494;">|</span> drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ n = 20</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: sample &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): group_data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts logcounts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): row_1 row_2 row_3 row_4 row_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(3): direction gene length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): condition sample</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

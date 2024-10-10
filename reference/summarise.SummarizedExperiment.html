@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biocmask</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,18 +81,14 @@ scalar and only computed values are retained in <code><a href="https://rdrr.io/p
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span><span class="va">direction</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>col_sums <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 2 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups: rows(direction)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .features .samples <span style="color: #949494;">|</span> col_sums sample <span style="color: #949494;">|</span> direction <span style="color: #949494;">|</span> sample condition</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494;">|</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         1 col_1    <span style="color: #949494;">|</span>       25     11 <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span> s1     cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2 col_1    <span style="color: #949494;">|</span>       25     11 <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span> s1     cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>         1 col_2    <span style="color: #949494;">|</span>       17     11 <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span> s2     cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>         2 col_2    <span style="color: #949494;">|</span>       12     11 <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span> s2     cntrl    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>         1 col_3    <span style="color: #949494;">|</span>       53     11 <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span> s3     drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>         2 col_3    <span style="color: #949494;">|</span>       21     11 <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span> s3     drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>         1 col_4    <span style="color: #949494;">|</span>       28     11 <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span> s4     drug     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>         2 col_4    <span style="color: #949494;">|</span>       29     11 <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span> s4     drug     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): group_data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): col_sums sample</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(1): direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(4): col_1 col_2 col_3 col_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): sample condition</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># .retain = "none" will drop ungrouped dimensions and</span></span></span>
 <span class="r-in"><span><span class="co"># outputs of assay context should be length 1.</span></span></span>
@@ -100,12 +96,14 @@ scalar and only computed values are retained in <code><a href="https://rdrr.io/p
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="fu"><a href="biocmask-context.html">rows</a></span><span class="op">(</span><span class="va">direction</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>col_sums <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            .retain <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 2 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups: rows(direction)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .features .samples <span style="color: #949494;">|</span> col_sums  <span style="color: #949494;">|</span> direction <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         1        1 <span style="color: #949494;">|</span> <span style="color: #949494;">&lt;dbl [4]&gt;</span> <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2        1 <span style="color: #949494;">|</span> <span style="color: #949494;">&lt;dbl [4]&gt;</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): group_data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): col_sums</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(1): direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using an `across()` function will help</span></span></span>
 <span class="r-in"><span><span class="co"># nest ungrouped dimensions</span></span></span>
@@ -114,12 +112,14 @@ scalar and only computed values are retained in <code><a href="https://rdrr.io/p
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>col_sums <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            <span class="fu"><a href="biocmask-context.html">cols</a></span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, <span class="va">list</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>             .retain <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A SummarizedExperiment-tibble Abstraction: 2 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups: rows(direction)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .features .samples <span style="color: #949494;">|</span> col_sums  <span style="color: #949494;">|</span> direction <span style="color: #949494;">|</span> sample    condition</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494;">|</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         1        1 <span style="color: #949494;">|</span> <span style="color: #949494;">&lt;dbl [4]&gt;</span> <span style="color: #949494;">|</span> -         <span style="color: #949494;">|</span> <span style="color: #949494;">&lt;chr [4]&gt;</span> <span style="color: #949494;">&lt;chr [4]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2        1 <span style="color: #949494;">|</span> <span style="color: #949494;">&lt;dbl [4]&gt;</span> <span style="color: #949494;">|</span> +         <span style="color: #949494;">|</span> <span style="color: #949494;">&lt;chr [4]&gt;</span> <span style="color: #949494;">&lt;chr [4]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): group_data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): col_sums</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(1): direction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(2): sample condition</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
