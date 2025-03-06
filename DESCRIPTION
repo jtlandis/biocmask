@@ -12,11 +12,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
-Imports: 
-    dplyr,
+Imports:
     purrr,
     rlang,
-    SummarizedExperiment,
     tidyr,
     tidyselect,
     vctrs,
@@ -28,7 +26,7 @@ Imports:
     S4Vectors,
     utils,
     methods
-Depends: 
+Depends:
     R (>= 4.4.0)
 Suggests:
     devtools,
