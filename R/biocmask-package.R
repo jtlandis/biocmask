@@ -38,8 +38,8 @@
 #' @importFrom vctrs vec_ptype
 #' @importFrom vctrs vec_ptype_abbr
 #' @importFrom vctrs vec_recycle_common
-#' @importFrom vctrs vec_rep
-#' @importFrom vctrs vec_rep_each
+#' @importFrom vctrsvec_rep
+#' @importFrom vctrsvec_rep_each
 #' @importFrom vctrs vec_restore
 #' @importFrom vctrs vec_size_common
 ## usethis namespace: end

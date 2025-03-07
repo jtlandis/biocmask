@@ -1,11 +1,9 @@
-
 # `skip!` <- structure(list(), class = "skip")
 # skip <- function() {
 #   `skip!`
 # }
 # print.skip <- function(x, ...) cat("<skip>\n")
 # is_skip <- function(x) inherits(x, "skip")
-
 
 ctx_env <- new.env(parent = emptyenv())
 
@@ -31,8 +29,6 @@ poke_ctx_local <- function(name, value) {
   invisible(old)
 }
 
-
-
 # this is the top of all our rlang data masks (inherited from base).
 # it contains all expected functions for transforming values  in multi-tiered
 # data masks.
@@ -44,8 +40,8 @@ top_env <- new_environment(
     vec_chop_assays = vec_chop_assays,
     vec_chop_assays_row = vec_chop_assays_row,
     vec_chop_assays_col = vec_chop_assays_col,
-    vec_rep = vctrs::vec_rep,
-    vec_rep_each = vctrs::vec_rep_each,
+    bioc_rep = bioc_rep,
+    bioc_rep_each = bioc_rep_each,
     vec_c = vctrs::vec_c,
     splice = splice,
     # skip = skip,
@@ -60,12 +56,16 @@ top_env <- new_environment(
 
 bot_env <- new.env(parent = top_env)
 
-biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows","cols")) {
+biocmask_group_ids2 <- function(
+  groups,
+  expanded,
+  relative_to = c("assays", "rows", "cols")
+) {
   # browser()
-  relative_to <- match.arg(relative_to, c("assays","rows","cols"))
+  relative_to <- match.arg(relative_to, c("assays", "rows", "cols"))
   Nr <- nrow(groups$row_groups)
   Nc <- nrow(groups$col_groups)
-  switch (
+  switch(
     relative_to,
     assays = {
       out <- expanded
@@ -84,12 +84,12 @@ biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows
       c_ind <- groups$col_groups[[".indices_group_id"]]
       r_nrow <- vapply(g_row[[".indices"]], length, 1L)
       r_ncol <- vapply(groups$col_groups[[".indices"]], length, 1L)
-      r_ncol <- vec_rep(sum(r_ncol), Nr)
+      r_ncol <- bioc_rep(sum(r_ncol), Nr)
       r_nsiz <- r_nrow * r_ncol
       list(
-        assays = lapply(g_ind, function(i) Nr *(c_ind - 1) + i),
+        assays = lapply(g_ind, function(i) Nr * (c_ind - 1) + i),
         rows = g_ind,
-        cols = vec_rep(list(c_ind), Nr),
+        cols = bioc_rep(list(c_ind), Nr),
         .nrow = as.list(r_nrow),
         .ncol = as.list(r_ncol),
         .nsize = as.list(r_nsiz)
@@ -101,11 +101,11 @@ biocmask_group_ids2 <- function(groups, expanded, relative_to = c("assays","rows
       r_ind <- groups$row_groups[[".indices_group_id"]]
       c_ncol <- vapply(g_col[[".indices"]], length, 1L)
       c_nrow <- vapply(groups$row_groups[[".indices"]], length, 1L)
-      c_nrow <- vec_rep(sum(c_nrow), Nc) #?
+      c_nrow <- bioc_rep(sum(c_nrow), Nc) #?
       c_nsiz <- c_nrow * c_ncol
       list(
-        assays = lapply(g_ind, function(i) Nr*(i-1L) + r_ind),
-        rows = vec_rep(list(r_ind), Nc),
+        assays = lapply(g_ind, function(i) Nr * (i - 1L) + r_ind),
+        rows = bioc_rep(list(r_ind), Nc),
         cols = g_ind,
         .nrow = as.list(c_nrow),
         .ncol = as.list(c_ncol),
@@ -141,9 +141,8 @@ env_group_id <- function(env) {
 # contexts should collect certain data. Most of this headache is to support
 # grouping operations.
 prepare_shared_ctx_env <- function(groups, expanded) {
-
   ind_d <- attr(groups, "obj_dim")
-  
+
   inf_assay <- biocmask_group_ids2(groups, expanded, "assays")
   inf_rows <- biocmask_group_ids2(groups, expanded, "rows")
   inf_cols <- biocmask_group_ids2(groups, expanded, "cols")
@@ -205,13 +204,13 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       # list of all contexts, each contains
       # indices to retrieve data from that context
       # while evaluating from rows context
-      `biocmask:::rows:::group_chop_ids` =   rows_group_id,
+      `biocmask:::rows:::group_chop_ids` = rows_group_id,
       # list of all contexts, each contains
       # indices to retrieve data from that context
       # while evaluating from cols context
-      `biocmask:::cols:::group_chop_ids` =   cols_group_id,
+      `biocmask:::cols:::group_chop_ids` = cols_group_id,
       # shortcut to the current context's indices
-      `biocmask:::ctx:::group_chop_ids`  =   ctx_group_id,
+      `biocmask:::ctx:::group_chop_ids` = ctx_group_id,
       # list of all contexts, each contains
       # the number of rows for the context
       `biocmask:::dim:::nrow` = nrow_info,
@@ -225,16 +224,18 @@ prepare_shared_ctx_env <- function(groups, expanded) {
       # rows -> nrow of rowData
       # cols -> nrow of colData
       `biocmask:::dim:::size` = nsize_info,
-      `biocmask:::dim:::n` =    nsize_ctx,
+      `biocmask:::dim:::n` = nsize_ctx,
       `biocmask:::ctx:::n_groups` = expanded |>
-        summarise(assays = max(.group_id),
-                  rows = max(`.rows::.indices_group_id`),
-                  cols = max(`.cols::.indices_group_id`)) |>
+        summarise(
+          assays = max(.group_id),
+          rows = max(`.rows::.indices_group_id`),
+          cols = max(`.cols::.indices_group_id`)
+        ) |>
         as.list()
     ),
     parent = bot_env
   )
-  
+
   # set of active bindings to retrieve above info dynamically
   env_bind_active(
     shared_ctx_env,
@@ -242,69 +243,91 @@ prepare_shared_ctx_env <- function(groups, expanded) {
     `biocmask:::n_groups` = new_function(
       pairlist(),
       expr(.subset2(`biocmask:::ctx:::n_groups`, `biocmask:::ctx`)),
-      env = shared_ctx_env),
+      env = shared_ctx_env
+    ),
     # indices of current group in current context
     `biocmask:::ctx:::current_chops` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::ctx:::group_chop_ids`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::ctx:::group_chop_ids`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
     # assays indices for current group
     `biocmask:::assays:::current_chops` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::assays:::group_chop_ids`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::assays:::group_chop_ids`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
-    # rowData indices for current group 
+    # rowData indices for current group
     `biocmask:::rows:::current_chops` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::rows:::group_chop_ids`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::rows:::group_chop_ids`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
     # colData indices for current group
     `biocmask:::cols:::current_chops` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::cols:::group_chop_ids`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::cols:::group_chop_ids`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
     # nrow for current context and group
     `biocmask:::ctx:::nrow` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::dim:::nrow`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::dim:::nrow`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
     # nrow for current context and group
     `biocmask:::ctx:::ncol` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::dim:::ncol`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::dim:::ncol`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
     # size for current context and group
     `biocmask:::ctx:::size` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::dim:::size`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::dim:::size`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     ),
     #
     `biocmask:::ctx:::n` = new_function(
       pairlist(),
-      expr(.subset2(`biocmask:::dim:::n`, `biocmask:::ctx`) |>
-             .subset2(`biocmask:::ctx:::group_id`)),
+      expr(
+        .subset2(`biocmask:::dim:::n`, `biocmask:::ctx`) |>
+          .subset2(`biocmask:::ctx:::group_id`)
+      ),
       env = shared_ctx_env
     )
   )
-  shared_ctx_env$n <- new_function(pairlist(),quote(`biocmask:::ctx:::n`), 
-                                   shared_ctx_env)
-  shared_ctx_env$cur_group_id <- new_function(pairlist(),
-                                              quote(`biocmask:::ctx:::group_id`),
-                                              shared_ctx_env)
+  shared_ctx_env$n <- new_function(
+    pairlist(),
+    quote(`biocmask:::ctx:::n`),
+    shared_ctx_env
+  )
+  shared_ctx_env$cur_group_id <- new_function(
+    pairlist(),
+    quote(`biocmask:::ctx:::group_id`),
+    shared_ctx_env
+  )
   shared_ctx_env$set_group_id <- env_group_id(shared_ctx_env)
   shared_ctx_env
 }

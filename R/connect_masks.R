@@ -17,15 +17,19 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
       if (length(chops) > 1) {
         col_ind <- attr(.indices, "biocmask:::col_chop_ind") |>
           .subset(chops)
-        tryCatch({
-          as_is <- as_is[,order(list_unchop(col_ind)), drop = FALSE]
-        },
-        error = function(cnd) {
-          if (!inherits(data_chop[[1]], "matrix")) 
-            abort("could not reconstruct 'asis' representation. underlying data was not a matrix",
-                  call = NULL)
-          abort("unexpected error", parent = cnd, call = NULL)
-        })
+        tryCatch(
+          {
+            as_is <- as_is[, order(list_unchop(col_ind)), drop = FALSE]
+          },
+          error = function(cnd) {
+            if (!inherits(data_chop[[1]], "matrix"))
+              abort(
+                "could not reconstruct 'asis' representation. underlying data was not a matrix",
+                call = NULL
+              )
+            abort("unexpected error", parent = cnd, call = NULL)
+          }
+        )
       }
       as_is
     }),
@@ -35,7 +39,13 @@ connect_assays_to_rows <- function(mask_assays, mask_rows) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(lapply(seq_len(`biocmask:::ctx:::n`), function(i,x) x[i,,drop=TRUE], x = !!name_sym)),
+    quote(
+      lapply(
+        seq_len(`biocmask:::ctx:::n`),
+        function(i, x) x[i, , drop = TRUE],
+        x = !!name_sym
+      )
+    ),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -69,25 +79,35 @@ connect_assays_to_cols <- function(mask_assays, mask_cols) {
       if (length(chops) > 1) {
         row_ind <- attr(.indices, "biocmask:::row_chop_ind") |>
           .subset(chops)
-        tryCatch({
-          as_is <- as_is[order(list_unchop(row_ind)),, drop = FALSE]
-        },
-        error = function(cnd) {
-          if (!inherits(data_chop[[1]], "matrix")) 
-            abort("could not reconstruct 'asis' representation. underlying data was not a matrix",
-                  call = NULL)
-          abort("unexpected error", parent = cnd, call = NULL)
-        })
+        tryCatch(
+          {
+            as_is <- as_is[order(list_unchop(row_ind)), , drop = FALSE]
+          },
+          error = function(cnd) {
+            if (!inherits(data_chop[[1]], "matrix"))
+              abort(
+                "could not reconstruct 'asis' representation. underlying data was not a matrix",
+                call = NULL
+              )
+            abort("unexpected error", parent = cnd, call = NULL)
+          }
+        )
       }
       as_is
-      }),
+    }),
     # should be evaluated within the chopped context, cannot guarantee groupings
     .env_expr = mask_assays$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(lapply(seq_len(`biocmask:::ctx:::n`), function(i,x) x[,i,drop=TRUE], x = !!name_sym)),
+    quote(
+      lapply(
+        seq_len(`biocmask:::ctx:::n`),
+        function(i, x) x[, i, drop = TRUE],
+        x = !!name_sym
+      )
+    ),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -122,7 +142,7 @@ connect_rows_to_assays <- function(mask_rows, mask_assays) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(!!name_sym, times = `biocmask:::ctx:::ncol`)),
+    quote(bioc_rep(!!name_sym, times = `biocmask:::ctx:::ncol`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -156,7 +176,7 @@ connect_cols_to_assays <- function(mask_cols, mask_assays) {
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep_each(!!name_sym, times = `biocmask:::ctx:::nrow`)),
+    quote(bioc_rep_each(!!name_sym, times = `biocmask:::ctx:::nrow`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -185,23 +205,24 @@ connect_rows_to_cols <- function(mask_rows, mask_cols) {
   fun_asis <- add_bind(
     # row data may be grouped. use vctrs::vec_c to concatenate vectors
     quote({
-      
       # browser();vec_c(splice(.subset(!!name_sym, `biocmask:::rows:::current_chops`)))
       chops <- `biocmask:::rows:::current_chops`
       data_chop <- .subset(!!name_sym, chops)
       as_is <- vec_c(splice(data_chop))
       if (length(chops) > 1) {
         ind <- .subset(.indices, chops) |>
-          splice() |> vec_c()
-        as_is <- vec_slice(as_is, order(ind, method = "radix"))
+          splice() |>
+          vec_c()
+        as_is <- bioc_slice(as_is, order(ind, method = "radix"))
       }
-      as_is }),
+      as_is
+    }),
     .env_expr = mask_rows$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(list(!!name_sym), times = `biocmask:::ctx:::n`)),
+    quote(bioc_rep(list(!!name_sym), times = `biocmask:::ctx:::n`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -230,23 +251,24 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
   fun_asis <- add_bind(
     # col data may be grouped. use vctrs::vec_c to concatenate vectors
     quote({
-      
       # browser();vec_c(splice(.subset(!!name_sym, `biocmask:::cols:::current_chops`))))
       chops <- `biocmask:::cols:::current_chops`
       data_chop <- .subset(!!name_sym, chops)
       as_is <- vec_c(splice(data_chop))
       if (length(chops) > 1) {
         ind <- .subset(.indices, chops) |>
-          splice() |> vec_c()
-        as_is <- vec_slice(as_is, order(ind, method = "radix"))
+          splice() |>
+          vec_c()
+        as_is <- bioc_slice(as_is, order(ind, method = "radix"))
       }
-      as_is }),
+      as_is
+    }),
     .env_expr = mask_cols$environments@env_data_chop,
     .env_bind = env_asis,
     type = "active"
   )
   fun_mold <- add_bind(
-    quote(vec_rep(list(!!name_sym), times = `biocmask:::ctx:::n`)),
+    quote(bioc_rep(list(!!name_sym), times = `biocmask:::ctx:::n`)),
     .env_expr = env_asis,
     .env_bind = env_pronoun,
     type = "active"
@@ -266,14 +288,25 @@ connect_cols_to_rows <- function(mask_rows, mask_cols) {
 }
 
 connect_masks <- function(mask_assays, mask_rows, mask_cols) {
-  
   col2row <- connect_cols_to_rows(mask_cols = mask_cols, mask_rows = mask_rows)
   row2col <- connect_rows_to_cols(mask_rows = mask_rows, mask_cols = mask_cols)
-  col2assay <- connect_cols_to_assays(mask_cols = mask_cols, mask_assays = mask_assays)
-  row2assay <- connect_rows_to_assays(mask_rows = mask_rows, mask_assays = mask_assays)
-  assay2row <- connect_assays_to_rows(mask_assays = mask_assays, mask_rows = mask_rows)
-  assay2col <- connect_assays_to_cols(mask_assays = mask_assays, mask_cols = mask_cols)
-  
+  col2assay <- connect_cols_to_assays(
+    mask_cols = mask_cols,
+    mask_assays = mask_assays
+  )
+  row2assay <- connect_rows_to_assays(
+    mask_rows = mask_rows,
+    mask_assays = mask_assays
+  )
+  assay2row <- connect_assays_to_rows(
+    mask_assays = mask_assays,
+    mask_rows = mask_rows
+  )
+  assay2col <- connect_assays_to_cols(
+    mask_assays = mask_assays,
+    mask_cols = mask_cols
+  )
+
   list(
     assays = list(
       cols = col2assay,
@@ -288,5 +321,4 @@ connect_masks <- function(mask_assays, mask_rows, mask_cols) {
       rows = row2col
     )
   )
-
 }

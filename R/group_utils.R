@@ -1,4 +1,3 @@
-
 #' @importFrom dplyr bind_cols reframe across everything group_vars
 
 # faster implementation
@@ -7,17 +6,17 @@ expand_groups2 <- function(.rows, .cols) {
   names(.cols) <- sprintf(".cols::%s", names(.cols))
   .nrow <- nrow(.rows)
   .ncol <- nrow(.cols)
-  .rows <- map(.rows, vec_rep, times = .ncol)
-  .cols <- map(.cols, vec_rep_each, times = .nrow)
+  .rows <- map(.rows, bioc_rep, times = .ncol)
+  .cols <- map(.cols, bioc_rep_each, times = .nrow)
   out <- c(.rows, .cols)
-  n <- .nrow*.ncol
+  n <- .nrow * .ncol
   out[[".nrows"]] <- map_int(out[[".rows::.indices"]], length)
   out[[".ncols"]] <- map_int(out[[".cols::.indices"]], length)
   attr(out, "row.names") <- c(NA_integer_, -n)
   class(out) <- c("tbl_df", "tbl", "data.frame")
-  
-  # due to this ordering here, I had introduced an unexpected  
-  # column-wise ordering of assays. I have changed it and commented 
+
+  # due to this ordering here, I had introduced an unexpected
+  # column-wise ordering of assays. I have changed it and commented
   # it out and also revered to the original intent of row-wise ordering.
   # o <- order(
   #   out[[".cols::.indices_group_id"]],
@@ -41,7 +40,7 @@ expand_groups2 <- function(.rows, .cols) {
 #       reframe(
 #         across(
 #           everything(),
-#           ~vec_rep(.x, times = .env$.ncol)
+#           ~bioc_rep(.x, times = .env$.ncol)
 #         ) |>
 #           rename_with(.fn = \(x) gsub(".indices", ".rows", x = x))
 #       ),
@@ -52,7 +51,7 @@ expand_groups2 <- function(.rows, .cols) {
 #       reframe(
 #         across(
 #           everything(),
-#           ~vec_rep_each(.x, times = .env$.nrow)
+#           ~bioc_rep_each(.x, times = .env$.nrow)
 #         ) |>
 #           rename_with(.fn = \(x) gsub(".indices", ".cols", x = x))
 #       ),
@@ -83,44 +82,42 @@ is_grouped_cols <- function(.groups) {
 
 #' @export
 group_vars.SummarizedExperiment <- function(x) {
-  map(metadata(x)[["group_data"]],
-         function(x) {
-           grep(x = names(x),
-                pattern = "^.indices",
-                value = TRUE,
-                invert = TRUE)
-         })
+  map(metadata(x)[["group_data"]], function(x) {
+    grep(x = names(x), pattern = "^.indices", value = TRUE, invert = TRUE)
+  })
 }
-
-
 
 vec_chop_assays <- function(.data, .indices) {
   map2(
     attr(.indices, "biocmask:::row_chop_ind"),
     attr(.indices, "biocmask:::col_chop_ind"),
-    function(.x, .y, .data) .data[.x, .y, drop = FALSE], .data = .data
+    function(.x, .y, .data) .data[.x, .y, drop = FALSE],
+    .data = .data
   )
 }
 
 vec_chop_assays_row <- function(.data, .indices) {
-  map(attr(.indices, "biocmask:::row_chop_ind"),
-      function(.i, .data) .data[.i,,drop = FALSE],
-      .data = .data)
+  map(
+    attr(.indices, "biocmask:::row_chop_ind"),
+    function(.i, .data) .data[.i, , drop = FALSE],
+    .data = .data
+  )
 }
 
 vec_chop_assays_col <- function(.data, .indices) {
-  map(attr(.indices, "biocmask:::col_chop_ind"),
-      function(.i, .data) .data[,.i,drop = FALSE],
-      .data = .data)
+  map(
+    attr(.indices, "biocmask:::col_chop_ind"),
+    function(.i, .data) .data[, .i, drop = FALSE],
+    .data = .data
+  )
 }
-
 
 create_groups <- function(.data, .rename = ".indices") {
   # check if length > 0
   if (is_empty(.data)) return(NULL)
   # check first index has length > 0
   # assumes all others have similar length (probably not always true)
-  if (length(.data[[1]])==0) {
+  if (length(.data[[1]]) == 0) {
     .data <- as_tibble(.data)
     .data[[.rename]] <- list()
     .data[[sprintf("%s_group_id", .rename)]] <- integer()
@@ -148,14 +145,15 @@ biocmask_groups <- function(row_groups = NULL, col_groups = NULL) {
   }
   class(out) <- "biocmask_groups"
   attr(out, "type") <- type
-  if (type=="") return(NULL)
+  if (type == "") return(NULL)
   out
 }
 
 get_group_indices <- function(
-    .groups,
-    .details,
-    type = c("assays", "rowData", "colData")) {
+  .groups,
+  .details,
+  type = c("assays", "rowData", "colData")
+) {
   if (is.null(attr(.groups, "type"))) return(NULL)
   type <- match.arg(type, c("assays", "rowData", "colData"))
   switch(
@@ -167,11 +165,14 @@ get_group_indices <- function(
         .details[[".cols::.indices"]],
         .f = function(row, col, n) {
           mat_index(row, col, nrows = n)
-        }, n = attr(.groups, "obj_dim")[1])
+        },
+        n = attr(.groups, "obj_dim")[1]
+      )
       attr(out, "biocmask:::row_chop_ind") <- .details[[".rows::.indices"]]
       attr(out, "biocmask:::col_chop_ind") <- .details[[".cols::.indices"]]
       attr(out, "type") <- attr(.groups, "type")
-      out},
+      out
+    },
     rowData = .groups$row_groups$.indices,
     colData = .groups$col_groups$.indices
   )
@@ -191,8 +192,10 @@ group_type <- function(obj) {
 
 group_details <- function(obj) {
   group_data <- metadata(obj)[["group_data"]]
-  group_data$row_groups <- group_data$row_groups %||% tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
-  group_data$col_groups <- group_data$col_groups %||% tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
+  group_data$row_groups <- group_data$row_groups %||%
+    tibble(.indices = list(seq_len(nrow(obj))), .indices_group_id = 1L)
+  group_data$col_groups <- group_data$col_groups %||%
+    tibble(.indices = list(seq_len(ncol(obj))), .indices_group_id = 1L)
   # out <- list(
   #   row_groups = row_groups,
   #   col_groups = col_groups
