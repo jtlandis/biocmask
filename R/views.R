@@ -157,14 +157,14 @@ link_view <- function(bm, .view) {
   chops_view <- env(env_view)
   # new call per new binding in the target context ("view")
   # caches the subsets of whatever binding of "name_sym"
-  new_chops_lazy_bind <- biocmask:::add_bind(
+  new_chops_lazy_bind <- add_bind(
     .expr = quote(lapply(.__uniq_map__., \(.x) .subset(!!name_sym, .x))),
     .env_expr = env_view,
     .env_bind = chops_view,
     type = "lazy"
   )
   asis_view <- new.env(parent = env_view)
-  asis_lazy_bind <- biocmask:::add_bind(
+  asis_lazy_bind <- add_bind(
     .expr = substitute(
       lapply(!!name_sym, \(.x) .y),
       list(.y = rlang::f_rhs(.view$asis))
@@ -176,7 +176,7 @@ link_view <- function(bm, .view) {
   asis_access_view <- new.env(parent = env_view)
   # only called ONCE per new symbol. ensures the
   # below lazy bind is accessed
-  asis_access_bind <- biocmask:::add_bind(
+  asis_access_bind <- add_bind(
     .expr = quote(.subset2(!!name_sym, .mapper)),
     .env_expr = asis_view,
     .env_bind = asis_access_view,
@@ -184,7 +184,7 @@ link_view <- function(bm, .view) {
   )
 
   reshape_view <- new.env(parent = asis_access_view)
-  reshape_lazy_bind <- biocmask:::add_bind(
+  reshape_lazy_bind <- add_bind(
     # reshape should be same length as `biocmask:::ctx:::n_group`
     .expr = substitute(
       .subset(!!name_sym, .__uniq_indx__.) |>
@@ -200,7 +200,7 @@ link_view <- function(bm, .view) {
     type = "lazy"
   )
   reshape_access_view <- new.env(parent = reshape_view)
-  reshape_access_bind <- biocmask:::add_bind(
+  reshape_access_bind <- add_bind(
     .expr = quote(.subset2(!!name_sym, `biocmask:::ctx:::group_id`)),
     .env_expr = reshape_view,
     .env_bind = reshape_access_view,

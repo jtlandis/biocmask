@@ -72,24 +72,32 @@ new_biocmask_manager.SummarizedExperiment <- function(obj, ...) {
   )
 }
 
-biocmask_evaluate <- function(mask, quos, ctxs, nams, env, .matrix = FALSE) {
+#' helpful wrapper to evaluate quosures in a biocmask_manager object
+#' @param mask_manager A biocmask_manager object
+#' @param quos A list of quosures to evaluate
+#' @param ctxs A character vector of contexts for each quosure
+#' @param env The environment in which to evaluate the quosures
+biocmask_manager_evaluate <- function(
+  mask_manager,
+  quos,
+  ctxs,
+  #nams,
+  env
+) {
   .call <- caller_call()
-  if (.matrix) {
-    quos <- enforce_matrix(quos, ctxs)
-  }
   n_quo <- length(quos)
   try_fetch(
     {
       for (i in seq_len(n_quo)) {
         quo <- quos[[i]]
         #nm <- nams[i]
-        mask$ctx <- ctxs[[i]]
-        mask$eval(quo, env = env)
+        mask_manager$ctx <- ctxs[[i]]
+        mask_manager$eval(quo, env = env)
       }
     },
     error = function(cnd) {
-      current_ctx <- mask$ctx
-      current_gid <- mask$group_id
+      current_ctx <- mask_manager$ctx
+      current_gid <- mask_manager$group_id
       cli::cli_abort(
         message = "an error occured in group {current_gid} of `{current_ctx}` context",
         parent = cnd,
@@ -98,5 +106,5 @@ biocmask_evaluate <- function(mask, quos, ctxs, nams, env, .matrix = FALSE) {
       )
     }
   )
-  invisible(mask)
+  invisible(mask_manager)
 }

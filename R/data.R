@@ -1,35 +1,15 @@
 #' @title Biocmask Simple Example Summarized Experiment
-#' 
+#'
 #' @description
-#' A small data SummarizedExperiment Object of 20 observations, 5 rows and 4 
-#' columns.
-#' 
-#' @format ## `se_simple`
+#' A small DataFrame Object of 8 observations, and 3 columns
+#'
+#' @format ## `df_simple`
 #' \describe{
-#' 
-#'  \item{`assays`}{
-#'    \describe{
-#'      \item{counts}{sampled data points between 1:20}
-#'      \item{logcounts}{log transform of `counts`}
-#'    }
-#'  }
-#'  \item{`rowData`/`.features`}{
-#'    \describe{
-#'      \item{gene}{fake gene name}
-#'      \item{length}{fake gene length}
-#'      \item{direction}{fake strand}
-#'    }
-#'  }
-#'  \item{`colData`/`.samples`}{
-#'    \describe{
-#'      \item{sample}{fake sample name}
-#'      \item{condition}{control or drug treatment}
-#'    }
-#'  }
+#'  \item{`signal`}{sampled data points between 1:100}
+#'  \item{condition}{an Rle object of "cntrl" and "drug"}
+#'  \item{group}{a factor vector of "A", "B", "C"}
 #' }
 #' @return a `SummarizedExperiment` object
 #' @examples
-#' SummarizedExperiment::assays(se_simple)
-#' SummarizedExperiment::rowData(se_simple)
-#' SummarizedExperiment::colData(se_simple)
-"se_simple"
+#' df_simple |> names()
+"df_simple"

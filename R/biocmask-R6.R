@@ -434,101 +434,103 @@ biocmask <- R6::R6Class(
   )
 )
 
-#' @title `biocmask` for SummarizedExperiment `assays()`
-#' @name BiocDataMask-assays
-#' @description
-#' A more specialized version of the biocmask R6 object for the
-#' assays list object. This includes chopping and unchopping
-#' of matrix like objects.
-#' @return an object inheriting [`biocmask`][biocmask::BiocDataMask].
-#' @noRd
-biocmask_assay <- R6::R6Class(
-  "biocmask_assay",
-  inherit = biocmask,
-  cloneable = FALSE,
-  public = list(
-    #' @description
-    #' Create a biocmask from `.data`. `.data` is chopped by
-    #' `.indices`, and environments are built from `.env`
-    #'
-    #' @param .data a named list like object to create a mask
-    #' @param .indices the indices that will be used to chop `.data`
-    #' @param .env_bot an environment that the resulting mask will be built from.
-    #' @param .env_top an environment that `.env_bot` inherits from
-    #' @param .nrow,.ncol the number of rows and columns of each element of `.data` respectively
-    initialize = function(
-      .data,
-      .indices,
-      .env_bot,
-      .env_top = .env_bot,
-      .nrow,
-      .ncol
-    ) {
-      super$initialize(
-        .data,
-        .indices = .indices,
-        .env_bot = .env_bot,
-        .env_top = .env_top
-      )
-      env_bind(
-        private$env_current_group_info,
-        .nrow = .nrow,
-        .ncol = .ncol
-      )
-      private$.nrow <- .nrow
-      private$.ncol <- .ncol
-    },
-    #' @description
-    #' unchop data within the mask, returns a matrix
-    #' @param name name of binding to retrieve and unchop
-    unchop = function(name) {
-      unchopped <- if (is.null(private$.indices)) {
-        .subset2(private$env_data_chop[[name]], 1L)
-      } else {
-        list_unchop(
-          lapply(private$env_data_chop[[name]], as.vector),
-          indices = private$.indices
-        )
-      }
-      if (is.null(unchopped)) return(unchopped)
-      matrix(
-        unchopped,
-        nrow = private$.nrow,
-        ncol = private$.ncol
-      )
-    }
-  ),
-  private = list(
-    get_chop_fun = function() {
-      .indices <- private$.indices
-      if (is.null(.indices)) {
-        # private$.e <- private$.env_col_chop <- private$env_data_chop
-        return(function(name) {
-          name <- enexpr(name)
-          expr(list(!!name))
-        })
-      } else {
-        type <- attr(.indices, "type")
-        private$.ngroups <- nrow(.indices)
-        fun <- switch(
-          type,
-          rowcol = function(name) {
-            name <- enexpr(name)
-            expr(vec_chop_assays(!!name, .indices))
-          },
-          row = function(name) {
-            name <- enexpr(name)
-            expr(vec_chop_assays_row(!!name, .indices))
-          },
-          col = function(name) {
-            name <- enexpr(name)
-            expr(vec_chop_assays_col(!!name, .indices))
-          }
-        )
-        return(fun)
-      }
-    },
-    .nrow = NULL,
-    .ncol = NULL
-  )
-)
+# #' @title `biocmask` for SummarizedExperiment `assays()`
+# #' @name BiocDataMask-assays
+# #' @description
+# #' A more specialized version of the biocmask R6 object for the
+# #' assays list object. This includes chopping and unchopping
+# #' of matrix like objects.
+# #' @return an object inheriting [`biocmask`][biocmask::BiocDataMask].
+# #' @noRd
+# biocmask_assay <- R6::R6Class(
+#   "biocmask_assay",
+#   inherit = biocmask,
+#   cloneable = FALSE,
+#   public = list(
+#     #' @description
+#     #' Create a biocmask from `.data`. `.data` is chopped by
+#     #' `.indices`, and environments are built from `.env`
+#     #'
+#     #' @param .data a named list like object to create a mask
+#     #' @param .indices the indices that will be used to chop `.data`
+#     #' @param .env_bot an environment that the resulting mask will be built
+#     #' from.
+#     #' @param .env_top an environment that `.env_bot` inherits from
+#     #' @param .nrow,.ncol the number of rows and columns of each element of
+#     #' `.data` respectively
+#     initialize = function(
+#       .data,
+#       .indices,
+#       .env_bot,
+#       .env_top = .env_bot,
+#       .nrow,
+#       .ncol
+#     ) {
+#       super$initialize(
+#         .data,
+#         .indices = .indices,
+#         .env_bot = .env_bot,
+#         .env_top = .env_top
+#       )
+#       env_bind(
+#         private$env_current_group_info,
+#         .nrow = .nrow,
+#         .ncol = .ncol
+#       )
+#       private$.nrow <- .nrow
+#       private$.ncol <- .ncol
+#     },
+#     #' @description
+#     #' unchop data within the mask, returns a matrix
+#     #' @param name name of binding to retrieve and unchop
+#     unchop = function(name) {
+#       unchopped <- if (is.null(private$.indices)) {
+#         .subset2(private$env_data_chop[[name]], 1L)
+#       } else {
+#         list_unchop(
+#           lapply(private$env_data_chop[[name]], as.vector),
+#           indices = private$.indices
+#         )
+#       }
+#       if (is.null(unchopped)) return(unchopped)
+#       matrix(
+#         unchopped,
+#         nrow = private$.nrow,
+#         ncol = private$.ncol
+#       )
+#     }
+#   ),
+#   private = list(
+#     get_chop_fun = function() {
+#       .indices <- private$.indices
+#       if (is.null(.indices)) {
+#         # private$.e <- private$.env_col_chop <- private$env_data_chop
+#         return(function(name) {
+#           name <- enexpr(name)
+#           expr(list(!!name))
+#         })
+#       } else {
+#         type <- attr(.indices, "type")
+#         private$.ngroups <- nrow(.indices)
+#         fun <- switch(
+#           type,
+#           rowcol = function(name) {
+#             name <- enexpr(name)
+#             expr(vec_chop_assays(!!name, .indices))
+#           },
+#           row = function(name) {
+#             name <- enexpr(name)
+#             expr(vec_chop_assays_row(!!name, .indices))
+#           },
+#           col = function(name) {
+#             name <- enexpr(name)
+#             expr(vec_chop_assays_col(!!name, .indices))
+#           }
+#         )
+#         return(fun)
+#       }
+#     },
+#     .nrow = NULL,
+#     .ncol = NULL
+#   )
+# )
