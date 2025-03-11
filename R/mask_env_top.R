@@ -34,6 +34,67 @@ poke_ctx_local <- function(name, value) {
 # data masks.
 # If future extensions need access to additional functions, they should consider
 # creating their own top_env, or open a PR to add it here.
+
+#' @title Create a new top-level environment for data masking.
+#' @name new_bioc_top_env
+#' @description
+#' Creates a new environment that inherits from the specified parent
+#' environment. This environment is automatically installed with various
+#' `bioc_*` functions that may be useful for the user.
+#'
+#' Ideally, this environment should be created once within a package's
+#' namespace, and then biocmasks should construct new environments with
+#' this top level as the parent environment.
+#'
+#' @param ... Additional arguments to pass to `new_environment()`.
+#' @param parent The parent environment to inherit from.
+#' @export
+new_bioc_top_env <- function(..., parent = empty_env()) {
+  new_environment(
+    data = rlang::dots_list(
+      .subset2 = base::.subset2,
+      .subset = base::.subset,
+      list = rlang::list2,
+      bioc_chop = bioc_chop,
+      bioc_rep = bioc_rep,
+      bioc_rep_each = bioc_rep_each,
+      vec_c = vctrs::vec_c,
+      splice = splice,
+      # skip = skip,
+      poke_ctx = poke_ctx,
+      poke_ctx_local = poke_ctx_local,
+      peek_ctx = peek_ctx,
+      .current_group_id = 0L,
+      .mask_manager = NULL,
+      ...,
+      .homonyms = "last"
+    ),
+    parent = parent
+  )
+}
+
+#' @title Create new environment prior to biocmask.
+#' @description dictate the default context as well as the group id.
+#' @param context The context to use for the new environment.
+#' @param parent The parent environment to inherit from. Ideally this is the #' environment created by `new_bioc_top_env()`.
+#' @export
+new_bioc_bot_env <- function(..., context = NULL, parent = top_env) {
+  if (!is.null(context)) {
+    stopifnot(is.character(context), length(context) == 1)
+  }
+  new_environment(
+    data = rlang::dots_list(
+      #current context
+      `biocmask:::ctx` = context,
+      #context group id
+      `biocmask:::ctx:::group_id` = 1L,
+      ...,
+      .homonyms = "last"
+    ),
+    parent = parent
+  )
+}
+
 top_env <- new_environment(
   data = list(
     vec_chop = vctrs::vec_chop,
