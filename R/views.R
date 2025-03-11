@@ -11,7 +11,8 @@
 #' enviornment. note: `.x` will be replaced dynamically with the correct name.
 #' Only symbols found within the `ctx`'s mask will be evaluated, thus the
 #' developer is responsible for how dynamic these bindings are.
-#' @param mold an expression on how to change `asis` to fit the `from` context
+#' @param reshape an expression on how to change `asis` to fit the `from` context
+#' @export
 new_view_spec <- function(
   ctx,
   from,
@@ -19,8 +20,8 @@ new_view_spec <- function(
   mapper = ~.x,
   # lazy binding of new chops by from groups
   #
-  asis = ~.subset(.x, 1L),
-  reshape = asis
+  asis = ~.subset2(.x, 1L),
+  reshape = ~.x
 ) {
   structure(
     list(
@@ -35,27 +36,28 @@ new_view_spec <- function(
   )
 }
 
+#' @export
 print.view_spec <- function(x) {
-  cat("View - `", x$ctx, "` from `", x$from, "`\n", sep = "")
+  cat("View spec - `", x$ctx, "` from `", x$from, "`\n", sep = "")
 }
 
-m_assays <- bm$masks[["assays"]]
-m_rows <- bm$masks[["rows"]]
-m_cols <- bm$masks[["cols"]]
+#m_assays <- bm$masks[["assays"]]
+#m_rows <- bm$masks[["rows"]]
+#m_cols <- bm$masks[["cols"]]
 
-.view <- new_view_spec(
-  "rows",
-  "assays",
-  mapper = ~{
-    # browser()
-    .subset2(attr(.indices, "biocmask:::row_chop_ind"), .x)
-  },
-  asis = ~{
-    browser()
-    chops <- .subset2(.x, .mapper)
-    chops
-  }
-)
+#.view <- new_view_spec(
+#  "rows",
+#  "assays",
+#  mapper = ~{
+#    # browser()
+#    .subset2(attr(.indices, "biocmask:::row_chop_ind"), .x)
+#  },
+#  asis = ~{
+#    browser()
+#    chops <- .subset2(.x, .mapper)
+#    chops
+#  }
+#)
 
 link_view <- function(bm, .view) {
   # browser()
@@ -74,6 +76,10 @@ link_view <- function(bm, .view) {
     f_rhs(.view$mapper),
     env = env_from
   )
+  env_bind(
+    env_from,
+    .ctx = as_data_pronoun(view_envs@env_current_group_info)
+  )
   env_bind_lazy(
     env_from,
     !!!lapply(.view$installs, new_quosure, env = env_from)
@@ -88,7 +94,7 @@ link_view <- function(bm, .view) {
     .__cache_map__. = !!new_quosure(
       expr({
         .res <- lapply(
-          seq_len(.subset2(`biocmask:::ctx:::n_groups`, !!.view$from)),
+          seq_len(`biocmask:::ctx:::n_groups`),
           .map_fn
         )
         # ideally this releases the environment made from `from`  ctx
@@ -119,12 +125,18 @@ link_view <- function(bm, .view) {
       expr(unique(.__cache_map__.)),
       env_view
     ),
-    .__from_n_groups__. = !!new_quosure(expr(length(.indices)), env_from),
-    !!!names(.view$installs) |>
-      rlang::set_names() |>
-      syms() |>
-      lapply(new_quosure, env = env_from)
+    .__from_n_groups__. = !!new_quosure(expr(length(.indices)), env_from)
   )
+  if (length(.view$installs)) {
+    env_bind_lazy(
+      env_view,
+      !!!names(.view$installs) |>
+        rlang::set_names() |>
+        syms() |>
+        lapply(new_quosure, env = env_from)
+    )
+  }
+
   env_bind_active(
     env_view,
     # .mapper will tell us which index of .__uniq_map__.
@@ -196,6 +208,9 @@ link_view <- function(bm, .view) {
 
   out <- new_environment(
     list(
+      # provides the active function
+      # that searches for the same symbol but in the
+      # lazy environment
       on_new_bind = list(
         asis = asis_access_bind,
         reshape = reshape_access_bind
@@ -231,7 +246,14 @@ link_view <- function(bm, .view) {
   )
 
   class(out) <- "View"
+  attr(out, "ctx") <- .view$ctx
+  attr(out, "from") <- .view$from
   out
+}
+
+#' @export
+print.View <- function(x) {
+  cat("View - `", attr(x, "ctx"), "` from `", attr(x, "from"), "`\n", sep = "")
 }
 
 # example of viewing "rows" from the "assays" context
