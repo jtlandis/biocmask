@@ -149,7 +149,7 @@ biocmask <- R6::R6Class(
     ) {
       private$.shared_env <- .env_bot
       private$.top_env <- .env_top
-      private$.true_parent_env <- env_parent(.env_top)
+      #private$.true_parent_env <- env_parent(.env_top)
       private$.data <- .data
       private$.indices <- .indices
       private$init_current_group_info()
