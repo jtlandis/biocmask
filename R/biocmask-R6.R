@@ -250,10 +250,10 @@ biocmask <- R6::R6Class(
     #' @field top_env the top-level environment of the mask
     top_env = function() {
       private$.top_env
-    },
-    true_parent = function() {
-      private$.true_parent_env
     }
+    #true_parent = function() {
+    # private$.true_parent_env
+    #}
   ),
   private = list(
     init_names = function() {
@@ -422,7 +422,7 @@ biocmask <- R6::R6Class(
 
     .shared_env = NULL,
     .top_env = NULL, # should at least inherit from `baseenv()`
-    .true_parent_env = NULL,
+    #.true_parent_env = NULL,
     #' holds grouping information
     #' for this object
     env_current_group_info = NULL,

@@ -32,6 +32,13 @@ biocmask_manager <- R6::R6Class(
       private$.extended_env <- .extended_env
       .ctx_env[["biocmask:::ctx:::group_id"]] <- 1L
     },
+    #' @description
+    #'   installs a link between two contexts via a
+    #'   view_spec object.
+    #' @param view_spec view specification made view [new_view_spec()]
+    #' @param pronoun_name name of the pronoun to be created. defaults to
+    #'   `sprintf(".%s", view_spec$ctx)`
+    #' @return self
     link_ctx = function(view_spec, pronoun_name = NULL) {
       pronoun_name <- pronoun_name %||% view_spec$ctx
       view <- link_view(self, view_spec)
@@ -155,7 +162,7 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
     # should we consider the parent to be transient? what happens
     # if we evaluate in a different environment? I suppose we should
     # make the true "top_env" the base environment for this example...
-    on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
+    #on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
     for (i in seq_len(n_groups)) {
       private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
       result <- mask$eval(quo, env = env)

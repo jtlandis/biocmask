@@ -1,3 +1,4 @@
+#' @title Specifying views
 #' @param ctx character name of the source contest
 #' @param from character name of context we are viewing `ctx` from
 #' @param ... additional bindings from the `from` context that should be
