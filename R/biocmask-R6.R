@@ -128,7 +128,7 @@ add_bind <- function(
 #' mask$eval(quote(Sepal.Width))
 #'
 #'
-#'
+#' @export
 biocmask <- R6::R6Class(
   "biocmask",
   cloneable = FALSE,
@@ -149,17 +149,20 @@ biocmask <- R6::R6Class(
     ) {
       private$.shared_env <- .env_bot
       private$.top_env <- .env_top
+      private$.true_parent_env <- env_parent(.env_top)
       private$.data <- .data
       private$.indices <- .indices
       private$init_current_group_info()
 
-      private$.names <- setNames(nm = names(.data))
-      private$.ptype <- lapply(.data, bioc_slice, i = 0L)
-      private$.env_size <- length(private$.names) + 20L
+      private$init_names()
+
+      private$init_env_size()
 
       private$init_foreign_data()
 
       private$init_data_lazy()
+
+      private$init_ptype()
 
       private$init_data_chop()
 
@@ -205,8 +208,9 @@ biocmask <- R6::R6Class(
       if (is.null(private$.indices)) {
         .subset2(private$env_data_chop[[name]], 1L)
       } else {
-        list_unchop(
-          private$env_data_chop[[name]],
+        bioc_unchop(
+          x = private$env_data_chop[[name]],
+          ptype = private$.ptype[[name]],
           indices = private$.indices
         )
       }
@@ -242,13 +246,37 @@ biocmask <- R6::R6Class(
     #' @field added newly added names to the mask
     added = function() {
       private$.added
+    },
+    #' @field top_env the top-level environment of the mask
+    top_env = function() {
+      private$.top_env
+    },
+    true_parent = function() {
+      private$.true_parent_env
     }
   ),
   private = list(
+    init_names = function() {
+      private$.names <- setNames(nm = names(private$.data))
+    },
+    init_ptype = function() {
+      private$.ptype <- lapply(
+        private$.names,
+        function(name, env) {
+          bioc_slice(env[[name]], i = 0)
+        },
+        env = private$env_data_lazy
+      )
+    },
+    init_env_size = function() {
+      private$.env_size <- length(private$.data) + 20L
+    },
     init_current_group_info = function() {
       private$env_current_group_info <- new_environment(
         list(
-          .indices = private$.indices
+          .indices = private$.indices,
+          `biocmask:::ctx:::n_groups` = if (is.null(private$.indices)) 1L else
+            length(private$.indices)
         ),
         private$.shared_env
       )
@@ -339,7 +367,7 @@ biocmask <- R6::R6Class(
       } else {
         function(name) {
           name <- enexpr(name)
-          expr(vec_chop(!!name, indices = .indices))
+          expr(bioc_chop(!!name, indices = .indices))
         }
       }
     },
@@ -394,6 +422,7 @@ biocmask <- R6::R6Class(
 
     .shared_env = NULL,
     .top_env = NULL, # should at least inherit from `baseenv()`
+    .true_parent_env = NULL,
     #' holds grouping information
     #' for this object
     env_current_group_info = NULL,
