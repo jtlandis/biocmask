@@ -13,7 +13,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Imports:
-
     purrr,
     rlang,
     tidyr,
@@ -37,7 +36,6 @@ Suggests:
     airway,
     IRanges,
     here
-LazyData: true
 URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
 BugReports: https://www.github.com/jtlandis/biocmask/issues
 biocViews: Annotation, GenomeAnnotation, Transcriptomics
