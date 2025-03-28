@@ -31,6 +31,8 @@ biocmask_manager <- R6::R6Class(
       private$.ctx_env <- .ctx_env
       private$.extended_env <- .extended_env
       .ctx_env[["biocmask:::ctx:::group_id"]] <- 1L
+      .ctx_env[["biocmask:::ctx"]] <- eval(quote(`biocmask:::ctx`), .ctx_env)
+      invisible(self)
     },
     #' @description
     #'   installs a link between two contexts via a
@@ -86,7 +88,9 @@ biocmask_manager <- R6::R6Class(
           private = private
         )
 
-        name <- if (quo_data$is_named) {quo_data$name} else {
+        name <- if (quo_data$is_named) {
+          quo_data$name
+        } else {
           as_label(quo_get_expr(quo))
         }
         mask$bind(name = name, value = chop_out)
