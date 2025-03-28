@@ -5,26 +5,8 @@
 
 ## usethis namespace: start
 #' @import rlang
-#' @importFrom purrr imap
-#' @importFrom purrr iwalk
-#' @importFrom purrr map
-#' @importFrom purrr map_int
-#' @importFrom purrr map2
-#' @importFrom purrr pmap
-#' @importFrom purrr reduce
-#' @importFrom purrr walk
 #' @importFrom rlang .env
-#' @importFrom S4Vectors metadata
-#' @importFrom S4Vectors metadata<-
-#' @importFrom S7 method
-#' @importFrom S7 method<-
-#' @importFrom S7 new_generic
-#' @importFrom S7 S7_dispatch
-#' @importFrom tibble as_tibble
-#' @importFrom tibble tibble
-#' @importFrom tidyr nest unnest chop
 #' @importFrom tidyselect eval_select
-#' @importFrom tidyselect starts_with
 #' @importFrom utils .AtNames
 #' @importFrom vctrs field
 #' @importFrom vctrs list_unchop

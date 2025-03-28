@@ -2,7 +2,8 @@
 #' @name bioc_slice
 #' @description
 #' This extends `vctrs::vec_slice` to `S4Vectors::Vector` class by wrapping
-#' `vec_slice` with `S7::new_generic` named `bioc_slice`. Atomic vectors and other base S3 classes
+#' `vec_slice` with an S4 standard generic named `bioc_slice`. Atomic vectors
+#' and other base S3 classes
 #'  (list, data.frame, factor, Dat, POSIXct) will dispatch to the
 #' `vctrs::vec_slice` method as normal. Dispatch support on the
 #' `S4Vectors::Vector` and `S4Vectors::DataFrame` classes provides a unified
@@ -36,18 +37,10 @@
 #' context would force the `CompressedGRangesList` object to be
 #' chopped element-wise.
 #'
-#' Unfortunately, there is a massive performance hit in attempting to construct
-#' 250,000 `GRanges`. Unless you do not mind waiting over an hour for each
-#' `dplyr` verb in which `exons` gets evaluated, consider `biocmask_s4_proxy_vec()`.
-#' This attempts to reconstruct certain standard `S4Vectors::Vectors` as
-#' standard vectors or tibbles. The equivalent `exons` object would require
-#' much more memory use, but at the advantage of only taking several seconds to
-#' construct.When you are done, you can attempt to restore the original S4
-#' Vector with `biocmask_restore_s4_proxy()`.
-#'
-#' `biocmask_s4_proxy_vec()` is faster to work with because there are less
-#' checks on the object validity and all `@elementMetadata` and `@metadata` are
-#' dropped from the objects.
+#' Note that biocmask's `bioc_slice` method is provided as an S4 generic so
+#' that other developers may implement possibly faster methods for slicing
+#' besides the default `[`. A solution for slicing a `CompressedGRangesList`
+#' or `GRanges` object may eventually be provided by a supplemental package.
 #'
 #' @inheritParams vctrs::vec_slice
 #' @return a new S3 or S4 vector subsetted by `i`
@@ -129,3 +122,16 @@ setMethod(
 #  attr(x, "phantomData") <- bioc_slice(attr(x, "phantomData"), i)
 #  x
 #}
+
+# Unfortunately, there is a massive performance hit in attempting to construct
+# 250,000 `GRanges`. Unless you do not mind waiting over an hour for each
+# `dplyr` verb in which `exons` gets evaluated, consider `biocmask_s4_proxy_vec()`.
+# This attempts to reconstruct certain standard `S4Vectors::Vectors` as
+# standard vectors or tibbles. The equivalent `exons` object would require
+# much more memory use, but at the advantage of only taking several seconds to
+# construct.When you are done, you can attempt to restore the original S4
+# Vector with `biocmask_restore_s4_proxy()`.
+#
+# `biocmask_s4_proxy_vec()` is faster to work with because there are less
+# checks on the object validity and all `@elementMetadata` and `@metadata` are
+# dropped from the objects.

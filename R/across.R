@@ -144,7 +144,7 @@ biocmask_across_setup <- function(
   ## suppose we are in rows_ctx, but want
   ## to do something across the assays...
   ctx_swap <- FALSE
-  if (quo_is_call(cols, c("assays", "rows", "cols"), n = 0)) {
+  if (quo_is_call(cols, names(manager$masks), n = 0)) {
     ctx_swap <- TRUE
     ctx <- as_label(quo_get_expr(cols)[[1]])
     cols <- quo_set_expr(cols, expr(everything()))
@@ -163,7 +163,7 @@ biocmask_across_setup <- function(
   }
 
   data <- manager$masks[[ctx]]$ptype
-  vars <- tidyselect::eval_select(cols, data = data, error_call = error_call)
+  vars <- eval_select(cols, data = data, error_call = error_call)
   names_vars <- names(vars)
   vars <- names(data)[vars]
   # if (is.null(fns)) {
@@ -285,7 +285,7 @@ validate_fns <- function(quo, mask, error_call = caller_env()) {
     }
   }
   if (obj_is_list(out)) {
-    map(out, function(elt) validate(elt))
+    lapply(out, function(elt) validate(elt))
   } else {
     validate(out)
   }

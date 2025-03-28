@@ -1,8 +1,8 @@
 #' @title replicate a vector
 #' @name vctrs-bioc_rep
 #' @description
-#' A wrapper of [`vctrs::vec_rep`][vctrs::vec_rep] and
-#' [`vctrs::vec_rep_each`][vctrs::vec_rep_each] as an S7 generic
+#' A alternative to [`vctrs::vec_rep`][vctrs::vec_rep] and
+#' [`vctrs::vec_rep_each`][vctrs::vec_rep_each] as an S4 generic
 #' function to allow `S4Vectors`.
 #' @inheritParams vctrs::vec_rep
 #' @return a new S3 or S4 vector replicated by specified times

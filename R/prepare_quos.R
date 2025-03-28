@@ -72,11 +72,13 @@ biocmask_quos <- function(
       ctx_exprs <- as.list(.expr[-1])
       ctx_nms <- rlang::names2(ctx_exprs)
       ctx_is_named <- ctx_nms != ""
-      ctx_quos <- pmap(
-        list(ctx_exprs, name = ctx_nms, is_named = ctx_is_named),
-        biocmask_quo,
-        env = .env,
-        ctx = ctx
+      ctx_quos <- mapply(
+        FUN = biocmask_quo,
+        expr = ctx_exprs,
+        name = ctx_nms,
+        is_named = ctx_is_named,
+        MoreArgs = list(env = .env, ctx = ctx),
+        SIMPLIFY = FALSE
       )
       dots[[i]] <- splice(ctx_quos)
       next

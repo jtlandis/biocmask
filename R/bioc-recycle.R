@@ -1,7 +1,7 @@
 #' @title Recycle a vector
 #' @name vctrs-bioc_recycle
 #' @description
-#' A re-export of [`vctrs::vec_recycle`][vctrs::vec_recycle] as an S7 generic
+#' A alternative to [`vctrs::vec_recycle`][vctrs::vec_recycle] as an S4 generic
 #' function to allow `S4Vectors`.
 #' @inheritParams vctrs::vec_recycle
 #' @return a S3 or S4 vector

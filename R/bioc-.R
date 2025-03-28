@@ -1,11 +1,12 @@
-#' @title S7 classes for vctrs and S4 Vectors
+#' @title classes for vctrs and S4 Vectors
 #' @name vectors
 #' @description
-#' A set of S7 classes and Class unions that help establish S7 method dispatch.
+#' A set of classes definitions and Class unions that help establish S4 method
+#' dispatch.
 #' These classes were made to re-export several `vctrs` functions such that
 #' internals for `biocmask` were consistent with room for optimization.
 #' @seealso [bioc_rep()],[bioc_recycle()],[bioc_slice()]
-#' @return S7 class union or base class
+#' @return S4 class union or base class
 #' @export
 class_vec <- methods::getClass("vector")
 
