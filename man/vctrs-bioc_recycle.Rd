@@ -21,7 +21,7 @@ bioc_recycle(x, size, ...)
 a S3 or S4 vector
 }
 \description{
-A re-export of \code{\link[vctrs:vec_recycle]{vctrs::vec_recycle}} as an S7 generic
+A alternative to \code{\link[vctrs:vec_recycle]{vctrs::vec_recycle}} as an S4 generic
 function to allow \code{S4Vectors}.
 }
 \examples{

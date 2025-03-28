@@ -8,7 +8,7 @@
 API for using S4 classes with rlang data masks
 }
 \description{
-The package provides `rlang` data masks for the SummarizedExperiment class. The enables the evaluation of unquoted expression in different contexts of the SummarizedExperiment object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
+The package provides `rlang`-like data masks for the complex class objects. The enables the evaluation of unquoted expression in different contexts of the object with optional access to other contexts. The goal for `biocmask` is for evaluation to feel like a data.frame object without ever needing to unwind to a rectangular data.frame.
 }
 \seealso{
 Useful links:

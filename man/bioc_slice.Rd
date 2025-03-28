@@ -21,7 +21,8 @@ a new S3 or S4 vector subsetted by \code{i}
 }
 \description{
 This extends \code{vctrs::vec_slice} to \code{S4Vectors::Vector} class by wrapping
-\code{vec_slice} with \code{S7::new_generic} named \code{bioc_slice}. Atomic vectors and other base S3 classes
+\code{vec_slice} with an S4 standard generic named \code{bioc_slice}. Atomic vectors
+and other base S3 classes
 (list, data.frame, factor, Dat, POSIXct) will dispatch to the
 \code{vctrs::vec_slice} method as normal. Dispatch support on the
 \code{S4Vectors::Vector} and \code{S4Vectors::DataFrame} classes provides a unified
@@ -56,18 +57,10 @@ grouping operation and attempting to evaluate the \code{exons} within the row
 context would force the \code{CompressedGRangesList} object to be
 chopped element-wise.
 
-Unfortunately, there is a massive performance hit in attempting to construct
-250,000 \code{GRanges}. Unless you do not mind waiting over an hour for each
-\code{dplyr} verb in which \code{exons} gets evaluated, consider \code{biocmask_s4_proxy_vec()}.
-This attempts to reconstruct certain standard \code{S4Vectors::Vectors} as
-standard vectors or tibbles. The equivalent \code{exons} object would require
-much more memory use, but at the advantage of only taking several seconds to
-construct.When you are done, you can attempt to restore the original S4
-Vector with \code{biocmask_restore_s4_proxy()}.
-
-\code{biocmask_s4_proxy_vec()} is faster to work with because there are less
-checks on the object validity and all \verb{@elementMetadata} and \verb{@metadata} are
-dropped from the objects.
+Note that biocmask's \code{bioc_slice} method is provided as an S4 generic so
+that other developers may implement possibly faster methods for slicing
+besides the default \code{[}. A solution for slicing a \code{CompressedGRangesList}
+or \code{GRanges} object may eventually be provided by a supplemental package.
 }
 }
 \examples{

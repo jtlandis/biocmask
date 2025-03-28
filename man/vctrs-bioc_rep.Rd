@@ -25,8 +25,8 @@ the size of \code{x}.}
 a new S3 or S4 vector replicated by specified times
 }
 \description{
-A wrapper of \code{\link[vctrs:vec-rep]{vctrs::vec_rep}} and
-\code{\link[vctrs:vec-rep]{vctrs::vec_rep_each}} as an S7 generic
+A alternative to \code{\link[vctrs:vec-rep]{vctrs::vec_rep}} and
+\code{\link[vctrs:vec-rep]{vctrs::vec_rep_each}} as an S4 generic
 function to allow \code{S4Vectors}.
 }
 \examples{

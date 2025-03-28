@@ -18,11 +18,11 @@ class_vctrs_vec <- getClass("vctrs_vctr")
 
 #' @rdname vectors
 #' @export
-class_s4_vec <- methods::getClass("Vector")
+class_s4_vec <- methods::getClass("Vector", where = "S4Vectors")
 
 #' @rdname vectors
 #' @export
-class_DF <- methods::getClass("DataFrame")
+class_DF <- methods::getClass("DataFrame", where = "S4Vectors")
 
 #' @rdname vectors
 #' @export

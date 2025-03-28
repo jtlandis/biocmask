@@ -8,7 +8,7 @@
 \alias{class_s4_vec}
 \alias{class_DF}
 \alias{class_df}
-\title{S7 classes for vctrs and S4 Vectors}
+\title{classes for vctrs and S4 Vectors}
 \format{
 An object of class \code{classRepresentation} of length 1.
 
@@ -32,10 +32,11 @@ class_DF
 class_df
 }
 \value{
-S7 class union or base class
+S4 class union or base class
 }
 \description{
-A set of S7 classes and Class unions that help establish S7 method dispatch.
+A set of classes definitions and Class unions that help establish S4 method
+dispatch.
 These classes were made to re-export several \code{vctrs} functions such that
 internals for \code{biocmask} were consistent with room for optimization.
 }
