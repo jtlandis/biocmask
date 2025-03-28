@@ -1,6 +1,3 @@
-library("testthat")
-library("biocmask")
-
 test_top_env <- new_bioc_top_env()
 test_bot_env <- new_bioc_bot_env(parent = test_top_env, context = "default")
 
@@ -45,5 +42,3 @@ df_simple_grouped_mask <- function() {
     .ctx_env = test_bot_env
   )
 }
-env <- rlang::caller_env()
-test_check("biocmask", env = env)

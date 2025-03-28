@@ -41,7 +41,6 @@ mask <- getNamespace("biocmask")$biocmask$new(iris,
 mask$eval(quote(Sepal.Width))
 
 
-
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -52,7 +51,9 @@ mask$eval(quote(Sepal.Width))
 
 \item{\code{ptype}}{get zero-length slices of underlying data}
 
-\item{\code{added}}{newly added names to the mask
+\item{\code{added}}{newly added names to the mask}
+
+\item{\code{top_env}}{the top-level environment of the mask
 holds grouping information
 for this object
 foreign bindings}

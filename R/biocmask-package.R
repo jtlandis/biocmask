@@ -1,45 +1,10 @@
-
-#' @returns 
+#' @returns
 #' API for using S4 classes with rlang data masks
 #' @keywords internal
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @import rlang 
-#' @importFrom dplyr across 
-#' @importFrom dplyr arrange 
-#' @importFrom dplyr bind_cols 
-#' @importFrom dplyr everything 
-#' @importFrom dplyr filter 
-#' @importFrom dplyr group_by
-#' @importFrom dplyr group_data
-#' @importFrom dplyr group_vars
-#' @importFrom dplyr groups
-#' @importFrom dplyr mutate
-#' @importFrom dplyr n
-#' @importFrom dplyr pull
-#' @importFrom dplyr reframe
-#' @importFrom dplyr rename
-#' @importFrom dplyr rename_with
-#' @importFrom dplyr rows_update
-#' @importFrom dplyr select
-#' @importFrom dplyr summarise 
-#' @importFrom dplyr ungroup
-#' @importFrom pillar align
-#' @importFrom pillar ctl_new_pillar
-#' @importFrom pillar ctl_new_rowid_pillar
-#' @importFrom pillar dim_desc
-#' @importFrom pillar new_ornament
-#' @importFrom pillar new_pillar
-#' @importFrom pillar new_pillar_shaft
-#' @importFrom pillar new_pillar_shaft_simple
-#' @importFrom pillar pillar
-#' @importFrom pillar pillar_component
-#' @importFrom pillar pillar_shaft
-#' @importFrom pillar style_subtle
-#' @importFrom pillar tbl_format_footer
-#' @importFrom pillar tbl_format_setup
-#' @importFrom pillar tbl_sum
+#' @import rlang
 #' @importFrom purrr imap
 #' @importFrom purrr iwalk
 #' @importFrom purrr map
@@ -55,15 +20,6 @@
 #' @importFrom S7 method<-
 #' @importFrom S7 new_generic
 #' @importFrom S7 S7_dispatch
-#' @importFrom SummarizedExperiment assay
-#' @importFrom SummarizedExperiment assay<-
-#' @importFrom SummarizedExperiment assays
-#' @importFrom SummarizedExperiment assays<-
-#' @importFrom SummarizedExperiment colData
-#' @importFrom SummarizedExperiment colData<-
-#' @importFrom SummarizedExperiment rowData
-#' @importFrom SummarizedExperiment rowData<-
-#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom tibble as_tibble
 #' @importFrom tibble tibble
 #' @importFrom tidyr nest unnest chop

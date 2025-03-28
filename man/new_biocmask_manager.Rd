@@ -21,7 +21,7 @@ a biocmask_manager R6 class object
 Create a biocmask for an object
 }
 \examples{
- 
+
 manager <- new_biocmask_manager(se_simple)
 manager$ctx
 q <- biocmask_quos(counts_1 = counts + 1,

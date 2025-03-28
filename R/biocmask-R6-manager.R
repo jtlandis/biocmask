@@ -1,5 +1,6 @@
 abort_invalid_quo <- function() {
-  abort("`biocmask_manager$eval()` requires quosure from `biocmask_quosures()`",
+  abort(
+    "`biocmask_manager$eval()` requires quosure from `biocmask_quosures()`",
     class = "biocmask_invalid_quo"
   )
 }
@@ -16,7 +17,7 @@ abort_invalid_quo <- function() {
 #' shared environment, or may have cyclical relationships.
 #' @return An R6 object inheriting `biocmask_manager`
 #'
-#'
+#' @export
 biocmask_manager <- R6::R6Class(
   "biocmask_manager",
   public = list(
@@ -24,11 +25,41 @@ biocmask_manager <- R6::R6Class(
     #' @param .masks list of named biocmask objects
     #' @param .ctx_env shared context environment
     #' @param .extended_env other extended environments
-    initialize = function(.data, .masks, .ctx_env, .extended_env) {
+    initialize = function(.data, .masks, .ctx_env, .extended_env = NULL) {
       private$.data <- .data
       private$.masks <- .masks
       private$.ctx_env <- .ctx_env
       private$.extended_env <- .extended_env
+      .ctx_env[["biocmask:::ctx:::group_id"]] <- 1L
+    },
+    #' @description
+    #'   installs a link between two contexts via a
+    #'   view_spec object.
+    #' @param view_spec view specification made view [new_view_spec()]
+    #' @param pronoun_name name of the pronoun to be created. defaults to
+    #'   `sprintf(".%s", view_spec$ctx)`
+    #' @return self
+    link_ctx = function(view_spec, pronoun_name = NULL) {
+      pronoun_name <- pronoun_name %||% view_spec$ctx
+      view <- link_view(self, view_spec)
+      # add pronouns
+      masks <- self$masks
+      from_envs <- masks[[view_spec$from]]$environments
+      from_envs@env_foreign_data |>
+        env_bind(
+          ".{pronoun_name}" := as_data_pronoun(view$reshape_access),
+          ".{pronoun_name}_asis" := as_data_pronoun(view$asis_access)
+        )
+      # make everything available now.
+      ctx_mask <- masks[[view_spec$ctx]]
+      lapply(ctx_mask$names, view$bind_new)
+      ctx_mask$on_bind(view$bind_new)
+      extended_ctxs <- private$.extended_env
+      ctxs <- extended_ctxs[[view_spec$ctx]]
+      ctxs[[view_spec$from]] <- view
+      extended_ctxs[[view_spec$ctx]] <- ctxs
+      private$.extended_env <- extended_ctxs
+      invisible(self)
     },
     #' @description
     #' provides a sequence for iterate over the groups
@@ -54,9 +85,8 @@ biocmask_manager <- R6::R6Class(
           mask = mask,
           private = private
         )
-        name <- if (quo_data$is_named) {
-          quo_data$name
-        } else {
+
+        name <- if (quo_data$is_named) {quo_data$name} else {
           as_label(quo_get_expr(quo))
         }
         mask$bind(name = name, value = chop_out)
@@ -77,7 +107,7 @@ biocmask_manager <- R6::R6Class(
       if (!missing(ctx)) {
         private$.ctx_env[["biocmask:::ctx"]] <- match.arg(
           ctx,
-          c("assays", "rows", "cols")
+          names(private$.masks)
         )
       }
       private$.ctx_env[["biocmask:::ctx"]]
@@ -90,7 +120,11 @@ biocmask_manager <- R6::R6Class(
     #' @field n_groups get the current context biocmask group size
     n_groups = function(value) {
       if (!missing(value)) stop("`$n_groups` is read only")
-      private$.ctx_env[["biocmask:::n_groups"]]
+      #private$.ctx_env[["biocmask:::n_groups"]]
+      eval(
+        quote(`biocmask:::ctx:::n_groups`),
+        self$ctx_mask$environments@env_current_group_info
+      )
     },
     #' @field group_id get and set the current context biocmask group id
     group_id = function(id) {
@@ -126,7 +160,11 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
   if (!is.null(quo_get_expr(quo))) {
     # weird bug with eval_tidy?
     # parent structure gets changed
-    on.exit(env_poke_parent(top_env, baseenv()), add = TRUE)
+    # ----
+    # should we consider the parent to be transient? what happens
+    # if we evaluate in a different environment? I suppose we should
+    # make the true "top_env" the base environment for this example...
+    #on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
     for (i in seq_len(n_groups)) {
       private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
       result <- mask$eval(quo, env = env)

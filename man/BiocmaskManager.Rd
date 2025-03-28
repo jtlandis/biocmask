@@ -37,6 +37,7 @@ shared environment, or may have cyclical relationships.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-biocmask_manager-new}{\code{biocmask_manager$new()}}
+\item \href{#method-biocmask_manager-link_ctx}{\code{biocmask_manager$link_ctx()}}
 \item \href{#method-biocmask_manager-along_ctx}{\code{biocmask_manager$along_ctx()}}
 \item \href{#method-biocmask_manager-eval}{\code{biocmask_manager$eval()}}
 \item \href{#method-biocmask_manager-results}{\code{biocmask_manager$results()}}
@@ -48,7 +49,7 @@ shared environment, or may have cyclical relationships.
 \if{latex}{\out{\hypertarget{method-biocmask_manager-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$new(.data, .masks, .ctx_env, .extended_env)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$new(.data, .masks, .ctx_env, .extended_env = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -63,6 +64,30 @@ shared environment, or may have cyclical relationships.
 \item{\code{.extended_env}}{other extended environments}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-biocmask_manager-link_ctx"></a>}}
+\if{latex}{\out{\hypertarget{method-biocmask_manager-link_ctx}{}}}
+\subsection{Method \code{link_ctx()}}{
+installs a link between two contexts via a
+view_spec object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$link_ctx(view_spec, pronoun_name = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{view_spec}}{view specification made view \code{\link[=new_view_spec]{new_view_spec()}}}
+
+\item{\code{pronoun_name}}{name of the pronoun to be created. defaults to
+\code{sprintf(".\%s", view_spec$ctx)}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+self
 }
 }
 \if{html}{\out{<hr>}}

@@ -13,10 +13,9 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Imports:
-    dplyr,
+
     purrr,
     rlang,
-    SummarizedExperiment,
     tidyr,
     tidyselect,
     vctrs,
@@ -43,3 +42,4 @@ URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
 BugReports: https://www.github.com/jtlandis/biocmask/issues
 biocViews: Annotation, GenomeAnnotation, Transcriptomics
 Config/testthat/edition: 3
+LazyData: true
