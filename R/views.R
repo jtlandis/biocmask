@@ -159,12 +159,12 @@ link_view <- function(bm, .view) {
     # we are in given any `biocmask:::ctx:::group_id` value.
     # helpful to access the correct chops handled by this function
     .mapper = new_function(
-      pairlist(),
+      pairlist2(index = ),
       # all contexts are dictated by some global "group_id"
       # to translate to the new view context we map
       # `biocmask:::ctx:::group_id` -> .__uniq_indx__.
       # .__uniq_indx__. -> .__uniq_map__.
-      expr(.subset2(.__uniq_indx__., `biocmask:::ctx:::group_id`)),
+      expr(.subset2(.__uniq_indx__., index)),
       env_view
     )
   )
@@ -192,7 +192,9 @@ link_view <- function(bm, .view) {
   # only called ONCE per new symbol. ensures the
   # below lazy bind is accessed
   asis_access_bind <- add_bind(
-    .expr = quote(.subset2(!!name_sym, .mapper)),
+    .expr = quote(
+      .subset2(!!name_sym, .mapper(.__from_group_id__.))
+    ),
     .env_expr = asis_view,
     .env_bind = asis_access_view,
     type = "active"
