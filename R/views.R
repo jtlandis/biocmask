@@ -79,12 +79,20 @@ link_view <- function(bm, .view) {
   )
   env_bind(
     env_from,
-    .ctx = as_data_pronoun(view_envs@env_current_group_info)
+    .ctx_view = as_data_pronoun(view_envs@env_current_group_info)
   )
-  env_bind_lazy(
-    env_from,
-    !!!lapply(.view$installs, new_quosure, env = env_from)
+
+  env_bind(
+    env_view,
+    .ctx_from = as_data_pronoun(from_envs@env_current_group_info)
   )
+
+  if (length(.view$installs)) {
+    env_bind_lazy(
+      env_from,
+      !!!lapply(.view$installs, new_quosure, env = env_from)
+    )
+  }
 
   # if ...cache_map is ever triggered
   # the .map_fn will evaluate for ALL groups, unbinding .map_fn
