@@ -134,17 +134,15 @@ link_view <- function(bm, .view) {
       expr(unique(.__cache_map__.)),
       env_view
     ),
-    .__from_n_groups__. = !!new_quosure(expr(length(.indices)), env_from)
-  )
-  if (length(.view$installs)) {
-    env_bind_lazy(
-      env_view,
-      !!!names(.view$installs) |>
-        rlang::set_names() |>
-        syms() |>
-        lapply(new_quosure, env = env_from)
+    .__from_n_groups__. = !!new_quosure(
+      expr(`biocmask:::ctx:::n_groups`),
+      env_from
+    ),
+    .__from_indices__. = !!new_quosure(
+      expr(.indices),
+      env_from
     )
-  }
+  )
 
   env_bind_active(
     env_view,
