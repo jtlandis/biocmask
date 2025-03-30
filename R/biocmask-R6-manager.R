@@ -33,11 +33,15 @@ biocmask_manager <- R6::R6Class(
       .data = NULL
     ) {
       private$.data <- .data
+      stopifnot(is.list(.masks), is_named(.masks))
       private$.masks <- .masks
-      private$.ctx_env <- .ctx_env
+      private$.ctx <- .ctx %||%
+        names(.masks)[1] %||%
+        abort(
+          "`.ctx` must be provided or `.masks` must contain at least one named element"
+        )
       private$.extended_env <- .extended_env
-      .ctx_env[["biocmask:::ctx:::group_id"]] <- 1L
-      .ctx_env[["biocmask:::ctx"]] <- eval(quote(`biocmask:::ctx`), .ctx_env)
+
       invisible(self)
     },
     #' @description
@@ -80,7 +84,7 @@ biocmask_manager <- R6::R6Class(
     #' @param env an environment
     #' @return returns evaluated `quo` in the form of a chop
     eval = function(quo, env = caller_env()) {
-      mask <- private$.masks[[private$.ctx_env[["biocmask:::ctx"]]]]
+      mask <- self$ctx_mask
       # expand across into more biocmask_quos
       quos <- expand_across(quo, mask = self, error_call = caller_call())
       for (k in seq_along(quos)) {
@@ -115,12 +119,12 @@ biocmask_manager <- R6::R6Class(
     #' @field ctx get and set the current context
     ctx = function(ctx) {
       if (!missing(ctx)) {
-        private$.ctx_env[["biocmask:::ctx"]] <- match.arg(
+        private$.ctx <- match.arg(
           ctx,
           names(private$.masks)
         )
       }
-      private$.ctx_env[["biocmask:::ctx"]]
+      private$.ctx
     },
     #' @field ctx_mask get the current context biocmask
     ctx_mask = function(value) {
@@ -150,14 +154,14 @@ biocmask_manager <- R6::R6Class(
     },
     #' @field extended other environments extended from a context mask.
     extended = function(value) {
-      if (!missing(value)) stop("`$exteded` is read only")
-      private$.extended_env[[private$.ctx_env[["biocmask:::ctx"]]]]
+      if (!missing(value)) abort("`$exteded` is read only")
+      private$.extended_env[[private$.ctx]]
     }
   ),
   private = list(
     .data = NULL,
     .masks = list(),
-    .ctx_env = NULL,
+    .ctx = NULL,
     .extended_env = list()
   )
 )
