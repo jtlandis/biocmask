@@ -29,6 +29,21 @@ poke_ctx_local <- function(name, value) {
   invisible(old)
 }
 
+pmap <- function(.l, .f, ...) {
+  do.call(
+    mapply,
+    c(list(FUN = .f, MoreArgs = list2(...), SIMPLIFY = FALSE), .l)
+  )
+}
+
+map2 <- function(.x, .y, .f, ...) {
+  mapply(.f, .x, .y, MoreArgs = list2(...), SIMPLIFY = FALSE)
+}
+
+map <- function(.x, .f, ...) {
+  lapply(X = .x, FUN = .f, ...)
+}
+
 # this is the top of all our rlang data masks (inherited from base).
 # it contains all expected functions for transforming values  in multi-tiered
 # data masks.
@@ -54,6 +69,39 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
     data = rlang::dots_list(
       .subset2 = base::.subset2,
       .subset = base::.subset,
+      # --- symbols
+      `[` = base::`[`,
+      `[[` = base::`[[`,
+      `:` = base::`:`,
+      `::` = base::`::`,
+      `$` = base::`$`,
+      `@` = base::`@`,
+      `{` = base::`{`,
+      `(` = base::`(`,
+      `!` = base::`!`,
+      `~` = base::`~`,
+      `^` = base::`^`,
+      `&` = base::`&`,
+      `|` = base::`|`,
+      `+` = base::`+`,
+      `-` = base::`-`,
+      `*` = base::`*`,
+      `/` = base::`/`,
+      `<` = base::`<`,
+      `>` = base::`>`,
+      `<=` = base::`<=`,
+      `>=` = base::`>=`,
+      `=` = base::`=`,
+      `<-` = base::`<-`,
+      `function` = base::`function`,
+      match = base::match,
+      unique = base::unique,
+      lapply = base::lapply,
+      map = map,
+      map2 = map2,
+      pmap = pmap,
+      seq_len = base::seq_len,
+      seq_along = base::seq_along,
       list = rlang::list2,
       bioc_chop = bioc_chop,
       bioc_rep = bioc_rep,
