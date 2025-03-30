@@ -108,7 +108,7 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
       bioc_rep_each = bioc_rep_each,
       vec_c = vctrs::vec_c,
       splice = splice,
-      # skip = skip,
+      # debating if the below is necessary. Currently not used.
       poke_ctx = poke_ctx,
       poke_ctx_local = poke_ctx_local,
       peek_ctx = peek_ctx,
