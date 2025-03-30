@@ -146,6 +146,15 @@ link_view <- function(bm, .view) {
 
   env_bind_active(
     env_view,
+    .__from_group_id__. = new_function(
+      pairlist2(),
+      expr(.ctx_from[["biocmask:::ctx:::group_id"]]),
+      env_view
+    )
+  )
+
+  env_bind(
+    env_view,
     # .mapper will tell us which index of .__uniq_map__.
     # we are in given any `biocmask:::ctx:::group_id` value.
     # helpful to access the correct chops handled by this function
@@ -207,7 +216,9 @@ link_view <- function(bm, .view) {
   )
   reshape_access_view <- new.env(parent = reshape_view)
   reshape_access_bind <- add_bind(
-    .expr = quote(.subset2(!!name_sym, `biocmask:::ctx:::group_id`)),
+    .expr = quote(
+      .subset2(!!name_sym, .ctx_from[["biocmask:::ctx:::group_id"]])
+    ),
     .env_expr = reshape_view,
     .env_bind = reshape_access_view,
     type = "active"
