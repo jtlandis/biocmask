@@ -205,7 +205,22 @@ link_view <- function(bm, .view) {
     # reshape should be same length as `biocmask:::ctx:::n_group`
     .expr = substitute(
       .subset(!!name_sym, .__uniq_indx__.) |>
-        Map(\(.x, .i) .y, .x = _, .i = seq_len(.__from_n_groups__.)),
+        list(
+          #.x represents "some" data per "from" group (as defined by `asis`)
+          .x = _,
+          #.i represents the index of the "from" group
+          .i = seq_len(.__from_n_groups__.)
+        ) |>
+        pmap(
+          .l = _,
+          # up to the user to decide how they will handle the reshaping.
+          # default is to pass asis through.
+          # users may use a multitude of variables installed in this View
+          # heirarchy.
+          # --- example
+          #
+          .f = \(.x, .i) .y
+        ),
       list(.y = rlang::f_rhs(.view$reshape))
     ),
     # we don't use the asis_access_view because that
