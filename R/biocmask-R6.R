@@ -291,7 +291,8 @@ biocmask <- R6::R6Class(
         list(
           .indices = private$.indices,
           `biocmask:::ctx:::n_groups` = if (is.null(private$.indices)) 1L else
-            length(private$.indices)
+            length(private$.indices),
+          `biocmask:::ctx:::group_id` = 1L
         ),
         private$.bot_env
       )
