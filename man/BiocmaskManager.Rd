@@ -49,19 +49,20 @@ shared environment, or may have cyclical relationships.
 \if{latex}{\out{\hypertarget{method-biocmask_manager-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$new(.data, .masks, .ctx_env, .extended_env = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$new(.masks, .ctx = NULL, .extended_env = NULL, .data = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{.data}}{Original data}
-
 \item{\code{.masks}}{list of named biocmask objects}
 
-\item{\code{.ctx_env}}{shared context environment}
+\item{\code{.ctx}}{scalar character specifying the default context. If not
+provided, the first element of \code{.masks} is used.}
 
 \item{\code{.extended_env}}{other extended environments}
+
+\item{\code{.data}}{Original data - optional and currently unused}
 }
 \if{html}{\out{</div>}}
 }

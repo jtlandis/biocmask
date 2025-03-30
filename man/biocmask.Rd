@@ -13,9 +13,9 @@ environments that the data is stored within.
 
 Environments:
 
-.shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
+.bot_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
 \itemize{
-\item .shared_env : environment provided at initialization. This may be shared
+\item .bot_env : environment provided at initialization. This may be shared
 with multiple other BiocDataMasks.
 \item curr_group  : Currently not used.
 \item foreign     : space to put foreign bindings, i.e. object unrelated to \code{.data}
@@ -28,7 +28,7 @@ for this BiocDataMask context are expected to be in a
 "chopped" format and are assigned here.
 \item active_mask : An active binding to chops in which the proper list index is
 used depending on the current group context. The current group
-context is at this moment determined by the .shared_env NOT
+context is at this moment determined by the .bot_env NOT
 the curr_group. I have plans to remove the curr_group
 environment.
 }
@@ -53,7 +53,12 @@ mask$eval(quote(Sepal.Width))
 
 \item{\code{added}}{newly added names to the mask}
 
-\item{\code{top_env}}{the top-level environment of the mask
+\item{\code{top_env}}{the top-level environment of the mask}
+
+\item{\code{group_id}}{get/set the current group id. value must be a
+scalar integer}
+
+\item{\code{n_groups}}{get the number of groups in the mask
 holds grouping information
 for this object
 foreign bindings}
@@ -78,7 +83,12 @@ foreign bindings}
 Create a biocmask from \code{.data}. \code{.data} is chopped by
 \code{.indices}, and environments are built from \code{.env}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask$new(.data, .indices = NULL, .env_bot, .env_top = .env_bot)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask$new(
+  .data,
+  .indices = NULL,
+  .env_bot = new_bioc_top_env(),
+  .env_top = .env_bot
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

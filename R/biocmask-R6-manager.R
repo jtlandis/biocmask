@@ -21,11 +21,17 @@ abort_invalid_quo <- function() {
 biocmask_manager <- R6::R6Class(
   "biocmask_manager",
   public = list(
-    #' @param .data Original data
+    #' @param .data Original data - optional and currently unused
     #' @param .masks list of named biocmask objects
-    #' @param .ctx_env shared context environment
+    #' @param .ctx scalar character specifying the default context. If not
+    #' provided, the first element of `.masks` is used.
     #' @param .extended_env other extended environments
-    initialize = function(.data, .masks, .ctx_env, .extended_env = NULL) {
+    initialize = function(
+      .masks,
+      .ctx = NULL,
+      .extended_env = NULL,
+      .data = NULL
+    ) {
       private$.data <- .data
       private$.masks <- .masks
       private$.ctx_env <- .ctx_env

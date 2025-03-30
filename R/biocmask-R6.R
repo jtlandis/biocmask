@@ -100,9 +100,9 @@ add_bind <- function(
 #'
 #' Environments:
 #'
-#' .shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
+#' .bot_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
 #'
-#' * .shared_env : environment provided at initialization. This may be shared
+#' * .bot_env : environment provided at initialization. This may be shared
 #'                 with multiple other BiocDataMasks.
 #' * curr_group  : Currently not used.
 #' * foreign     : space to put foreign bindings, i.e. object unrelated to `.data`
@@ -115,7 +115,7 @@ add_bind <- function(
 #'                 "chopped" format and are assigned here.
 #' * active_mask : An active binding to chops in which the proper list index is
 #'                 used depending on the current group context. The current group
-#'                 context is at this moment determined by the .shared_env NOT
+#'                 context is at this moment determined by the .bot_env NOT
 #'                 the curr_group. I have plans to remove the curr_group
 #'                 environment.
 #'
@@ -144,10 +144,10 @@ biocmask <- R6::R6Class(
     initialize = function(
       .data,
       .indices = NULL,
-      .env_bot,
+      .env_bot = new_bioc_top_env(),
       .env_top = .env_bot
     ) {
-      private$.shared_env <- .env_bot
+      private$.bot_env <- .env_bot
       private$.top_env <- .env_top
       #private$.true_parent_env <- env_parent(.env_top)
       private$.data <- .data
@@ -251,9 +251,6 @@ biocmask <- R6::R6Class(
     top_env = function() {
       private$.top_env
     }
-    #true_parent = function() {
-    # private$.true_parent_env
-    #}
   ),
   private = list(
     init_names = function() {
@@ -278,7 +275,7 @@ biocmask <- R6::R6Class(
           `biocmask:::ctx:::n_groups` = if (is.null(private$.indices)) 1L else
             length(private$.indices)
         ),
-        private$.shared_env
+        private$.bot_env
       )
     },
     init_foreign_data = function() {
@@ -336,7 +333,7 @@ biocmask <- R6::R6Class(
     init_environments = function() {
       out <- c(
         list(private$env_mask_bind),
-        env_parents(private$env_mask_bind, private$.shared_env)
+        env_parents(private$env_mask_bind, private$.bot_env)
       )
       class(out) <- c("biocmask_envs", "rlang_envs")
       attr(out, "env_mask_bind") <- private$env_mask_bind
@@ -420,8 +417,8 @@ biocmask <- R6::R6Class(
     # number of elements of `.data` + 20L
     .env_size = NULL,
 
-    .shared_env = NULL,
-    .top_env = NULL, # should at least inherit from `baseenv()`
+    .bot_env = NULL,
+    .top_env = NULL,
     #.true_parent_env = NULL,
     #' holds grouping information
     #' for this object
