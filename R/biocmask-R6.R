@@ -250,6 +250,24 @@ biocmask <- R6::R6Class(
     #' @field top_env the top-level environment of the mask
     top_env = function() {
       private$.top_env
+    },
+    #' @field group_id get/set the current group id. value must be a
+    #' scalar integer
+    group_id = function(id) {
+      if (!missing(id)) {
+        if (!is_scalar_integer(id)) {
+          abort("group_id must be a scalar integer")
+        }
+        private$env_current_group_info[["biocmask:::ctx:::group_id"]] <- id
+      }
+      private$env_current_group_info[["biocmask:::ctx:::group_id"]]
+    },
+    #' @field n_groups get the number of groups in the mask
+    n_groups = function(value) {
+      if (!missing(value)) {
+        abort("`$n_groups` is read-only")
+      }
+      private$env_current_group_info[["biocmask:::ctx:::n_groups"]]
     }
   ),
   private = list(

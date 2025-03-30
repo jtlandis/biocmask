@@ -76,7 +76,7 @@ biocmask_manager <- R6::R6Class(
     #' @description
     #' provides a sequence for iterate over the groups
     along_ctx = function() {
-      seq_len(private$.ctx_env[["biocmask:::n_groups"]])
+      seq_len(self$ctx_mask$n_groups)
     },
     #' @description
     #' eval an expression in the current context
@@ -134,22 +134,19 @@ biocmask_manager <- R6::R6Class(
     #' @field n_groups get the current context biocmask group size
     n_groups = function(value) {
       if (!missing(value)) stop("`$n_groups` is read only")
-      #private$.ctx_env[["biocmask:::n_groups"]]
-      eval(
-        quote(`biocmask:::ctx:::n_groups`),
-        self$ctx_mask$environments@env_current_group_info
-      )
+      self$ctx_mask$n_groups
     },
     #' @field group_id get and set the current context biocmask group id
     group_id = function(id) {
+      mask <- self$ctx_mask
       if (!missing(id)) {
-        private$.ctx_env[["biocmask:::ctx:::group_id"]] <- id
+        mask$group_id <- id
       }
-      private$.ctx_env[["biocmask:::ctx:::group_id"]]
+      mask$group_id
     },
     #' @field masks get the private list of masks
     masks = function(value) {
-      if (!missing(value)) stop("`$masks` is read only")
+      if (!missing(value)) abort("`$masks` is read only")
       private$.masks
     },
     #' @field extended other environments extended from a context mask.
@@ -179,8 +176,9 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
     # if we evaluate in a different environment? I suppose we should
     # make the true "top_env" the base environment for this example...
     #on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
+    id <- mask$group_id
     for (i in seq_len(n_groups)) {
-      private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
+      vec_poke_n(id, 1L, i, 1L, 1L)
       result <- mask$eval(quo, env = env)
       chop_out[[i]] <- result
     }
