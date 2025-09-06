@@ -251,9 +251,9 @@ biocmask <- R6::R6Class(
     top_env = function() {
       private$.top_env
     }
-    #true_parent = function() {
+    # true_parent = function() {
     # private$.true_parent_env
-    #}
+    # }
   ),
   private = list(
     init_names = function() {

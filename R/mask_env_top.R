@@ -29,6 +29,21 @@ poke_ctx_local <- function(name, value) {
   invisible(old)
 }
 
+pmap <- function(.l, .f, ...) {
+  do.call(
+    mapply,
+    c(list(FUN = .f, MoreArgs = list2(...), SIMPLIFY = FALSE), .l)
+  )
+}
+
+map2 <- function(.x, .y, .f, ...) {
+  mapply(.f, .x, .y, MoreArgs = list2(...), SIMPLIFY = FALSE)
+}
+
+map <- function(.x, .f, ...) {
+  lapply(X = .x, FUN = .f, ...)
+}
+
 # this is the top of all our rlang data masks (inherited from base).
 # it contains all expected functions for transforming values  in multi-tiered
 # data masks.
@@ -54,13 +69,46 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
     data = rlang::dots_list(
       .subset2 = base::.subset2,
       .subset = base::.subset,
+      # --- symbols
+      `[` = base::`[`,
+      `[[` = base::`[[`,
+      `:` = base::`:`,
+      `::` = base::`::`,
+      `$` = base::`$`,
+      `@` = base::`@`,
+      `{` = base::`{`,
+      `(` = base::`(`,
+      `!` = base::`!`,
+      `~` = base::`~`,
+      `^` = base::`^`,
+      `&` = base::`&`,
+      `|` = base::`|`,
+      `+` = base::`+`,
+      `-` = base::`-`,
+      `*` = base::`*`,
+      `/` = base::`/`,
+      `<` = base::`<`,
+      `>` = base::`>`,
+      `<=` = base::`<=`,
+      `>=` = base::`>=`,
+      `=` = base::`=`,
+      `<-` = base::`<-`,
+      `function` = base::`function`,
+      match = base::match,
+      unique = base::unique,
+      lapply = base::lapply,
+      map = map,
+      map2 = map2,
+      pmap = pmap,
+      seq_len = base::seq_len,
+      seq_along = base::seq_along,
       list = rlang::list2,
       bioc_chop = bioc_chop,
       bioc_rep = bioc_rep,
       bioc_rep_each = bioc_rep_each,
       vec_c = vctrs::vec_c,
       splice = splice,
-      # skip = skip,
+      # debating if the below is necessary. Currently not used.
       poke_ctx = poke_ctx,
       poke_ctx_local = poke_ctx_local,
       peek_ctx = peek_ctx,
@@ -76,7 +124,8 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
 #' @title Create new environment prior to biocmask.
 #' @description dictate the default context as well as the group id.
 #' @param context The context to use for the new environment.
-#' @param parent The parent environment to inherit from. Ideally this is the #' environment created by `new_bioc_top_env()`.
+#' @param parent The parent environment to inherit from. Ideally this is the
+#' environment created by `new_bioc_top_env()`.
 #' @export
 new_bioc_bot_env <- function(..., context = NULL, parent = top_env) {
   if (!is.null(context)) {
@@ -84,9 +133,9 @@ new_bioc_bot_env <- function(..., context = NULL, parent = top_env) {
   }
   new_environment(
     data = rlang::dots_list(
-      #current context
+      # current context
       `biocmask:::ctx` = context,
-      #context group id
+      # context group id
       `biocmask:::ctx:::group_id` = 1L,
       ...,
       .homonyms = "last"
