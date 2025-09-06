@@ -1,4 +1,4 @@
-#'
+#' @export
 setGeneric(
   "bioc_chop",
   signature = "x",
@@ -11,11 +11,10 @@ setMethod(
   "bioc_chop",
   signature = list(x = class_vec),
   function(
-    x,
-    ...,
-    sizes = NULL,
-    indices = NULL
-  ) {
+      x,
+      ...,
+      sizes = NULL,
+      indices = NULL) {
     vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
   }
 )
@@ -24,11 +23,10 @@ setMethod(
   "bioc_chop",
   signature = list(x = class_df),
   function(
-    x,
-    ...,
-    sizes = NULL,
-    indices = NULL
-  ) {
+      x,
+      ...,
+      sizes = NULL,
+      indices = NULL) {
     vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
   }
 )
@@ -37,11 +35,10 @@ setMethod(
   "bioc_chop",
   signature = list(x = class_vctrs_vec),
   function(
-    x,
-    ...,
-    sizes = NULL,
-    indices = NULL
-  ) {
+      x,
+      ...,
+      sizes = NULL,
+      indices = NULL) {
     vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
   }
 )
@@ -50,10 +47,9 @@ setMethod(
   "bioc_chop",
   signature = list(x = class_s4_vec),
   function(
-    x,
-    ...,
-    indices = NULL
-  ) {
+      x,
+      ...,
+      indices = NULL) {
     fun <- selectMethod(bioc_slice, signature = c(x = class(x)))
     if (is.null(indices)) {
       indices <- seq_len(bioc_size(x))

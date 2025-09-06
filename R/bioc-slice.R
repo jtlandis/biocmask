@@ -79,12 +79,17 @@ setMethod(
   "bioc_slice",
   signature = list(x = class_DF),
   function(x, i, ...) {
-    x@listData <- lapply(x@listData, bioc_slice, i = i)
-    x@nrows <- length(i)
+    data <- lapply(x@listData, bioc_slice, i = i)
+    nrows <- length(i)
     if (!is.null(rnames <- x@rownames)) {
-      x@rownames <- bioc_slice(rnames, i)
+      rnames <- bioc_slice(rnames, i)
     }
-    x
+
+    new_DF(
+      .data = data,
+      nrows = nrows,
+      rownames = rnames
+    )
   }
 )
 
@@ -96,7 +101,7 @@ setMethod(
   }
 )
 
-#method(bioc_slice, getClass("CompressedGRangesList")) <- function(x, i, ...) {
+# method(bioc_slice, getClass("CompressedGRangesList")) <- function(x, i, ...) {
 #  st <- IRanges::start(x@partitioning)
 #  en <- IRanges::end(x@partitioning)
 #  w <- IRanges::width(x@partitioning)[i]
@@ -116,12 +121,12 @@ setMethod(
 #    elementMetadata = IRanges::extractROWS(x@elementMetadata, i),
 #    metadata = x@metadata
 #  )
-#}
+# }
 
-#method(bioc_slice, class_vec_phantom) <- function(x, i, ...) {
+# method(bioc_slice, class_vec_phantom) <- function(x, i, ...) {
 #  attr(x, "phantomData") <- bioc_slice(attr(x, "phantomData"), i)
 #  x
-#}
+# }
 
 # Unfortunately, there is a massive performance hit in attempting to construct
 # 250,000 `GRanges`. Unless you do not mind waiting over an hour for each

@@ -47,3 +47,26 @@ setMethod(
     nrow(x)
   }
 )
+
+#' @export
+bioc_size_common <- function(...) {
+  size <- 1L
+  j <- 0L
+  for (i in seq_len(...length())) {
+    dot_size <- bioc_size(...elt(i))
+    if (dot_size != 1L) {
+      if (size == 1L) {
+        size <- dot_size
+        j <- i
+      } else if (size != dot_size) {
+        stop(
+          sprintf(
+            "Can't recycle `..%i` (size %i) to match `..%i` (size %i)",
+            j, size, i, dot_size
+          )
+        )
+      }
+    }
+  }
+  size
+}

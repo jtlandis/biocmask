@@ -27,3 +27,7 @@ class_DF <- methods::getClass("DataFrame", where = "S4Vectors")
 #' @rdname vectors
 #' @export
 class_df <- methods::getClass("data.frame")
+
+#' @rdname vectors
+#' @export
+class_GR <- methods::getClass("GRanges", where = "GenomicRanges")

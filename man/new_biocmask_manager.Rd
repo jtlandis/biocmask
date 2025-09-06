@@ -24,13 +24,15 @@ Create a biocmask for an object
 
 manager <- new_biocmask_manager(se_simple)
 manager$ctx
-q <- biocmask_quos(counts_1 = counts + 1,
-                   cols(is_drug = condition=="drug"),
-                   .ctx_default = "assays",
-                   .ctx_opt = c("rows", "cols"))
+q <- biocmask_quos(
+  counts_1 = counts + 1,
+  cols(is_drug = condition == "drug"),
+  .ctx_default = "assays",
+  .ctx_opt = c("rows", "cols")
+)
 manager$eval(q[[1]])
 manager$results()
-#evaluating second quo without switching contexts will error
+# evaluating second quo without switching contexts will error
 manager$eval(q[[2]]) |> try()
 manager$ctx <- "cols"
 manager$ctx

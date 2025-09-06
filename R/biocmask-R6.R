@@ -36,26 +36,28 @@
 #'
 #' # example code
 #'
-#' env <- new_environment(list(
-#'   .iris = iris,
-#'   .nrow = 10),
-#'   baseenv())
+#' env <- new_environment(
+#'   list(
+#'     .iris = iris,
+#'     .nrow = 10
+#'   ),
+#'   baseenv()
+#' )
 #' binding_func <- add_bind(
 #'   .expr = quote(lapply(seq_len(.nrow), function(i, x) x[i], x = .iris[[!!name]])),
 #'   .expr_env = env,
-#'   type = "lazy")
+#'   type = "lazy"
+#' )
 #' binding_func("Sepal.Width")
 #' env$Sepal.Width
 #' @noRd
 add_bind <- function(
-  .expr,
-  .env_expr,
-  .env_bind = .env_expr,
-  type = c("standard", "lazy", "active")
-) {
+    .expr,
+    .env_expr,
+    .env_bind = .env_expr,
+    type = c("standard", "lazy", "active")) {
   # type <- match.arg(type, c("standard", "lazy", "active"))
-  fun <- switch(
-    type,
+  fun <- switch(type,
     standard = expr(env_bind),
     lazy = expr(env_bind_lazy),
     active = expr(env_bind_active)
@@ -124,9 +126,9 @@ add_bind <- function(
 #' # note: this R6 class is not exported at this moment
 #'
 #' mask <- getNamespace("biocmask")$biocmask$new(iris,
-#'                      .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+#'   .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L)
+#' )
 #' mask$eval(quote(Sepal.Width))
-#'
 #'
 #' @export
 biocmask <- R6::R6Class(
@@ -141,15 +143,13 @@ biocmask <- R6::R6Class(
     #' @param .indices the indices that will be used to chop `.data`
     #' @param .env_bot an environment that the resulting mask will be built from.
     #' @param .env_top an environment that `.env_bot` inherits from
-    initialize = function(
-      .data,
-      .indices = NULL,
-      .env_bot,
-      .env_top = .env_bot
-    ) {
-      private$.shared_env <- .env_bot
+    initialize = function(.data,
+                          .indices = NULL,
+                          .env_bot = new_bioc_top_env(),
+                          .env_top = .env_bot) {
+      private$.bot_env <- .env_bot
       private$.top_env <- .env_top
-      #private$.true_parent_env <- env_parent(.env_top)
+      # private$.true_parent_env <- env_parent(.env_top)
       private$.data <- .data
       private$.indices <- .indices
       private$init_current_group_info()
@@ -275,8 +275,12 @@ biocmask <- R6::R6Class(
       private$env_current_group_info <- new_environment(
         list(
           .indices = private$.indices,
-          `biocmask:::ctx:::n_groups` = if (is.null(private$.indices)) 1L else
+          `biocmask:::ctx:::n_groups` = if (is.null(private$.indices)) {
+            1L
+          } else {
             length(private$.indices)
+          },
+          `biocmask:::ctx:::group_id` = 1L
         ),
         private$.shared_env
       )
@@ -347,6 +351,12 @@ biocmask <- R6::R6Class(
       private$.environments <- out
       invisible(NULL)
     },
+    forced = function(name, env = NULL) {
+      env <- env %||% private$env_data_chop
+      !rlang::env_binding_are_lazy(
+        env = env, nms = name
+      )
+    },
     handle_chops = function(indices) {
       private$.indices <- indices
       private$.ngroups <- if (is.null(indices)) 1L else length(indices)
@@ -387,7 +397,6 @@ biocmask <- R6::R6Class(
         private$env_mask_bind,
         !!name := fun
       )
-
       needs_unbind <- name %in% private$.names
       private$.names[name] <- name
       private$.added[name] <- name
@@ -404,9 +413,9 @@ biocmask <- R6::R6Class(
     .grouped = NULL,
     .ngroups = NULL,
     .environments = NULL,
-    #names of `.data`
+    # names of `.data`
     .names = NULL,
-    #size 0 vectors of `.data`
+    # size 0 vectors of `.data`
     .ptype = NULL,
     # newly added names
     .added = character(),
@@ -419,10 +428,9 @@ biocmask <- R6::R6Class(
     # initial size of environments
     # number of elements of `.data` + 20L
     .env_size = NULL,
-
-    .shared_env = NULL,
-    .top_env = NULL, # should at least inherit from `baseenv()`
-    #.true_parent_env = NULL,
+    .bot_env = NULL,
+    .top_env = NULL,
+    # .true_parent_env = NULL,
     #' holds grouping information
     #' for this object
     env_current_group_info = NULL,

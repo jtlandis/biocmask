@@ -37,9 +37,9 @@ environment.
 # note: this R6 class is not exported at this moment
 
 mask <- getNamespace("biocmask")$biocmask$new(iris,
-                     .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L))
+  .env_bot = rlang::env(`biocmask:::ctx:::group_id` = 1L)
+)
 mask$eval(quote(Sepal.Width))
-
 
 }
 \section{Active bindings}{

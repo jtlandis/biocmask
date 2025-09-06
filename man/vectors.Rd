@@ -8,8 +8,11 @@
 \alias{class_s4_vec}
 \alias{class_DF}
 \alias{class_df}
+\alias{class_GR}
 \title{classes for vctrs and S4 Vectors}
 \format{
+An object of class \code{classRepresentation} of length 1.
+
 An object of class \code{classRepresentation} of length 1.
 
 An object of class \code{classRepresentation} of length 1.
@@ -30,6 +33,8 @@ class_s4_vec
 class_DF
 
 class_df
+
+class_GR
 }
 \value{
 S4 class union or base class
