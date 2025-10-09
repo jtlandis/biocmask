@@ -75,22 +75,25 @@ setMethod(
   }
 )
 
+
+slice_DF <- function(x, i, ...) {
+  data <- lapply(x@listData, bioc_slice, i = i)
+  nrows <- length(i)
+  if (!is.null(rnames <- x@rownames)) {
+    rnames <- bioc_slice(rnames, i)
+  }
+
+  new_DF(
+    .data = data,
+    nrows = nrows,
+    rownames = rnames
+  )
+}
+
 setMethod(
   "bioc_slice",
   signature = list(x = class_DF),
-  function(x, i, ...) {
-    data <- lapply(x@listData, bioc_slice, i = i)
-    nrows <- length(i)
-    if (!is.null(rnames <- x@rownames)) {
-      rnames <- bioc_slice(rnames, i)
-    }
-
-    new_DF(
-      .data = data,
-      nrows = nrows,
-      rownames = rnames
-    )
-  }
+  slice_DF
 )
 
 setMethod(

@@ -5,7 +5,6 @@
 #' dispatch.
 #' These classes were made to re-export several `vctrs` functions such that
 #' internals for `biocmask` were consistent with room for optimization.
-#' @seealso [bioc_rep()],[bioc_recycle()],[bioc_slice()]
 #' @return S4 class union or base class
 #' @export
 class_vec <- methods::getClass("vector")
