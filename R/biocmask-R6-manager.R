@@ -98,6 +98,7 @@ biocmask_manager <- R6::R6Class(
     },
     #' @description
     #' collections the envaluated result of a given name
+    #' @param name a character scalar of a name within the mask
     result = function(name) {
       self$apply(function(m, name) m$unchop(name), name = name)
     },

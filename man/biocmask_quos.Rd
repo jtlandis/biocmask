@@ -4,16 +4,23 @@
 \alias{biocmask_quos}
 \title{biocmask quosures}
 \usage{
-biocmask_quos(..., .named = TRUE, .ctx_default = NULL, .ctx_opt = NULL)
+biocmask_quos(..., .named = TRUE, .ctx = NULL, .trans = list())
 }
 \arguments{
 \item{...}{rlang dots, supports splicing an quoting}
 
 \item{.named}{should resulting expressions be named?}
 
-\item{.ctx_default}{default context to eval within}
+\item{.ctx}{A character string of availablecontexts. The first
+element is considered to be the default context, whereas the
+rest are considered optional.}
 
-\item{.ctx_opt}{optional contexts to eval within}
+\item{.ctx_trans}{A list of functions to eventually apply to
+the expressions depending on their context. The names of the list
+elements should match the contexts names provided by \code{.ctx}. These
+functions will be quoted and in-lined into the expressions and thus
+cannot rely on the environments the functions are constructed.
+These functions are quoted}
 }
 \value{
 a quosure with attribute \code{biocmask:::ctx}.
@@ -26,8 +33,6 @@ mask context it should be evaluate in.
 }
 \examples{
 
-# in biocmask the default context is "assays"
-# and optional contexts are "rows" and "cols"
 quos <- biocmask_quos(
   foo = bar,
   ctx2(foo = bar),

@@ -40,7 +40,9 @@ shared environment, or may have cyclical relationships.
 \item \href{#method-biocmask_manager-link_ctx}{\code{biocmask_manager$link_ctx()}}
 \item \href{#method-biocmask_manager-along_ctx}{\code{biocmask_manager$along_ctx()}}
 \item \href{#method-biocmask_manager-eval}{\code{biocmask_manager$eval()}}
+\item \href{#method-biocmask_manager-result}{\code{biocmask_manager$result()}}
 \item \href{#method-biocmask_manager-results}{\code{biocmask_manager$results()}}
+\item \href{#method-biocmask_manager-apply}{\code{biocmask_manager$apply()}}
 \item \href{#method-biocmask_manager-clone}{\code{biocmask_manager$clone()}}
 }
 }
@@ -71,7 +73,7 @@ shared environment, or may have cyclical relationships.
 \if{latex}{\out{\hypertarget{method-biocmask_manager-link_ctx}{}}}
 \subsection{Method \code{link_ctx()}}{
 installs a link between two contexts via a
-view_spec object.
+view_spec object. Currently experimental and not working!
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$link_ctx(view_spec, pronoun_name = NULL)}\if{html}{\out{</div>}}
 }
@@ -123,17 +125,67 @@ returns evaluated \code{quo} in the form of a chop
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-biocmask_manager-result"></a>}}
+\if{latex}{\out{\hypertarget{method-biocmask_manager-result}{}}}
+\subsection{Method \code{result()}}{
+collections the envaluated result of a given name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$result(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{a character scalar of a name within the mask}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-biocmask_manager-results"></a>}}
 \if{latex}{\out{\hypertarget{method-biocmask_manager-results}{}}}
 \subsection{Method \code{results()}}{
 collects the evaluated results with biocmasks
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$results()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$results(.from_masks)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{.from_masks}}{index vector from which masks to collect results.
+a missing argument will collect all results.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 named list for each mask containing named list of evaluated
 expressions.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-biocmask_manager-apply"></a>}}
+\if{latex}{\out{\hypertarget{method-biocmask_manager-apply}{}}}
+\subsection{Method \code{apply()}}{
+apply a function to each mask this object manages
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$apply(.f, ..., .on_masks)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{.f}}{a function to apply to the managed masks}
+
+\item{\code{...}}{additional arguments to pass to \code{.f}}
+
+\item{\code{.on_masks}}{index vector indicating which masks to apply \code{.f} to.
+a missing argument will collect all results.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+named list containing the results of each function
 }
 }
 \if{html}{\out{<hr>}}

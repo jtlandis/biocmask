@@ -9,7 +9,8 @@ new_bioc_bot_env(..., context = NULL, parent = top_env)
 \arguments{
 \item{context}{The context to use for the new environment.}
 
-\item{parent}{The parent environment to inherit from. Ideally this is the #' environment created by \code{new_bioc_top_env()}.}
+\item{parent}{The parent environment to inherit from. Ideally this is the
+environment created by \code{new_bioc_top_env()}.}
 }
 \description{
 dictate the default context as well as the group id.

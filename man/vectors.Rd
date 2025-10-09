@@ -45,7 +45,4 @@ dispatch.
 These classes were made to re-export several \code{vctrs} functions such that
 internals for \code{biocmask} were consistent with room for optimization.
 }
-\seealso{
-\code{\link[=bioc_rep]{bioc_rep()}},\code{\link[=bioc_recycle]{bioc_recycle()}},\code{\link[=bioc_slice]{bioc_slice()}}
-}
 \keyword{datasets}

@@ -64,7 +64,7 @@ as_trans_fn <- function(fn) {
 #' attr(quos[[2]], "biocmask:::ctx")
 #' attr(quos[[3]], "biocmask:::ctx")
 #'
-#' @noRd
+#' @export
 biocmask_quos <- function(
     ...,
     .named = TRUE,

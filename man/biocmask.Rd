@@ -66,6 +66,7 @@ foreign bindings}
 \item \href{#method-biocmask-new}{\code{biocmask$new()}}
 \item \href{#method-biocmask-on_bind}{\code{biocmask$on_bind()}}
 \item \href{#method-biocmask-bind}{\code{biocmask$bind()}}
+\item \href{#method-biocmask-get_chop}{\code{biocmask$get_chop()}}
 \item \href{#method-biocmask-unchop}{\code{biocmask$unchop()}}
 \item \href{#method-biocmask-results}{\code{biocmask$results()}}
 \item \href{#method-biocmask-eval}{\code{biocmask$eval()}}
@@ -78,7 +79,12 @@ foreign bindings}
 Create a biocmask from \code{.data}. \code{.data} is chopped by
 \code{.indices}, and environments are built from \code{.env}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask$new(.data, .indices = NULL, .env_bot, .env_top = .env_bot)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask$new(
+  .data,
+  .indices = NULL,
+  .env_bot = new_bioc_top_env(),
+  .env_top = .env_bot
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -128,6 +134,22 @@ binds value to an name within the chops environment.
 \item{\code{name}}{a character scalar}
 
 \item{\code{value}}{results from \verb{$eval} in the form of chops}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-biocmask-get_chop"></a>}}
+\if{latex}{\out{\hypertarget{method-biocmask-get_chop}{}}}
+\subsection{Method \code{get_chop()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{biocmask$get_chop(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name of binding to retrieve chopped}
 }
 \if{html}{\out{</div>}}
 }
