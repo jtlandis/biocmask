@@ -6,11 +6,10 @@ ctx_quo <- function(expr, env, ctx) {
 
 enforce_named <- function(exprs) {
   to_update <- FALSE
-  nms <- names(exprs) %||%
-    {
-      to_update <- TRUE
-      vapply(exprs, rlang::as_label, "")
-    }
+  nms <- names(exprs) %||% {
+    to_update <- TRUE
+    vapply(exprs, rlang::as_label, "")
+  }
   char_len <- nzchar(nms)
   if (any(to_rename <- char_len == 0)) {
     nms[to_rename] <- vapply(exprs[to_rename], rlang::as_label, "")
@@ -22,6 +21,18 @@ enforce_named <- function(exprs) {
   exprs
 }
 
+as_trans_fn <- function(fn) {
+  if (is_call(fn)) {
+    if (identical(fn[[1]], quote(`function`))) {
+      return(fn)
+    }
+  }
+  if (is_function(fn)) {
+    return(fn)
+  }
+  NULL
+}
+
 #' @title biocmask quosures
 #' @description
 #' a consistent way to handle `...` for dplyr extensions.
@@ -30,13 +41,18 @@ enforce_named <- function(exprs) {
 #' mask context it should be evaluate in.
 #' @param ... rlang dots, supports splicing an quoting
 #' @param .named should resulting expressions be named?
-#' @param .ctx_default default context to eval within
-#' @param .ctx_opt optional contexts to eval within
+#' @param .ctx A character string of availablecontexts. The first
+#' element is considered to be the default context, whereas the
+#' rest are considered optional.
+#' @param .ctx_trans A list of functions to eventually apply to
+#' the expressions depending on their context. The names of the list
+#' elements should match the contexts names provided by `.ctx`. These
+#' functions will be quoted and in-lined into the expressions and thus
+#' cannot rely on the environments the functions are constructed.
+#' These functions are quoted
 #' @return a quosure with attribute `biocmask:::ctx`.
 #' @examples
 #'
-#' # in biocmask the default context is "assays"
-#' # and optional contexts are "rows" and "cols"
 #' quos <- biocmask_quos(
 #'   foo = bar,
 #'   ctx2(foo = bar),
@@ -48,28 +64,38 @@ enforce_named <- function(exprs) {
 #' attr(quos[[2]], "biocmask:::ctx")
 #' attr(quos[[3]], "biocmask:::ctx")
 #'
-#' @export
+#' @noRd
 biocmask_quos <- function(
-  ...,
-  .named = TRUE,
-  .ctx_default = NULL,
-  .ctx_opt = NULL
-) {
+    ...,
+    .named = TRUE,
+    .ctx = NULL,
+    .trans = list()) {
   # browser()
   dots <- quos(...) |>
     as.list()
-  .ctx_default <- .ctx_default %||% abort("`.ctx_default` must be specified!")
-  has_opt_ctx <- !is.null(.ctx_opt)
+  if (is.null(.ctx)) rlang::abort("`.ctx` must be specified!")
+  if (!is.list(.trans)) rlang::abort("`.trans` must be a list!")
+  .trans <- lapply(.trans, as_trans_fn)
+  .ctx_default <- .ctx[1] %||% rlang::abort("`.ctx` have at least 1 element!")
+  .ctx_opt <- .ctx[-1]
+  has_opt_ctx <- length(.ctx_opt) > 0
   # ctx_opt <- c("cols", "rows")
   nms <- rlang::names2(dots)
   is_nms <- nms != ""
   for (i in seq_along(dots)) {
     quo <- dots[[i]]
+    if (quo_is_missing(quo)) {
+      # skip missing quosures
+      next
+    }
     .env <- quo_get_env(quo)
     .expr <- quo_get_expr(quo)
     if (has_opt_ctx && is_call(.expr, .ctx_opt)) {
       ctx <- as_label(.expr[[1]])
       ctx_exprs <- as.list(.expr[-1])
+      # recapture the inner arguments allowing for dynamic
+      # dots and using `"{foo}" := bar` notation
+      ctx_exprs <- rlang::inject(rlang::exprs(!!!ctx_exprs), env = .env)
       ctx_nms <- rlang::names2(ctx_exprs)
       ctx_is_named <- ctx_nms != ""
       ctx_quos <- mapply(
@@ -77,9 +103,14 @@ biocmask_quos <- function(
         expr = ctx_exprs,
         name = ctx_nms,
         is_named = ctx_is_named,
-        MoreArgs = list(env = .env, ctx = ctx),
+        MoreArgs = list(
+          env = .env, ctx = ctx,
+          trans = .trans[[ctx]]
+        ),
         SIMPLIFY = FALSE
       )
+      # remove empty arguments from calls
+      ctx_quos <- Filter(Negate(rlang::quo_is_missing), ctx_quos)
       dots[[i]] <- splice(ctx_quos)
       next
     }
@@ -89,10 +120,12 @@ biocmask_quos <- function(
       env = .env,
       ctx = .ctx_default,
       is_named = is_nms[i],
-      name = nms[i]
+      name = nms[i],
+      trans = .trans[[.ctx_default]]
     )
   }
   out <- do.call(dots_list, c(dots, list(.named = .named)))
+  out <- Filter(Negate(is.null), out)
   if (.named) {
     # in case the prior expansion
     # of rows(...) and cols(...) need
@@ -102,9 +135,10 @@ biocmask_quos <- function(
   out
 }
 
-biocmask_quo <- function(expr, env, ctx, ...) {
+biocmask_quo <- function(expr, env, ctx, trans, ...) {
   quo <- new_quosure(expr = expr, env = env)
   attr(quo, "biocmask:::ctx") <- ctx
+  attr(quo, "biocmask:::transform") <- trans
   attr(quo, "biocmask:::data") <- list2(...)
   quo
 }
