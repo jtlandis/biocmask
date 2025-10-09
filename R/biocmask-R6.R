@@ -102,9 +102,9 @@ add_bind <- function(
 #'
 #' Environments:
 #'
-#' .shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
+#' .bot_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
 #'
-#' * .shared_env : environment provided at initialization. This may be shared
+#' * .bot_env : environment provided at initialization. This may be shared
 #'                 with multiple other BiocDataMasks.
 #' * curr_group  : Currently not used.
 #' * foreign     : space to put foreign bindings, i.e. object unrelated to `.data`
@@ -117,7 +117,7 @@ add_bind <- function(
 #'                 "chopped" format and are assigned here.
 #' * active_mask : An active binding to chops in which the proper list index is
 #'                 used depending on the current group context. The current group
-#'                 context is at this moment determined by the .shared_env NOT
+#'                 context is at this moment determined by the .bot_env NOT
 #'                 the curr_group. I have plans to remove the curr_group
 #'                 environment.
 #'
@@ -298,7 +298,7 @@ biocmask <- R6::R6Class(
           },
           `biocmask:::ctx:::group_id` = 1L
         ),
-        private$.shared_env
+        private$.bot_env
       )
     },
     init_foreign_data = function() {
@@ -356,7 +356,7 @@ biocmask <- R6::R6Class(
     init_environments = function() {
       out <- c(
         list(private$env_mask_bind),
-        env_parents(private$env_mask_bind, private$.shared_env)
+        env_parents(private$env_mask_bind, private$.bot_env)
       )
       class(out) <- c("biocmask_envs", "rlang_envs")
       attr(out, "env_mask_bind") <- private$env_mask_bind
