@@ -82,8 +82,7 @@ biocmask_manager <- R6::R6Class(
           quo = quo,
           env = env,
           n_groups = self$n_groups,
-          mask = mask,
-          private = private
+          mask = mask
         )
         name <- if (quo_data$is_named) {
           quo_data$name
@@ -175,7 +174,7 @@ biocmask_manager <- R6::R6Class(
 # Created this scoped function so that on.exit could be called
 # in case of an error. Need to write test
 # mutate(se, counts = stop("check rlang::env_parents()"))
-biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
+biocmask_manager_eval <- function(quo, env, n_groups, mask) {
   chop_out <- vector("list", n_groups)
   if (!is.null(quo_get_expr(quo))) {
     # weird bug with eval_tidy?
@@ -185,8 +184,9 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
     # if we evaluate in a different environment? I suppose we should
     # make the true "top_env" the base environment for this example...
     # on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
+    group_env <- mask$environments@env_current_group_info
     for (i in seq_len(n_groups)) {
-      private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
+      group_env[["biocmask:::ctx:::group_id"]] <- i
       result <- mask$eval(quo, env = env)
       chop_out[[i]] <- result
     }
