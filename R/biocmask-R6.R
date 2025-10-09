@@ -203,13 +203,21 @@ biocmask <- R6::R6Class(
       }
       invisible(value)
     },
+    #' @param name name of binding to retrieve chopped
+    get_chop = function(name) {
+      private$env_data_chop[[name]]
+    },
     #' @param name name of binding to retrieve and unchop
     unchop = function(name) {
+      data <- self$get_chop(name)
+      if (is.null(data)) {
+        return(NULL)
+      }
       if (is.null(private$.indices)) {
-        .subset2(private$env_data_chop[[name]], 1L)
+        .subset2(data, 1L)
       } else {
         bioc_unchop(
-          x = private$env_data_chop[[name]],
+          x = data,
           ptype = private$.ptype[[name]],
           indices = private$.indices
         )
@@ -227,6 +235,14 @@ biocmask <- R6::R6Class(
     #' @param env an environment to search after mask
     eval = function(quo, env = caller_env()) {
       mask <- new_data_mask(private$env_mask_bind, top = private$.top_env)
+      trans <- attr(quo, "biocmask:::data")[["transform"]]
+      if (!is.null(trans)) {
+        exp <- quo_get_expr(quo)
+        quo <- quo_set_expr(
+          quo,
+          expr((!!exp) |> (!!trans)())
+        )
+      }
       eval_tidy(quo, data = mask, env = env)
     }
   ),
