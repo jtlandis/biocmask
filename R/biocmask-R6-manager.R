@@ -149,6 +149,7 @@ biocmask_manager <- R6::R6Class(
     group_id = function(id) {
       if (!missing(id)) {
         private$.ctx_env[["biocmask:::ctx:::group_id"]] <- id
+        self$ctx_mask$environments@env_current_group_info[["biocmask:::ctx:::group_id"]] <- id
       }
       private$.ctx_env[["biocmask:::ctx:::group_id"]]
     },
