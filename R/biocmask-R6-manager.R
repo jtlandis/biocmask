@@ -36,7 +36,7 @@ biocmask_manager <- R6::R6Class(
     },
     #' @description
     #'   installs a link between two contexts via a
-    #'   view_spec object.
+    #'   view_spec object. Currently experimental and not working!
     #' @param view_spec view specification made view [new_view_spec()]
     #' @param pronoun_name name of the pronoun to be created. defaults to
     #'   `sprintf(".%s", view_spec$ctx)`
