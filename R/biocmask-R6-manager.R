@@ -30,8 +30,6 @@ biocmask_manager <- R6::R6Class(
       private$.masks <- .masks
       private$.ctx_env <- .ctx_env
       private$.extended_env <- .extended_env
-      .ctx_env[["biocmask:::ctx:::group_id"]] <- 1L
-      .ctx_env[["biocmask:::ctx"]] <- eval(quote(`biocmask:::ctx`), .ctx_env)
       invisible(self)
     },
     #' @description
