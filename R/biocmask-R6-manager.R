@@ -87,7 +87,6 @@ biocmask_manager <- R6::R6Class(
           mask = mask,
           private = private
         )
-
         name <- if (quo_data$is_named) {
           quo_data$name
         } else {
@@ -98,11 +97,28 @@ biocmask_manager <- R6::R6Class(
       invisible(self)
     },
     #' @description
+    #' collections the envaluated result of a given name
+    result = function(name) {
+      self$apply(function(m, name) m$unchop(name), name = name)
+    },
+    #' @description
     #' collects the evaluated results with biocmasks
+    #' @param .from_masks index vector from which masks to collect results.
+    #' a missing argument will collect all results.
     #' @return named list for each mask containing named list of evaluated
     #' expressions.
-    results = function() {
-      lapply(private$.masks, function(m) m$results())
+    results = function(.from_masks) {
+      self$apply(function(m) m$results(), .on_masks = .from_masks)
+    },
+    #' @description
+    #' apply a function to each mask this object manages
+    #' @param .f a function to apply to the managed masks
+    #' @param ... additional arguments to pass to `.f`
+    #' @param .on_masks index vector indicating which masks to apply `.f` to.
+    #' a missing argument will collect all results.
+    #' @return named list containing the results of each function
+    apply = function(.f, ..., .on_masks) {
+      lapply(private$.masks[.on_masks], .f, ...)
     }
   ),
   active = list(
@@ -124,7 +140,7 @@ biocmask_manager <- R6::R6Class(
     #' @field n_groups get the current context biocmask group size
     n_groups = function(value) {
       if (!missing(value)) stop("`$n_groups` is read only")
-      #private$.ctx_env[["biocmask:::n_groups"]]
+      # private$.ctx_env[["biocmask:::n_groups"]]
       eval(
         quote(`biocmask:::ctx:::n_groups`),
         self$ctx_mask$environments@env_current_group_info
@@ -168,7 +184,7 @@ biocmask_manager_eval <- function(quo, env, n_groups, mask, private) {
     # should we consider the parent to be transient? what happens
     # if we evaluate in a different environment? I suppose we should
     # make the true "top_env" the base environment for this example...
-    #on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
+    # on.exit(env_poke_parent(mask$top_env, mask$true_parent), add = TRUE)
     for (i in seq_len(n_groups)) {
       private$.ctx_env[["biocmask:::ctx:::group_id"]] <- i
       result <- mask$eval(quo, env = env)
