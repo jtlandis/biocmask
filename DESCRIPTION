@@ -30,9 +30,38 @@ Suggests:
     testthat,
     airway,
     IRanges,
+    GenomicRanges,
     here
 URL: https://github.com/jtlandis/biocmask, https://jtlandis.github.io/biocmask
 BugReports: https://www.github.com/jtlandis/biocmask/issues
 biocViews: Annotation, GenomeAnnotation, Transcriptomics
 Config/testthat/edition: 3
 LazyData: true
+Collate: 
+    'across.R'
+    'bioc-.R'
+    'bioc-init.r'
+    'bioc-unchop.r'
+    'bioc-ptype2.R'
+    'bioc-ptype.R'
+    'bioc-cast.r'
+    'bioc-chop.r'
+    'bioc-group-.R'
+    'bioc-recycle.R'
+    'bioc-rep.R'
+    'bioc-size.r'
+    'bioc-slice.R'
+    'biocmask-R6-manager.R'
+    'biocmask-R6.R'
+    'biocmask-package.R'
+    'biocmask.R'
+    'connect_masks.R'
+    'context-utils.R'
+    'data.R'
+    'group_utils.R'
+    'mask_env_top.R'
+    'prepare_quos.R'
+    'utils.R'
+    'views.R'
+    'zz-registar.r'
+    'zzz-globals.R'

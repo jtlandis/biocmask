@@ -2,6 +2,7 @@
 % Please edit documentation in R/bioc-rep.R
 \name{vctrs-bioc_rep}
 \alias{vctrs-bioc_rep}
+\alias{bioc_rep}
 \alias{bioc_rep_each}
 \title{replicate a vector}
 \usage{

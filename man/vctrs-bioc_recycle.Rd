@@ -2,6 +2,7 @@
 % Please edit documentation in R/bioc-recycle.R
 \name{vctrs-bioc_recycle}
 \alias{vctrs-bioc_recycle}
+\alias{bioc_recycle}
 \title{Recycle a vector}
 \usage{
 bioc_recycle(x, size, ...)

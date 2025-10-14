@@ -13,9 +13,9 @@ environments that the data is stored within.
 
 Environments:
 
-.shared_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
+.bot_env --> curr_group_ctx --> foreign --> lazy --> chops --> active_mask
 \itemize{
-\item .shared_env : environment provided at initialization. This may be shared
+\item .bot_env : environment provided at initialization. This may be shared
 with multiple other BiocDataMasks.
 \item curr_group  : Currently not used.
 \item foreign     : space to put foreign bindings, i.e. object unrelated to \code{.data}
@@ -28,7 +28,7 @@ for this BiocDataMask context are expected to be in a
 "chopped" format and are assigned here.
 \item active_mask : An active binding to chops in which the proper list index is
 used depending on the current group context. The current group
-context is at this moment determined by the .shared_env NOT
+context is at this moment determined by the .bot_env NOT
 the curr_group. I have plans to remove the curr_group
 environment.
 }
