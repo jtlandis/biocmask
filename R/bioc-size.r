@@ -48,12 +48,13 @@ setMethod(
   }
 )
 
-#' @export
-bioc_size_common <- function(...) {
+bioc_size_common_list <- function(dots) {
   size <- 1L
   j <- 0L
-  for (i in seq_len(...length())) {
-    dot_size <- bioc_size(...elt(i))
+  iseq <- seq_len(length(dots))
+  for (i in iseq) {
+    dot <- .subset2(dots, i)
+    dot_size <- bioc_size(dot)
     if (dot_size != 1L) {
       if (size == 1L) {
         size <- dot_size
@@ -69,4 +70,9 @@ bioc_size_common <- function(...) {
     }
   }
   size
+}
+
+#' @export
+bioc_size_common <- function(...) {
+  bioc_size_common_list(rlang::list2(...))
 }
