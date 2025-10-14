@@ -13,127 +13,117 @@
 #' bioc_rep_each(1:2, times = 5)
 #' bioc_rep_each(S4Vectors::Rle(1:2), times = 5)
 #' @export
-setGeneric(
+bioc_rep <- S7::new_generic(
   "bioc_rep",
-  signature = "x",
-  def = function(x, times, ...) standardGeneric("bioc_rep")
+  dispatch_args = "x",
+  def = function(x, times, ...) S7_dispatch()
 )
 
-setMethod(
-  "bioc_rep",
-  signature = list(x = class_vec),
-  function(x, times, ...) {
-    vctrs::vec_rep(
-      x = x,
-      times = times,
-      ...,
-      error_call = caller_env(),
-      x_arg = "x",
-      times_arg = "times"
-    )
-  }
-)
+S7::method(
+  bioc_rep,
+  signature = list(x = class_vec)
+) <- function(x, times, ...) {
+  vctrs::vec_rep(
+    x = x,
+    times = times,
+    ...,
+    error_call = caller_env(),
+    x_arg = "x",
+    times_arg = "times"
+  )
+}
 
-setMethod(
-  "bioc_rep",
-  signature = list(x = class_vctrs_vec),
-  function(x, times, ...) {
-    vctrs::vec_rep(
-      x = x,
-      times = times,
-      ...,
-      error_call = caller_env(),
-      x_arg = "x",
-      times_arg = "times"
-    )
-  }
-)
 
-setMethod(
-  "bioc_rep",
-  signature = list(x = class_df),
-  function(x, times, ...) {
-    vctrs::vec_rep(
-      x = x,
-      times = times,
-      ...,
-      error_call = caller_env(),
-      x_arg = "x",
-      times_arg = "times"
-    )
-  }
-)
+S7::method(
+  bioc_rep,
+  signature = list(x = class_vctrs_vec)
+) <- function(x, times, ...) {
+  vctrs::vec_rep(
+    x = x,
+    times = times,
+    ...,
+    error_call = caller_env(),
+    x_arg = "x",
+    times_arg = "times"
+  )
+}
 
-setMethod(
-  "bioc_rep",
-  signature = list(x = class_s4_vec),
-  function(
+S7::method(
+  bioc_rep,
+  signature = list(x = class_df)
+) <- function(x, times, ...) {
+  vctrs::vec_rep(
+    x = x,
+    times = times,
+    ...,
+    error_call = caller_env(),
+    x_arg = "x",
+    times_arg = "times"
+  )
+}
+
+S7::method(
+  bioc_rep,
+  signature = list(x = class_s4_vec)
+) <- function(
     x,
     times,
-    ...
-  ) {
-    times <- vctrs::vec_cast(times, integer(1), x_arg = "times")
-    if (length(times) != 1L) abort("`times` must be a single number")
-    rep(x, times)
-  }
-)
+    ...) {
+  times <- vctrs::vec_cast(times, integer(1), x_arg = "times")
+  if (length(times) != 1L) abort("`times` must be a single number")
+  rep(x, times)
+}
 
 #' @rdname vctrs-bioc_rep
 #' @export
-setGeneric(
+bioc_rep_each <- S7::new_generic(
   "bioc_rep_each",
-  signature = "x",
-  def = function(x, times, ...) standardGeneric("bioc_rep_each")
+  dispatch_args = "x",
+  def = function(x, times, ...) S7_dispatch()
 )
 
-setMethod(
-  "bioc_rep_each",
-  signature = list(x = class_vec),
-  function(
+S7::method(
+  bioc_rep_each,
+  signature = list(x = class_vec)
+) <- function(
     x,
     times,
-    ...
-  ) {
-    vctrs::vec_rep_each(
-      x = x,
-      times = times,
-      ...,
-      x_arg = "x",
-      times_arg = "times",
-      error_call = caller_env()
-    )
-  }
-)
+    ...) {
+  vctrs::vec_rep_each(
+    x = x,
+    times = times,
+    ...,
+    x_arg = "x",
+    times_arg = "times",
+    error_call = caller_env()
+  )
+}
 
-setMethod(
-  "bioc_rep_each",
-  signature = list(x = class_vctrs_vec),
-  function(
+S7::method(
+  bioc_rep_each,
+  signature = list(x = class_vctrs_vec)
+) <- function(
     x,
     times,
-    ...
-  ) {
-    vctrs::vec_rep_each(
-      x = x,
-      times = times,
-      ...,
-      x_arg = "x",
-      times_arg = "times",
-      error_call = caller_env()
-    )
-  }
-)
+    ...) {
+  vctrs::vec_rep_each(
+    x = x,
+    times = times,
+    ...,
+    x_arg = "x",
+    times_arg = "times",
+    error_call = caller_env()
+  )
+}
 
-setMethod(
-  "bioc_rep_each",
-  signature = list(x = class_s4_vec),
-  function(
+S7::method(
+  bioc_rep_each,
+  signature = list(x = class_s4_vec)
+) <- function(
     x,
     times,
-    ...
-  ) {
-    times <- vctrs::vec_cast(times, integer(1), x_arg = times_arg)
-    if (length(length) != 1L) abort("`times` must be a single number")
-    rep(x, each = times)
-  }
-)
+    ...) {
+  times <- vctrs::vec_cast(times, integer(1), x_arg = "times")
+  if (length(times) != 1L) abort("`times` must be a single number")
+  rep(x, each = times)
+}

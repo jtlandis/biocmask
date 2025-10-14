@@ -6,6 +6,7 @@
 ## usethis namespace: start
 #' @import rlang
 #' @importFrom rlang .env
+#' @importFrom S7 S7_dispatch
 #' @importFrom tidyselect eval_select
 #' @importFrom utils .AtNames
 #' @importFrom vctrs field

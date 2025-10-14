@@ -17,55 +17,55 @@
 #' bioc_group_loc(data)
 #'
 #' @export
-setGeneric(
+bioc_group_id <- S7::new_generic(
   "bioc_group_id",
-  signature = "x",
-  def = function(x, ...) {
-    standardGeneric("bioc_group_id")
+  dispatch_args = "x",
+  function(x, ...) {
+    S7_dispatch()
   }
 )
 
-setMethod(
-  "bioc_group_id",
-  signature = list(x = class_vec),
-  def = function(x, ...) {
-    vctrs::vec_group_id(x = x)
-  }
-)
+S7::method(
+  bioc_group_id,
+  signature = list(x = class_vec)
+) <- function(x, ...) {
+  vctrs::vec_group_id(x = x)
+}
 
-setMethod(
-  "bioc_group_id",
-  signature = list(x = class_vctrs_vec),
-  def = function(x, ...) {
-    vctrs::vec_group_id(x = x)
-  }
-)
 
-setMethod(
-  "bioc_group_id",
-  signature = list(x = class_df),
-  def = function(x, ...) {
-    vctrs::vec_group_id(x = x)
-  }
-)
+S7::method(
+  bioc_group_id,
+  signature = list(x = class_vctrs_vec)
+) <- function(x, ...) {
+  vctrs::vec_group_id(x = x)
+}
 
-setMethod(
-  "bioc_group_id",
-  signature = list(x = class_s4_vec),
-  def = function(x, ...) {
-    as(BiocGenerics::match(x, BiocGenerics::unique(x)), "integer")
-  }
-)
 
-setMethod(
-  "bioc_group_id",
-  signature = list(x = class_DF),
-  def = function(x, ...) {
-    lapply(x@listData, bioc_group_id) |>
-      as.data.frame() |>
-      vctrs::vec_group_id()
-  }
-)
+S7::method(
+  bioc_group_id,
+  signature = class_df
+) <- function(x, ...) {
+  vctrs::vec_group_id(x = x)
+}
+
+
+S7::method(
+  bioc_group_id,
+  signature = class_s4_vec
+) <- function(x, ...) {
+  as(BiocGenerics::match(x, BiocGenerics::unique(x)), "integer")
+}
+
+
+S7::method(
+  bioc_group_id,
+  signature = class_DF
+) <- function(x, ...) {
+  lapply(x@listData, bioc_group_id) |>
+    as.data.frame() |>
+    vctrs::vec_group_id()
+}
+
 
 ## -----
 
@@ -73,73 +73,73 @@ setMethod(
 #' @export
 setGeneric(
   "bioc_group_loc",
-  signature = "x",
-  def = function(x, ...) {
-    standardGeneric("bioc_group_loc")
-  }
-)
+  signature = "x"
+) <- function(x, ...) {
+  standardGeneric("bioc_group_loc")
+}
 
-setMethod(
-  "bioc_group_loc",
-  signature = list(x = class_vec),
-  def = function(x, ...) {
-    vctrs::vec_group_loc(x = x)
-  }
-)
 
-setMethod(
-  "bioc_group_loc",
-  signature = list(x = class_vctrs_vec),
-  def = function(x, ...) {
-    vctrs::vec_group_loc(x = x)
-  }
-)
+S7::method(
+  bioc_group_loc,
+  signature = class_vec
+) <- function(x, ...) {
+  vctrs::vec_group_loc(x = x)
+}
 
-setMethod(
-  "bioc_group_loc",
-  signature = list(x = class_df),
-  def = function(x, ...) {
-    vctrs::vec_group_loc(x = x)
-  }
-)
 
-setMethod(
-  "bioc_group_loc",
-  signature = list(x = class_s4_vec),
-  def = function(x, ...) {
-    # bioc_group_id is based on the object `x` and NOT
-    # the mcols data. So for any arbitrary class `x` may
-    # be, we do not consider the elementMetadata
-    #
-    # `Vector` extends Annotated, thus `mcols(x)` exists
-    mcols(x) <- NULL
-    id <- bioc_group_id(x)
-    loc <- bioc_size(x) |>
-      seq_len() |>
-      split(f = id) |>
-      unname()
+S7::method(
+  bioc_group_loc,
+  signature = class_vctrs_vec
+) <- function(x, ...) {
+  vctrs::vec_group_loc(x = x)
+}
 
-    as_DF(
-      list(
-        key = bioc_slice(x, vapply(loc, `[`, 1L, 1L)),
-        loc = loc
-      )
+
+S7::method(
+  bioc_group_loc,
+  signature = class_df
+) <- function(x, ...) {
+  vctrs::vec_group_loc(x = x)
+}
+
+
+S7::method(
+  bioc_group_loc,
+  signature = class_s4_vec
+) <- function(x, ...) {
+  # bioc_group_id is based on the object `x` and NOT
+  # the mcols data. So for any arbitrary class `x` may
+  # be, we do not consider the elementMetadata
+  #
+  # `Vector` extends Annotated, thus `mcols(x)` exists
+  mcols(x) <- NULL
+  id <- bioc_group_id(x)
+  loc <- bioc_size(x) |>
+    seq_len() |>
+    split(f = id) |>
+    unname()
+
+  as_DF(
+    list(
+      key = bioc_slice(x, vapply(loc, `[`, 1L, 1L)),
+      loc = loc
     )
-  }
-)
+  )
+}
 
-setMethod(
-  "bioc_group_loc",
-  signature = list(x = class_DF),
-  def = function(x, ...) {
-    out <- lapply(x@listData, bioc_group_id) |>
-      as.data.frame() |>
-      vctrs::vec_group_loc()
-    out <- as_DF(as.list(out))
-    out$key <- bioc_slice(x, i = vapply(out$loc, `[`, 1L, 1L))
-    out
-  }
-)
+
+S7::method(
+  bioc_group_loc,
+  signature = class_DF
+) <- function(x, ...) {
+  out <- lapply(x@listData, bioc_group_id) |>
+    as.data.frame() |>
+    vctrs::vec_group_loc()
+  out <- as_DF(as.list(out))
+  out$key <- bioc_slice(x, i = vapply(out$loc, `[`, 1L, 1L))
+  out
+}
+
 
 #' create groups
 #' @export

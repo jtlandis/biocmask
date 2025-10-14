@@ -7,13 +7,15 @@
 #' internals for `biocmask` were consistent with room for optimization.
 #' @return S4 class union or base class
 #' @export
-class_vec <- methods::getClass("vector")
+class_vec <- S7::new_union(S7::class_atomic, S7::class_list, S7::class_factor)
 
-methods::setOldClass("vctrs_vctr")
+# using S7::class_vector would include S7::class_expression, which we don't
+# want to define methods for.
+
 
 #' @rdname vectors
 #' @export
-class_vctrs_vec <- getClass("vctrs_vctr")
+class_vctrs_vec <- S7::new_S3_class("vctrs_vctr")
 
 #' @rdname vectors
 #' @export
@@ -25,7 +27,7 @@ class_DF <- methods::getClass("DataFrame", where = "S4Vectors")
 
 #' @rdname vectors
 #' @export
-class_df <- methods::getClass("data.frame")
+class_df <- S7::class_data.frame
 
 #' @rdname vectors
 #' @export

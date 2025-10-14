@@ -49,37 +49,34 @@
 #' bioc_slice(S4Vectors::Rle(rep(1:3, each = 3)), i = 5)
 #'
 #' @export
-setGeneric(
+bioc_slice <- S7::new_generic(
   "bioc_slice",
-  def = function(x, i, ...) standardGeneric("bioc_slice"),
-  signature = "x"
+  dispatch_args = "x",
+  function(x, i, ...) S7_dispatch()
 )
 
-setMethod(
-  "bioc_slice",
-  signature = list(x = class_vec),
-  function(x, i, ...) x[i]
-)
+S7::method(
+  bioc_slice,
+  signature = class_vec
+) <- function(x, i, ...) x[i]
 
-setMethod(
-  "bioc_slice",
-  signature = list(x = class_vctrs_vec),
-  function(x, i, ...) vctrs::vec_slice(x, i)
-)
+S7::method(
+  bioc_slice,
+  signature = class_vctrs_vec
+) <- function(x, i, ...) vctrs::vec_slice(x, i)
 
-setMethod(
-  "bioc_slice",
-  signature = list(x = class_s4_vec),
-  function(x, i, ...) {
-    x[i]
-  }
-)
+S7::method(
+  bioc_slice,
+  signature = class_s4_vec
+) <- function(x, i, ...) {
+  x[i]
+}
 
 
 slice_DF <- function(x, i, ...) {
   data <- lapply(x@listData, bioc_slice, i = i)
   nrows <- length(i)
-  if (!is.null(rnames <- x@rownames)) {
+  if (!is.null(rnames <- rownames(x))) {
     rnames <- bioc_slice(rnames, i)
   }
 
@@ -90,19 +87,18 @@ slice_DF <- function(x, i, ...) {
   )
 }
 
-setMethod(
-  "bioc_slice",
-  signature = list(x = class_DF),
+S7::method(
+  bioc_slice,
+  signature = class_DF,
   slice_DF
 )
 
-setMethod(
-  "bioc_slice",
-  signature = list(x = class_df),
-  function(x, i, ...) {
-    vctrs::vec_slice(x, i)
-  }
-)
+S7::method(
+  bioc_slice,
+  signature = class_df
+) <- function(x, i, ...) {
+  vctrs::vec_slice(x, i)
+}
 
 # method(bioc_slice, getClass("CompressedGRangesList")) <- function(x, i, ...) {
 #  st <- IRanges::start(x@partitioning)

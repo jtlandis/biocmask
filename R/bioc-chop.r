@@ -1,62 +1,61 @@
 #' @export
-setGeneric(
+bioc_chop <- S7::new_generic(
   "bioc_chop",
-  signature = "x",
+  dispatch_args = "x",
   function(x, ..., indices = NULL) {
-    standardGeneric("bioc_chop")
+    S7_dispatch()
   }
 )
 
-setMethod(
-  "bioc_chop",
-  signature = list(x = class_vec),
-  function(
-      x,
-      ...,
-      sizes = NULL,
-      indices = NULL) {
+S7::method(
+  bioc_chop,
+  signature = class_vec
+) <-
+  function(x,
+           ...,
+           sizes = NULL,
+           indices = NULL) {
     vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
   }
-)
 
-setMethod(
-  "bioc_chop",
-  signature = list(x = class_df),
-  function(
-      x,
-      ...,
-      sizes = NULL,
-      indices = NULL) {
+
+method(
+  bioc_chop,
+  signature = class_df
+) <- function(x,
+              ...,
+              sizes = NULL,
+              indices = NULL) {
+  vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
+}
+
+
+S7::method(
+  bioc_chop,
+  signature = class_vctrs_vec
+) <-
+  function(x,
+           ...,
+           sizes = NULL,
+           indices = NULL) {
     vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
   }
-)
 
-setMethod(
-  "bioc_chop",
-  signature = list(x = class_vctrs_vec),
-  function(
-      x,
-      ...,
-      sizes = NULL,
-      indices = NULL) {
-    vctrs::vec_chop(x = x, ..., indices = indices, sizes = sizes)
-  }
-)
 
-setMethod(
-  "bioc_chop",
-  signature = list(x = class_s4_vec),
-  function(
-      x,
-      ...,
-      indices = NULL) {
-    fun <- selectMethod(bioc_slice, signature = c(x = class(x)))
+S7::method(
+  bioc_chop,
+  signature = list(x = class_s4_vec)
+) <-
+  function(x,
+           ...,
+           indices = NULL) {
+    fun <- S7::method(bioc_slice, object = x)
     if (is.null(indices)) {
       indices <- seq_len(bioc_size(x))
     }
     lapply(indices, fun, x = x)
   }
-)
+
 
 # cgr_as_lst <- function(x) {
 #   n <- length(x)

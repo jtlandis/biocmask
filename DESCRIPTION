@@ -18,6 +18,7 @@ Imports:
     vctrs,
     cli,
     S4Vectors,
+    S7,
     utils,
     methods
 Depends:

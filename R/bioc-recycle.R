@@ -10,90 +10,81 @@
 #' bioc_recycle(S4Vectors::Rle(1L), size = 5L)
 #'
 #' @export
-setGeneric(
+bioc_recycle <- S7::new_generic(
   "bioc_recycle",
-  signature = "x",
-  def = function(x, size, ...) {
-    standardGeneric("bioc_recycle")
+  dispatch_args = "x",
+  function(x, size, ...) {
+    S7_dispatch()
   }
 )
 
-setMethod(
-  "bioc_recycle",
-  signature = list(x = class_vec),
-  def = function(
-    x,
-    size,
-    ...
-  ) {
-    vctrs::vec_recycle(
-      x = x,
-      size = size,
-      ...,
-      x_arg = "x",
-      call = caller_env()
-    )
-  }
-)
-
-setMethod(
-  "bioc_recycle",
-  signature = list(x = class_vctrs_vec),
-  def = function(
-    x,
-    size,
-    ...
-  ) {
-    vctrs::vec_recycle(
-      x = x,
-      size = size,
-      ...,
-      x_arg = "x",
-      call = caller_env()
-    )
-  }
-)
-
-setMethod(
-  "bioc_recycle",
-  signature = list(x = class_df),
-  def = function(
-    x,
-    size,
-    ...
-  ) {
-    vctrs::vec_recycle(
-      x = x,
-      size = size,
-      ...,
-      x_arg = "x",
-      call = caller_env()
-    )
-  }
-)
-
-setMethod(
-  "bioc_recycle",
-  signature = list(x = class_s4_vec),
-  def = function(
-    x,
-    size,
+S7::method(
+  bioc_recycle,
+  signature = class_vec
+) <- function(x,
+              size,
+              ...) {
+  vctrs::vec_recycle(
+    x = x,
+    size = size,
     ...,
-    x_arg = "",
+    x_arg = "x",
     call = caller_env()
-  ) {
-    if (!is.numeric(size)) abort("argument `size` should be integer-ish")
-    if (length(size) != 1L) abort("argument `size` should be length 1L")
-    vec_len <- bioc_size(x)
-    vec_len |>
-      match(c(1L, size), nomatch = 3L) |>
-      switch(
-        `1` = bioc_slice(x, vctrs::vec_rep(1L, size)),
-        `2` = x,
-        abort(
-          glue::glue("Can't recycle inpute of size {vec_len} to size {size}."),
-          call = caller_env()
-        )
+  )
+}
+
+
+S7::method(
+  bioc_recycle,
+  signature = class_vctrs_vec
+) <- function(x,
+              size,
+              ...) {
+  vctrs::vec_recycle(
+    x = x,
+    size = size,
+    ...,
+    x_arg = "x",
+    call = caller_env()
+  )
+}
+
+
+S7::method(
+  bioc_recycle,
+  signature = class_df
+) <- function(x,
+              size,
+              ...) {
+  vctrs::vec_recycle(
+    x = x,
+    size = size,
+    ...,
+    x_arg = "x",
+    call = caller_env()
+  )
+}
+
+
+S7::method(
+  bioc_recycle,
+  signature = class_s4_vec
+) <- function(x,
+              size,
+              ...,
+              x_arg = "",
+              call = caller_env()) {
+  if (!is.numeric(size)) abort("argument `size` should be integer-ish")
+  if (length(size) != 1L) abort("argument `size` should be length 1L")
+  vec_len <- bioc_size(x)
+  vec_len |>
+    match(c(1L, size), nomatch = 3L) |>
+    switch(
+      `1` = bioc_slice(x, vctrs::vec_rep(1L, size)),
+      `2` = x,
+      abort(
+        glue::glue("Can't recycle inpute of size {vec_len} to size {size}."),
+        call = caller_env()
       )
-  }
-)
+    )
+}
