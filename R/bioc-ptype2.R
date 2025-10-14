@@ -83,20 +83,19 @@ S7::method(
 
 S7::method(
   bioc_ptype2,
-  signature = list(x = class_vctrs_vec, y = class_vec),
-  def = function(x,
-                 y,
-                 ...) {
-    vctrs::vec_ptype2(
-      x = x,
-      y = y,
-      ...,
-      x_arg = "x",
-      y_arg = "y",
-      call = caller_env()
-    )
-  }
-)
+  signature = list(x = class_vctrs_vec, y = class_vec)
+) <- function(x,
+              y,
+              ...) {
+  vctrs::vec_ptype2(
+    x = x,
+    y = y,
+    ...,
+    x_arg = "x",
+    y_arg = "y",
+    call = caller_env()
+  )
+}
 
 S7::method(
   bioc_ptype2,

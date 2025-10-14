@@ -27,7 +27,7 @@ S7::method(
 
 S7::method(
   bioc_unchop_ptype,
-  signature = S7::class_any,
+  signature = S7::class_any
 ) <- function(ptype, x, ..., indices = NULL) {
   vctrs::list_unchop(x, indices = indices, ptype = NULL)
 }
@@ -41,7 +41,7 @@ S7::method(
 
 S7::method(
   bioc_unchop_ptype,
-  signature = class_s4_vec,
+  signature = class_s4_vec
 ) <- function(ptype, x, ..., indices = NULL) {
   merged <- do.call("c", x)
   if (!is.null(indices)) {

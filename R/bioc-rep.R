@@ -16,12 +16,12 @@
 bioc_rep <- S7::new_generic(
   "bioc_rep",
   dispatch_args = "x",
-  def = function(x, times, ...) S7_dispatch()
+  function(x, times, ...) S7_dispatch()
 )
 
 S7::method(
   bioc_rep,
-  signature = list(x = class_vec)
+  signature = class_vec
 ) <- function(x, times, ...) {
   vctrs::vec_rep(
     x = x,
@@ -36,7 +36,7 @@ S7::method(
 
 S7::method(
   bioc_rep,
-  signature = list(x = class_vctrs_vec)
+  signature = class_vctrs_vec
 ) <- function(x, times, ...) {
   vctrs::vec_rep(
     x = x,
@@ -50,7 +50,7 @@ S7::method(
 
 S7::method(
   bioc_rep,
-  signature = list(x = class_df)
+  signature = class_df
 ) <- function(x, times, ...) {
   vctrs::vec_rep(
     x = x,
@@ -64,7 +64,7 @@ S7::method(
 
 S7::method(
   bioc_rep,
-  signature = list(x = class_s4_vec)
+  signature = class_s4_vec
 ) <- function(
     x,
     times,
@@ -79,12 +79,12 @@ S7::method(
 bioc_rep_each <- S7::new_generic(
   "bioc_rep_each",
   dispatch_args = "x",
-  def = function(x, times, ...) S7_dispatch()
+  function(x, times, ...) S7_dispatch()
 )
 
 S7::method(
   bioc_rep_each,
-  signature = list(x = class_vec)
+  signature = class_vec
 ) <- function(
     x,
     times,
@@ -101,7 +101,7 @@ S7::method(
 
 S7::method(
   bioc_rep_each,
-  signature = list(x = class_vctrs_vec)
+  signature = class_vctrs_vec
 ) <- function(
     x,
     times,
@@ -118,7 +118,7 @@ S7::method(
 
 S7::method(
   bioc_rep_each,
-  signature = list(x = class_s4_vec)
+  signature = class_s4_vec
 ) <- function(
     x,
     times,

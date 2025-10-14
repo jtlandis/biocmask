@@ -19,7 +19,7 @@ S7::method(
   }
 
 
-method(
+S7::method(
   bioc_chop,
   signature = class_df
 ) <- function(x,
@@ -44,7 +44,7 @@ S7::method(
 
 S7::method(
   bioc_chop,
-  signature = list(x = class_s4_vec)
+  signature = class_s4_vec
 ) <-
   function(x,
            ...,

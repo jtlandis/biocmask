@@ -65,15 +65,6 @@ S7::method(
 
 S7::method(
   bioc_ptype,
-  signature = class_s4_vec
-) <- function(x,
-              ...) {
-  x[0]
-}
-
-
-S7::method(
-  bioc_ptype,
   signature = class_DF
 ) <- function(x,
               ...) {

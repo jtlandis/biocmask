@@ -27,7 +27,7 @@ bioc_group_id <- S7::new_generic(
 
 S7::method(
   bioc_group_id,
-  signature = list(x = class_vec)
+  signature = class_vec
 ) <- function(x, ...) {
   vctrs::vec_group_id(x = x)
 }
@@ -35,7 +35,7 @@ S7::method(
 
 S7::method(
   bioc_group_id,
-  signature = list(x = class_vctrs_vec)
+  signature = class_vctrs_vec
 ) <- function(x, ...) {
   vctrs::vec_group_id(x = x)
 }
@@ -71,12 +71,13 @@ S7::method(
 
 #' @rdname bioc_group_id
 #' @export
-setGeneric(
+bioc_group_loc <- S7::new_generic(
   "bioc_group_loc",
-  signature = "x"
-) <- function(x, ...) {
-  standardGeneric("bioc_group_loc")
-}
+  dispatch_args = "x",
+  function(x, ...) {
+    S7_dispatch()
+  }
+)
 
 
 S7::method(

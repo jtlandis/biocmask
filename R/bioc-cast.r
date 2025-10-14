@@ -39,19 +39,18 @@ S7::method(
   signature = list(
     from = S7::class_any,
     to = S7::class_any
-  ),
-  def = function(from,
-                 to,
-                 ...) {
-    rlang::abort(
-      sprintf(
-        "cannot cast class <%s> into <%s>",
-        paste0(class(from), collapse = "/"),
-        paste0(class(to), collapse = "/")
-      )
+  )
+) <- function(from,
+              to,
+              ...) {
+  rlang::abort(
+    sprintf(
+      "cannot cast class <%s> into <%s>",
+      paste0(class(from), collapse = "/"),
+      paste0(class(to), collapse = "/")
     )
-  }
-)
+  )
+}
 
 S7::method(
   bioc_cast,

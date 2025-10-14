@@ -89,9 +89,8 @@ slice_DF <- function(x, i, ...) {
 
 S7::method(
   bioc_slice,
-  signature = class_DF,
-  slice_DF
-)
+  signature = class_DF
+) <- slice_DF
 
 S7::method(
   bioc_slice,
