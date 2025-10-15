@@ -23,16 +23,14 @@ register_iranges_init <- function() {
         start = integer(size),
         width = integer(size)
       )
-      S4Vectors::mcols(out) <- bioc_init(S4Vectors::mcols(x), size = size)
-      out
+      bioc_init_mcols(to = out, from = x, size = size)
     }
   S7::method(bioc_init, methods::getClass("IPos", where = "IRanges")) <-
     function(x, size = 0L, ...) {
       out <- IRanges::IPos(
         pos = integer(size)
       )
-      S4Vectors::mcols(out) <- bioc_init(S4Vectors::mcols(x), size = size)
-      out
+      bioc_init_mcols(to = out, from = x, size = size)
     }
 }
 
@@ -52,7 +50,6 @@ register_granges_init <- function() {
         lengths = size
       )
     )
-    S4Vectors::mcols(out) <- bioc_init(S4Vectors::mcols(x), size = size)
-    out
+    bioc_init_mcols(to = out, from = x, size = size)
   }
 }

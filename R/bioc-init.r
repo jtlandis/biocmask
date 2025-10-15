@@ -201,11 +201,12 @@ S7::method(
 
 S7::method(
   bioc_init,
-  signature = getClass("Rle", where = "S4Vectors")
+  signature = class_Rle
 ) <- function(x, size = 0L, ...) {
-  S4Vectors::Rle(
+  out <- S4Vectors::Rle(
     values = bioc_init(S4Vectors::runValue(x), size = size)
   )
+  bioc_init_mcols(to = out, from = x, size = size)
 }
 
 S7::method(
@@ -228,10 +229,12 @@ S7::method(
   df
 }
 
-S7::method(
-  bioc_init,
-  signature = class_DF
-) <- function(x, size = 0L, ...) {
+bioc_init_mcols <- function(to, from, size) {
+  S4Vectors::mcols(to) <- bioc_init_DF(S4Vectors::mcols(from), size = size)
+  to
+}
+
+bioc_init_DF <- function(x, size = 0L, ...) {
   df <- vector("list", ncol(x))
   names(df) <- names(x)
   for (name in names(df)) {
@@ -247,3 +250,8 @@ S7::method(
     nrows = size
   )
 }
+
+S7::method(
+  bioc_init,
+  signature = class_DF
+) <- bioc_init_DF
