@@ -75,7 +75,10 @@ S7::method(
 
 slice_DF <- function(x, i, ...) {
   data <- lapply(x@listData, bioc_slice, i = i)
-  nrows <- length(i)
+  nrows <- 0L
+  if (length(data)) {
+    nrows <- length(data[[1L]])
+  }
   if (!is.null(rnames <- rownames(x))) {
     rnames <- bioc_slice(rnames, i)
   }
