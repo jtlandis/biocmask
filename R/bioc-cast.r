@@ -63,7 +63,7 @@ S7::method(
     to = to,
     ...,
     x_arg = "from",
-    y_arg = "to",
+    to_arg = "to",
     call = caller_env()
   )
 }
@@ -79,7 +79,7 @@ S7::method(
     to = to,
     ...,
     x_arg = "from",
-    y_arg = "to",
+    to_arg = "to",
     call = caller_env()
   )
 }
@@ -96,7 +96,7 @@ S7::method(
     to = to,
     ...,
     x_arg = "from",
-    y_arg = "to",
+    to_arg = "to",
     call = caller_env()
   )
 }
@@ -112,7 +112,7 @@ S7::method(
     to = to,
     ...,
     x_arg = "from",
-    y_arg = "to",
+    to_arg = "to",
     call = caller_env()
   )
 }
@@ -128,36 +128,39 @@ S7::method(
     to = to,
     ...,
     x_arg = "from",
-    y_arg = "to",
+    to_arg = "to",
     call = caller_env()
   )
 }
 
 bioc_cast_DF <- function(from,
                          to,
-                         ...) {
-  to <- bioc_ptype(to, x_arg = "y", call = caller_env()) |>
+                         ...,
+                         size = bioc_size(from)) {
+  out <- bioc_ptype(to, x_arg = "y", call = caller_env()) |>
     as.list()
   xnames <- names(from)
-  ynames <- names(to)
+  ynames <- names(out)
+  force(size)
   if (!all(xnames %in% ynames)) {
     rlang::abort(
       sprintf(
-        "cannot cast a DataFrame with columns (%s) to a data.frame with columns (%s)",
+        "cannot cast a <%s> with columns (%s) to a <%s> with columns (%s)",
+        paste(class(from), collapse = "/"),
         paste(xnames, collapse = ", "),
+        paste(class(to), collapse = "/"),
         paste(ynames, collapse = ", ")
       )
     )
   }
   for (name in xnames) {
-    to[[name]] <- bioc_cast(from[[name]], to[[name]])
+    out[[name]] <- bioc_cast(from[[name]], out[[name]])
   }
   ynames <- setdiff(ynames, xnames)
-  size <- bioc_size(from)
   for (name in ynames) {
-    to[[name]] <- bioc_init(to[[name]], size = size)
+    out[[name]] <- bioc_init(out[[name]], size = size)
   }
-  new_DF(to, nrows = size, rownames = rownames(from))
+  new_DF(out, nrows = size, rownames = rownames(from))
 }
 
 S7::method(
@@ -175,23 +178,28 @@ S7::method(
   signature = list(from = class_DF, to = class_DF)
 ) <- bioc_cast_DF
 
-S7::method(
-  bioc_cast,
-  signature = list(from = class_s4_vec, y = class_s4_vec)
-) <- function(from, to, ...) {
-  methods::as(from, class(to))
+bioc_cast_mcols <- function(from, to) {
+  S4Vectors::mcols(from) <- bioc_cast_DF(S4Vectors::mcols(from), S4Vectors::mcols(to), size = bioc_size(from))
+  from
 }
 
 S7::method(
   bioc_cast,
-  signature = list(from = class_vec, y = class_s4_vec)
+  signature = list(from = class_s4_vec, to = class_s4_vec)
 ) <- function(from, to, ...) {
-  methods::as(from, class(to))
+  bioc_cast_mcols(methods::as(from, class(to)), to = to)
 }
 
 S7::method(
   bioc_cast,
-  signature = list(from = class_s4_vec, y = class_vec)
+  signature = list(from = class_vec, to = class_s4_vec)
+) <- function(from, to, ...) {
+  bioc_cast_mcols(methods::as(from, class(to)), to = to)
+}
+
+S7::method(
+  bioc_cast,
+  signature = list(from = class_s4_vec, to = class_vec)
 ) <- function(from, to, ...) {
   methods::as(from, class(to))
 }
@@ -230,13 +238,3 @@ S7::method(
 #     attempt_ptype2(x, y)
 #   }
 # )
-
-is_anno <- S7::new_generic("is_anno", "x")
-
-S7::method(
-  is_anno,
-  getClass("Annotated")
-) <- function(x, ...) {
-  cat("this object is annotated\n")
-  invisible(x)
-}
