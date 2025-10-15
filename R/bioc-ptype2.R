@@ -211,7 +211,14 @@ attempt_ptype2 <- function(x, y) {
       )
     }
   )
-  out[0]
+  out <- bioc_slice(out, 0L)
+  if (methods::is(out, class_s4_vec)) {
+    S4Vectors::mcols(out) <- bioc_ptype2(
+      S4Vectors::mcols(x),
+      S4Vectors::mcols(y)
+    )
+  }
+  out
 }
 
 S7::method(
