@@ -28,3 +28,7 @@ class_DF <- methods::getClass("DataFrame", where = "S4Vectors")
 #' @rdname vectors
 #' @export
 class_df <- S7::class_data.frame
+
+#' @rdname vectors
+#' @export
+class_Rle <- getClass("Rle", where = "S4Vectors")

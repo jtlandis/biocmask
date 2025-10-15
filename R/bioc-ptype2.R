@@ -262,5 +262,7 @@ bioc_ptype_common_list <- function(dots, .ptype) {
 #' @export
 bioc_c <- function(...) {
   dots <- rlang::list2(...)
-  bioc_unchop(x = dots, ptype = bioc_ptype_common_list(dots, NULL))
+  ptype <- bioc_ptype_common_list(dots, NULL)
+  dots <- lapply(dots, bioc_cast, to = ptype)
+  bioc_unchop(x = dots, ptype = ptype)
 }

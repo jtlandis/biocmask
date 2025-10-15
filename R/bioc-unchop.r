@@ -54,6 +54,19 @@ S7::method(
 
 S7::method(
   bioc_unchop_ptype,
+  signature = class_DF
+) <- function(ptype, x, ..., indices = NULL) {
+  merged <- do.call("rbind", x)
+  if (!is.null(indices)) {
+    # fun <- selectMethod("bioc_size", c(x = class(x[[1]])))
+    indices <- vctrs::list_unchop(indices)
+    merged <- bioc_slice(merged, order(indices))
+  }
+  merged
+}
+
+S7::method(
+  bioc_unchop_ptype,
   signature = NULL
 ) <- function(ptype, x, ..., indices = NULL) {
   ptype <- bioc_ptype_common_list(x, NULL)

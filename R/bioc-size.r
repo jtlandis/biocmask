@@ -10,6 +10,13 @@ bioc_size <- S7::new_generic(
 
 S7::method(
   bioc_size,
+  signature = NULL
+) <- function(x, ...) {
+  0L
+}
+
+S7::method(
+  bioc_size,
   signature = class_vec
 ) <- function(x, ...) {
   length(x)
