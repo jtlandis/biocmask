@@ -44,6 +44,10 @@ map <- function(.x, .f, ...) {
   lapply(X = .x, FUN = .f, ...)
 }
 
+map_int <- function(.x, .f, ...) {
+  vapply(X = .x, FUN = .f, FUN.VALUE = 1L, ...)
+}
+
 # this is the top of all our rlang data masks (inherited from base).
 # it contains all expected functions for transforming values  in multi-tiered
 # data masks.
@@ -69,6 +73,17 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
     data = rlang::dots_list(
       .subset2 = base::.subset2,
       .subset = base::.subset,
+      do.call = base::do.call,
+      cbind = base::cbind,
+      rbind = base::rbind,
+      c = base::c,
+      # --- control flow
+      `if` = base::`if`,
+      `for` = base::`for`,
+      `while` = base::`while`,
+      `repeat` = base::`repeat`,
+      `next` = base::`next`,
+      `break` = base::`break`,
       # --- symbols
       `[` = base::`[`,
       `[[` = base::`[[`,
@@ -82,7 +97,9 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
       `~` = base::`~`,
       `^` = base::`^`,
       `&` = base::`&`,
+      `&&` = base::`&&`,
       `|` = base::`|`,
+      `||` = base::`||`,
       `+` = base::`+`,
       `-` = base::`-`,
       `*` = base::`*`,
@@ -93,6 +110,10 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
       `>=` = base::`>=`,
       `=` = base::`=`,
       `<-` = base::`<-`,
+      `%%` = base::`%%`,
+      `%/%` = base::`%/%`,
+      `%*%` = base::`%*%`,
+      `%in%` = base::`%in%`,
       `function` = base::`function`,
       match = base::match,
       unique = base::unique,

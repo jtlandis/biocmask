@@ -1,5 +1,5 @@
 #' @title Specifying views
-#' @param ctx character name of the source contest
+#' @param ctx character name of the source context
 #' @param from character name of context we are viewing `ctx` from
 #' @param ... additional bindings from the `from` context that should be
 #' made available to the new `view`.
@@ -15,15 +15,14 @@
 #' @param reshape an expression on how to change `asis` to fit the `from` context
 #' @export
 new_view_spec <- function(
-  ctx,
-  from,
-  ...,
-  mapper = ~.x,
-  # lazy binding of new chops by from groups
-  #
-  asis = ~.subset2(.x, 1L),
-  reshape = ~.x
-) {
+    ctx,
+    from,
+    ...,
+    mapper = ~.x,
+    # lazy binding of new chops by from groups
+    #
+    asis = ~ .subset2(.x, 1L),
+    reshape = ~.x) {
   structure(
     list(
       ctx = ctx,
@@ -42,11 +41,11 @@ print.view_spec <- function(x) {
   cat("View spec - `", x$ctx, "` from `", x$from, "`\n", sep = "")
 }
 
-#m_assays <- bm$masks[["assays"]]
-#m_rows <- bm$masks[["rows"]]
-#m_cols <- bm$masks[["cols"]]
+# m_assays <- bm$masks[["assays"]]
+# m_rows <- bm$masks[["rows"]]
+# m_cols <- bm$masks[["cols"]]
 
-#.view <- new_view_spec(
+# .view <- new_view_spec(
 #  "rows",
 #  "assays",
 #  mapper = ~{
@@ -58,7 +57,7 @@ print.view_spec <- function(x) {
 #    chops <- .subset2(.x, .mapper)
 #    chops
 #  }
-#)
+# )
 
 link_view <- function(bm, .view) {
   # browser()
@@ -68,8 +67,9 @@ link_view <- function(bm, .view) {
   # envs of current mask
   from_envs <- masks[[.view$from]]$environments
   ctx_chops <- view_envs@env_data_chop
+  # env_view is branch from the viewable ctx_chops
   env_view <- env(ctx_chops)
-  #
+  # env_from is a branch from where we are at the top level
   env_from <- env(from_envs@env_mask_bind)
   # setup map function
   env_from$.map_fn <- new_function(
@@ -77,9 +77,14 @@ link_view <- function(bm, .view) {
     f_rhs(.view$mapper),
     env = env_from
   )
+  # provide access to the view context group info
   env_bind(
     env_from,
     .ctx = as_data_pronoun(view_envs@env_current_group_info)
+  )
+  env_bind(
+    env_view,
+    .from = as_data_pronoun(from_envs@env_current_group_info)
   )
   env_bind_lazy(
     env_from,
@@ -149,7 +154,7 @@ link_view <- function(bm, .view) {
       # to translate to the new view context we map
       # `biocmask:::ctx:::group_id` -> .__uniq_indx__.
       # .__uniq_indx__. -> .__uniq_map__.
-      expr(.subset2(.__uniq_indx__., `biocmask:::ctx:::group_id`)),
+      expr(.subset2(.__uniq_indx__., .from[["biocmask:::ctx:::group_id"]])),
       env_view
     )
   )
@@ -157,6 +162,8 @@ link_view <- function(bm, .view) {
   chops_view <- env(env_view)
   # new call per new binding in the target context ("view")
   # caches the subsets of whatever binding of "name_sym"
+  #
+  # Technically a chop of chops...
   new_chops_lazy_bind <- add_bind(
     .expr = quote(lapply(.__uniq_map__., \(.x) .subset(!!name_sym, .x))),
     .env_expr = env_view,
@@ -187,8 +194,10 @@ link_view <- function(bm, .view) {
   reshape_lazy_bind <- add_bind(
     # reshape should be same length as `biocmask:::ctx:::n_group`
     .expr = substitute(
-      .subset(!!name_sym, .__uniq_indx__.) |>
-        Map(\(.x, .i) .y, .x = _, .i = seq_len(.__from_n_groups__.)),
+      map2(
+        .x = !!name_sym, seq_len(.__from_n_groups__.),
+        .f = \(.x, .i) .y
+      ),
       list(.y = rlang::f_rhs(.view$reshape))
     ),
     # we don't use the asis_access_view because that
@@ -201,7 +210,7 @@ link_view <- function(bm, .view) {
   )
   reshape_access_view <- new.env(parent = reshape_view)
   reshape_access_bind <- add_bind(
-    .expr = quote(.subset2(!!name_sym, `biocmask:::ctx:::group_id`)),
+    .expr = quote(.subset2(!!name_sym, .mapper)),
     .env_expr = reshape_view,
     .env_bind = reshape_access_view,
     type = "active"

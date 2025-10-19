@@ -25,10 +25,12 @@ biocmask_manager <- R6::R6Class(
     #' @param .masks list of named biocmask objects
     #' @param .ctx_env shared context environment
     #' @param .extended_env other extended environments
-    initialize = function(.data, .masks, .ctx_env, .extended_env = NULL) {
+    initialize = function(.data, .masks,
+                          .ctx_env = list(), .extended_env = NULL) {
       private$.data <- .data
       private$.masks <- .masks
       private$.ctx_env <- .ctx_env
+      private$.ctx_env[["biocmask:::ctx"]] <- names(.masks)[1]
       private$.extended_env <- .extended_env
       invisible(self)
     },
@@ -64,7 +66,7 @@ biocmask_manager <- R6::R6Class(
     #' @description
     #' provides a sequence for iterate over the groups
     along_ctx = function() {
-      seq_len(private$.ctx_env[["biocmask:::n_groups"]])
+      seq_len(self$n_groups)
     },
     #' @description
     #' eval an expression in the current context
@@ -148,7 +150,8 @@ biocmask_manager <- R6::R6Class(
     group_id = function(id) {
       if (!missing(id)) {
         private$.ctx_env[["biocmask:::ctx:::group_id"]] <- id
-        self$ctx_mask$environments@env_current_group_info[["biocmask:::ctx:::group_id"]] <- id
+        grp_info <- self$ctx_mask$environments@env_current_group_info
+        grp_info[["biocmask:::ctx:::group_id"]] <- id
       }
       private$.ctx_env[["biocmask:::ctx:::group_id"]]
     },

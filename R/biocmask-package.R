@@ -25,6 +25,8 @@
 #' @importFrom vctrs vec_rep_each
 #' @importFrom vctrs vec_restore
 #' @importFrom vctrs vec_size_common
+#' @importFrom S4Vectors parallel_slot_names
+#' @importFrom S4Vectors showAsCell
 ## usethis namespace: end
 NULL
 
