@@ -160,10 +160,19 @@ biocmask_manager <- R6::R6Class(
       if (!missing(value)) stop("`$masks` is read only")
       private$.masks
     },
-    #' @field extended other environments extended from a context mask.
+    #' @field extended list of contexts that extend the current mask.
     extended = function(value) {
       if (!missing(value)) stop("`$exteded` is read only")
       private$.extended_env[[private$.ctx_env[["biocmask:::ctx"]]]]
+    },
+    #' @field views list of contexts that this mask can view.
+    views = function(value) {
+      if (!missing(value)) stop("`$views` is read only")
+      lapply(
+        private$.extended_env,
+        .subset2,
+        private$.ctx_env[["biocmask:::ctx"]]
+      )
     }
   ),
   private = list(

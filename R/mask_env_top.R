@@ -77,6 +77,16 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
       cbind = base::cbind,
       rbind = base::rbind,
       c = base::c,
+      # --- as functions
+      as = methods::as,
+      as.list = base::as.list,
+      as.integer = base::as.integer,
+      as.numeric = base::as.numeric,
+      as.double = base::as.double,
+      as.character = base::as.character,
+      as.factor = base::as.factor,
+      as.complex = base::as.complex,
+      as.dataframe = base::as.data.frame,
       # --- control flow
       `if` = base::`if`,
       `for` = base::`for`,
