@@ -4,14 +4,36 @@ setClass(
   slots = c("data" = "ANY", times = "integer")
 )
 
-Replicated <- function(data, times, each = FALSE) {
-  times <- vctrs::vec_cast(times, integer(1L))
-  vctrs::vec_assert(times, size = 1L)
+new_Replicated <- function(data, times, each = FALSE) {
   methods::new(
     if (each) "ReplicatedEach" else "ReplicatedTimes",
     data = data,
     times = times
   )
+}
+
+Replicated <- function(data, times, each = FALSE, compressed = TRUE) {
+  times <- vctrs::vec_cast(times, integer(1L))
+  vctrs::vec_assert(times, size = 1L)
+  vctrs::vec_assert(each, ptype = logical(), size = 1L)
+  vctrs::vec_assert(compressed, ptype = logical(), size = 1L)
+  if (compressed && methods::is(data, "Replicated")) {
+    # see if we can simplify the data
+    target <- if (each) "ReplicatedEach" else "ReplicatedTimes"
+    if (methods::is(data, target)) {
+      data@times <- data@times * times
+      return(data)
+    } else if (methods::is(data@data, target)) {
+      old_data <- data@data
+      data@data <- new_Replicated(
+        old_data@data,
+        old_data@times * times,
+        each = each
+      )
+      return(data)
+    }
+  }
+  new_Replicated(data, times, each = each)
 }
 
 setClass(
@@ -36,19 +58,19 @@ setMethod("show", "Replicated", function(object) {
 })
 
 S7::method(bioc_rep, getClass("ReplicatedTimes")) <- function(x, times, ...) {
-  Replicated(x@data, times = x@times * times)
+  new_Replicated(x@data, times = x@times * times)
 }
 
 S7::method(bioc_rep, getClass("ReplicatedEach")) <- function(x, times, ...) {
-  Replicated(x, times = times)
+  new_Replicated(x, times = times)
 }
 
 S7::method(bioc_rep_each, getClass("ReplicatedTimes")) <- function(x, times, ...) {
-  Replicated(x, times = times, each = TRUE)
+  new_Replicated(x, times = times, each = TRUE)
 }
 
 S7::method(bioc_rep_each, getClass("ReplicatedEach")) <- function(x, times, ...) {
-  Replicated(x@data, times = x@times * times, each = TRUE)
+  new_Replicated(x@data, times = x@times * times, each = TRUE)
 }
 
 setMethod("as.vector", "ReplicatedTimes", function(x, mode = "any") {
@@ -91,9 +113,41 @@ setMethod(
     if (!recursive) {
       return(x@data)
     }
-    while (methods::is(x, "Replciated")) {
+    while (methods::is(x, "Replicated")) {
       x <- x@data
     }
+    x
+  }
+)
+
+setGeneric(
+  "unreplicate<-",
+  signature = "x",
+  def = function(x, recursive = FALSE, value) standardGeneric("unreplicate<-")
+)
+
+setMethod(
+  `unreplicate<-`,
+  signature = "Replicated",
+  def = function(x, recursive = FALSE, value) {
+    data <- unreplicate(x, recursive = recursive)
+    if (length(data) != length(value)) {
+      rlang::abort("Replacement value must have the same length as the unreplicated object.")
+    }
+    if (recursive && methods::is(x@data, "Replicated")) {
+      unreplicate(x@data, recursive = recursive) <- value
+    } else {
+      x@data <- value
+    }
+    x
+  }
+)
+
+setMethod(
+  `unreplicate<-`,
+  signature = "ANY",
+  def = function(x, recursive = FALSE, value) {
+    x <- value
     x
   }
 )
@@ -102,7 +156,7 @@ setMethod(
   S4Vectors::extractROWS,
   c("Replicated"),
   function(x, i) {
-    Replicated(x[i], 1L)
+    new_Replicated(x[i], 1L)
   }
 )
 
@@ -123,8 +177,3 @@ setMethod(
     bioc_slice(x@data, i = ((i - 1L) %% bioc_size(x@data)) + 1L)
   }
 )
-
-test <- function() {
-  browser()
-  ..r[1]
-}
