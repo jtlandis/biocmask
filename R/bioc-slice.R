@@ -57,6 +57,11 @@ bioc_slice <- S7::new_generic(
 
 S7::method(
   bioc_slice,
+  signature = NULL
+) <- function(x, i, ...) NULL
+
+S7::method(
+  bioc_slice,
   signature = class_vec
 ) <- function(x, i, ...) x[i]
 
