@@ -262,6 +262,7 @@ bioc_ptype_common_list <- function(dots, .ptype) {
 }
 
 #' @include bioc-unchop.r
+#' @title concatinate vector objects
 #' concatinate objects
 #' @description
 #' an alternative to `base::c` and `vctrs::vec_c` that will

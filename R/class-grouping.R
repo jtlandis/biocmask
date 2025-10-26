@@ -55,9 +55,9 @@ as_index_grouping <- function(x) {
   )
 }
 
-#' @importFrom S4Vectors parallel_slot_names
+
 setMethod(
-  S4Vectors::parallel_slot_names,
+  "parallel_slot_names",
   "IndexGrouping",
   function(x) {
     c("indices", "elementMetadata")

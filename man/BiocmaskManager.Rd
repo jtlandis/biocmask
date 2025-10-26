@@ -29,7 +29,9 @@ shared environment, or may have cyclical relationships.
 
 \item{\code{masks}}{get the private list of masks}
 
-\item{\code{extended}}{other environments extended from a context mask.}
+\item{\code{extended}}{list of contexts that extend the current mask.}
+
+\item{\code{views}}{list of contexts that this mask can view.}
 }
 \if{html}{\out{</div>}}
 }
@@ -51,7 +53,7 @@ shared environment, or may have cyclical relationships.
 \if{latex}{\out{\hypertarget{method-biocmask_manager-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$new(.data, .masks, .ctx_env, .extended_env = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{biocmask_manager$new(.data, .masks, .ctx_env = list(), .extended_env = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

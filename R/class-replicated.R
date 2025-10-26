@@ -88,7 +88,7 @@ setMethod("as.vector", "ReplicatedEach", function(x, mode = "any") {
   bioc_rep_each(data, times = x@times)
 })
 
-#' @importFrom S4Vectors showAsCell
+
 setMethod(
   S4Vectors::showAsCell, "Replicated",
   function(object) S4Vectors::showAsCell(as.vector(object))

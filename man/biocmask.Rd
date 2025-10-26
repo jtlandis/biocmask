@@ -45,6 +45,8 @@ mask$eval(quote(Sepal.Width))
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
+\item{\code{get_ind}}{the slice indices for the mask}
+
 \item{\code{environments}}{the hierarchy of environments for this mask}
 
 \item{\code{names}}{the associated names of data in mask}

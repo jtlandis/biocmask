@@ -14,7 +14,7 @@ new_view_spec(
 )
 }
 \arguments{
-\item{ctx}{character name of the source contest}
+\item{ctx}{character name of the source context}
 
 \item{from}{character name of context we are viewing \code{ctx} from}
 

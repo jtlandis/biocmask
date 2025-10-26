@@ -247,7 +247,7 @@ biocmask <- R6::R6Class(
     }
   ),
   active = list(
-    #' @field returns the slice indices for the mask
+    #' @field get_ind the slice indices for the mask
     get_ind = function() {
       as.list(private$.indices)
     },
