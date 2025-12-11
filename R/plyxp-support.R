@@ -434,8 +434,9 @@ into_dimlist <- function(ind) {
 # large_mat <- SummarizedExperiment::assay(large_se)
 # bench::mark(
 #   chop = biocmask:::chop_mat(large_mat, assay_grps),
-#   chop_outer = biocmask:::chop_dims_outer(large_mat, assay_grps |> into_dimlist()),
-#   rust_outer = biocmask:::chop_matrix_(large_mat, assay_grps |> into_dimlist())
+#   chop_outer = biocmask:::chop_dims_outer(large_mat, assay_grps |>
+#  biocmask:::into_dimlist()))
+###   rust_outer = biocmask:::chop_matrix_(large_mat, assay_grps |> into_dimlist())
 # )
 
 

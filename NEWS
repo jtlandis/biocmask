@@ -1,3 +1,9 @@
+## biocmask 0.99.20
+
+* Moving towards using a different structure for connecting masks via "Views"
+* adding a replicated class for easy encoding of replicated data.
+* the `ctx` argument has been removed from `biocmask_manager_evaluate` and is
+  instead enforced on the `quos` argument.
 
 ## biocmask 0.99.18
 
@@ -6,13 +12,13 @@
 
 ## biocmask 0.99.13
 
-* `print.SummarizedExperiment` has been renamed to 
+* `print.SummarizedExperiment` has been renamed to
   `show_tidy.SummarizedExperiment` and `show_tidy` is exported as an S3 generic.
-* Adjust show function display original show method by default. using 
+* Adjust show function display original show method by default. using
   `show_tidy()` is now opt-in via options or `use_show_tidy()`.
 * Verbose messages checking if `tidySummarizedExperiment` is already attached or
   ever becomes loaded with `biocmask`.
-* change README and Vignette explaining this package provides an alternative 
+* change README and Vignette explaining this package provides an alternative
   approach to `tidySummarizedExperiment` to manipulating `SummarizedExperiment`
   objects. For now they are exclusive in their functionality, but there may be
   plans to reconsile conflicts in the future!

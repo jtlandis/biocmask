@@ -74,6 +74,22 @@ new_biocmask_manager.SummarizedExperiment <- function(obj, ...) {
   )
 }
 
+get_biocmask_quo_ctx <- function(quo, index, env = rlang::caller_env()) {
+  ctx <- attr(quo, which = "biocmask:::ctx", exact = TRUE)
+  if (is.null(ctx)) {
+    cli::cli_abort(
+      c("quosure is missing 'biocmask:::ctx' attribute.",
+        i = "error occured on index {i}",
+        i = "Was the quosure created without using `biocmask::biocmask_quos()`"
+      ),
+      problem_quo = quo,
+      call = env,
+      internal = TRUE
+    )
+  }
+  ctx
+}
+
 #' helpful wrapper to evaluate quosures in a biocmask_manager object
 #' @param mask_manager A biocmask_manager object
 #' @param quos A list of quosures to evaluate
@@ -81,13 +97,19 @@ new_biocmask_manager.SummarizedExperiment <- function(obj, ...) {
 #' @param env The environment in which to evaluate the quosures
 #' @export
 biocmask_manager_evaluate <- function(
-    mask_manager,
-    quos,
-    ctxs,
-    # nams,
-    env) {
+  mask_manager,
+  quos,
+  # nams,
+  env
+) {
   .call <- caller_call()
   n_quo <- length(quos)
+  ctxs <- map2(
+    quos,
+    seq_along(quos),
+    get_biocmask_quo_ctx,
+    env = env
+  )
   try_fetch(
     {
       for (i in seq_len(n_quo)) {
