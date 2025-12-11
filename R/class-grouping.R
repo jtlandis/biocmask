@@ -29,6 +29,7 @@ setAs(
   }
 )
 
+#' @export
 IndexGrouping <- function(..., indices = list()) {
   dots <- Filter(function(x) !is.null(x), list(...))
   mcols <- if (length(dots) == 0) {
@@ -44,6 +45,7 @@ IndexGrouping <- function(..., indices = list()) {
   grp
 }
 
+#' @export
 as_index_grouping <- function(x) {
   x <- bioc_group_loc(x)
   mcols <- as(x[["key"]], "DataFrame")
@@ -55,7 +57,15 @@ as_index_grouping <- function(x) {
   )
 }
 
+#' @export
+setAs(
+  "ANY",
+  "IndexGrouping",
+  function(from) as_index_grouping(from)
+)
 
+
+#' @export
 setMethod(
   "parallel_slot_names",
   "IndexGrouping",

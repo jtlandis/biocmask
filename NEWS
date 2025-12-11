@@ -1,5 +1,6 @@
 ## biocmask 0.99.20
 
+* Adding `IndexGrouping` as the variant S4 class for grouping data structures
 * Moving towards using a different structure for connecting masks via "Views"
 * adding a replicated class for easy encoding of replicated data.
 * the `ctx` argument has been removed from `biocmask_manager_evaluate` and is
