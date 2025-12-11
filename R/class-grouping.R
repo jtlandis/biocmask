@@ -46,11 +46,11 @@ IndexGrouping <- function(..., indices = list()) {
 
 as_index_grouping <- function(x) {
   x <- bioc_group_loc(x)
-  mcols <- as(x$key, "DataFrame")
+  mcols <- as(x[["key"]], "DataFrame")
   rownames(mcols) <- NULL
   new(
     "IndexGrouping",
-    indices = x$loc,
+    indices = x[["loc"]],
     elementMetadata = mcols
   )
 }

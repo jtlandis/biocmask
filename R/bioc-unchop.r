@@ -71,7 +71,22 @@ S7::method(
 ) <- function(ptype, x, ..., indices = NULL) {
   ptype <- bioc_ptype_common_list(x, NULL)
   if (is.null(ptype)) {
-    rlang::abort("could not resolve ptype")
+    if (all(are_null <- vapply(x, is.null, FUN.VALUE = FALSE))) {
+      # if all objects are null in the list, return NULL
+      return(NULL)
+    } else {
+      # otherwise tell user some indices are non-null but we can't infer
+      # a common prototype
+      rlang::abort(
+        c("Can't infer common prototype for unchop.",
+          i = sprintf(
+            "%i/%i elements are non-NULL, please supply `ptype` explicitly.",
+            sum(!are_null),
+            length(are_null)
+          )
+        ),
+      )
+    }
   }
   bioc_unchop_ptype(
     x,

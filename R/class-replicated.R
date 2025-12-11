@@ -12,6 +12,7 @@ new_Replicated <- function(data, times, each = FALSE) {
   )
 }
 
+#' @export
 Replicated <- function(data, times, each = FALSE, compressed = TRUE) {
   times <- vctrs::vec_cast(times, integer(1L))
   vctrs::vec_assert(times, size = 1L)
@@ -94,6 +95,7 @@ setMethod(
   function(object) S4Vectors::showAsCell(as.vector(object))
 )
 
+#' @export
 setGeneric(
   "unreplicate",
   signature = "x",
@@ -165,7 +167,7 @@ setMethod(
   "ReplicatedEach",
   function(x, i, ...) {
     i <- S4Vectors::normalizeSingleBracketSubscript(i, x)
-    bioc_slice(x@data, i = ((i - 1L) %/% bioc_size(x@data)) + 1L)
+    bioc_slice(x@data, i = ((i - 1L) %/% x@times) + 1L)
   }
 )
 
