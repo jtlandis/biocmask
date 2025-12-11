@@ -416,6 +416,51 @@ into_dimlist <- function(ind) {
   )
 }
 
+# large_se <- SummarizedExperiment::SummarizedExperiment(
+#   assays = list(data = matrix(rnorm(1e6), nrow = 1000, ncol = 1000))
+# ) |>
+#   plyxp::new_plyxp() |>
+#   plyxp::mutate(
+#     rows(row_grp = sample(1L:100L, 1000, TRUE)),
+#     cols(col_grp = sample(1L:100L, 1000, TRUE))
+#   )
+
+# row_grps <- SummarizedExperiment::rowData(large_se) |> biocmask:::as_index_grouping()
+# col_grps <- SummarizedExperiment::colData(large_se) |> biocmask:::as_index_grouping()
+# assay_grps <- expand_groups3(row_grps, col_grps, obj = large_se)
+
+
+
+# large_mat <- SummarizedExperiment::assay(large_se)
+# bench::mark(
+#   chop = biocmask:::chop_mat(large_mat, assay_grps),
+#   chop_outer = biocmask:::chop_dims_outer(large_mat, assay_grps |> into_dimlist()),
+#   rust_outer = biocmask:::chop_matrix_(large_mat, assay_grps |> into_dimlist())
+# )
+
+
+# small_se <- SummarizedExperiment::SummarizedExperiment(
+#   assays = list(data = matrix(1:12, nrow = 3, ncol = 4))
+# ) |>
+#   plyxp::new_plyxp() |>
+#   plyxp::mutate(
+#     rows(row_grp = c(2, 2, 1)),
+#     cols(col_grp = c(2, 1, 1, 2))
+#   )
+
+
+# ind <- biocmask:::expand_groups3(
+#   SummarizedExperiment::rowData(small_se) |> biocmask:::as_index_grouping(),
+#   SummarizedExperiment::colData(small_se) |> biocmask:::as_index_grouping(),
+#   obj = small_se
+# )
+
+# small_mat <- SummarizedExperiment::assay(small_se)
+# bench::mark(
+#   chop = biocmask:::chop_mat(small_mat, ind),
+#   chop_outer = biocmask:::chop_dims_outer(small_mat, ind |> into_dimlist()),
+#   rust_outer = biocmask:::chop_matrix_(small_mat, ind |> into_dimlist())
+# )
 
 # if (interactive()) {
 #   # obj <- group_by(plyxp::se_simple, rows(direction), cols(condition))
