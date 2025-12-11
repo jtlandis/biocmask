@@ -4,16 +4,16 @@
 \alias{biocmask_manager_evaluate}
 \title{helpful wrapper to evaluate quosures in a biocmask_manager object}
 \usage{
-biocmask_manager_evaluate(mask_manager, quos, ctxs, env)
+biocmask_manager_evaluate(mask_manager, quos, env)
 }
 \arguments{
 \item{mask_manager}{A biocmask_manager object}
 
 \item{quos}{A list of quosures to evaluate}
 
-\item{ctxs}{A character vector of contexts for each quosure}
-
 \item{env}{The environment in which to evaluate the quosures}
+
+\item{ctxs}{A character vector of contexts for each quosure}
 }
 \description{
 helpful wrapper to evaluate quosures in a biocmask_manager object

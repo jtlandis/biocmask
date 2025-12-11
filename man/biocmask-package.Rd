@@ -3,7 +3,7 @@
 \docType{package}
 \name{biocmask-package}
 \alias{biocmask-package}
-\title{biocmask: Data masks for SummarizedExperiment enabling dplyr-like manipulation}
+\title{biocmask: Data masks utilities for S4 objects using S7 functions inspired by vctrs and rlang.}
 \value{
 API for using S4 classes with rlang data masks
 }
