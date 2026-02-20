@@ -1,3 +1,4 @@
+#' @export
 setClass(
   "Replicated",
   contains = c("VIRTUAL", "Vector"),
