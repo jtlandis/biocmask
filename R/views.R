@@ -15,14 +15,15 @@
 #' @param reshape an expression on how to change `asis` to fit the `from` context
 #' @export
 new_view_spec <- function(
-    ctx,
-    from,
-    ...,
-    mapper = ~.x,
-    # lazy binding of new chops by from groups
-    #
-    asis = ~ .subset2(.x, 1L),
-    reshape = ~.x) {
+  ctx,
+  from,
+  ...,
+  mapper = ~.x,
+  # lazy binding of new chops by from groups
+  #
+  asis = ~ .subset2(.x, 1L),
+  reshape = ~.x
+) {
   structure(
     list(
       ctx = ctx,
@@ -95,6 +96,10 @@ link_view <- function(bm, .view) {
   # the .map_fn will evaluate for ALL groups, unbinding .map_fn
   # and saving the results into the env_view.
   # this will be triggered by .mapper active binding in env_view.
+  # NEED TO RETHINK THIS BLOCK!!!
+  #   attemting to make unique indices may be too complicated for
+  #   our usecase. consider removing "uniqueness" and just create
+  #   "easier" to reason about indicies lists.
   env_bind_lazy(
     env_view,
     .__cache_map__. = !!new_quosure(
@@ -195,7 +200,7 @@ link_view <- function(bm, .view) {
     # reshape should be same length as `biocmask:::ctx:::n_group`
     .expr = substitute(
       map2(
-        .x = !!name_sym, seq_len(.__from_n_groups__.),
+        .x = (!!name_sym)[.__uniq_indx__.], seq_len(.__from_n_groups__.),
         .f = \(.x, .i) .y
       ),
       list(.y = rlang::f_rhs(.view$reshape))
@@ -210,7 +215,7 @@ link_view <- function(bm, .view) {
   )
   reshape_access_view <- new.env(parent = reshape_view)
   reshape_access_bind <- add_bind(
-    .expr = quote(.subset2(!!name_sym, .mapper)),
+    .expr = quote(.subset2(!!name_sym, .from[["biocmask:::ctx:::group_id"]])),
     .env_expr = reshape_view,
     .env_bind = reshape_access_view,
     type = "active"
