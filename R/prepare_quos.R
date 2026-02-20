@@ -66,15 +66,23 @@ as_trans_fn <- function(fn) {
 #'
 #' @export
 biocmask_quos <- function(
-    ...,
-    .named = TRUE,
-    .ctx = NULL,
-    .trans = list()) {
+  ...,
+  .named = TRUE,
+  .ctx = NULL,
+  .trans = list()
+) {
   # browser()
   dots <- quos(...) |>
     as.list()
   if (is.null(.ctx)) rlang::abort("`.ctx` must be specified!")
   if (!is.list(.trans)) rlang::abort("`.trans` must be a list!")
+  if (is.list(.ctx)) {
+    if (is.null(names(.ctx))) rlang::abort("list `.ctx` must be named!")
+    .ctx <- vctrs::list_unchop(.ctx, name_spec = "{outer}")
+  } else {
+    if (!is.character(.ctx)) rlang::abort("`.ctx` must be a character vector or a named list!")
+    names(.ctx) <- .ctx
+  }
   .trans <- lapply(.trans, as_trans_fn)
   .ctx_default <- .ctx[1] %||% rlang::abort("`.ctx` have at least 1 element!")
   .ctx_opt <- .ctx[-1]
@@ -91,7 +99,16 @@ biocmask_quos <- function(
     .env <- quo_get_env(quo)
     .expr <- quo_get_expr(quo)
     if (has_opt_ctx && is_call(.expr, .ctx_opt)) {
-      ctx <- as_label(.expr[[1]])
+      ctx <- names(.ctx_opt)[match(as_label(.expr[[1]]), .ctx_opt)]
+      if (length(ctx) != 1L) {
+        rlang::abort(
+          sprintf(
+            "expression `%s(...)` matched multiple contexts: %s",
+            as_label(.expr[[1]]),
+            paste(ctx, collapse = ", ")
+          )
+        )
+      }
       ctx_exprs <- as.list(.expr[-1])
       # recapture the inner arguments allowing for dynamic
       # dots and using `"{foo}" := bar` notation
