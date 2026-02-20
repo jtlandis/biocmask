@@ -1,3 +1,5 @@
+#' @include utils.R
+
 setClass(
   "IndexGrouping",
   contains = c("Vector"),

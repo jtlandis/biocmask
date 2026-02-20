@@ -1,3 +1,5 @@
+#' @include utils.R
+
 #' @title Recycle a vector
 #' @name bioc_group_id
 #' @description
