@@ -80,7 +80,7 @@ get_biocmask_quo_ctx <- function(quo, index, env = rlang::caller_env()) {
     cli::cli_abort(
       c("quosure is missing 'biocmask:::ctx' attribute.",
         i = "error occured on index {i}",
-        i = "Was the quosure created without using `biocmask::biocmask_quos()`"
+        i = "Was the quosure created without using `biocmask::biocmask_quos()`?"
       ),
       problem_quo = quo,
       call = env,
@@ -131,4 +131,29 @@ biocmask_manager_evaluate <- function(
     }
   )
   invisible(mask_manager)
+}
+
+#' Get a biocmask R6 object
+#'
+#' Method to construct a biocmask R6 object. It is the caller's
+#' responsibility to ensure the proper contexts are stored within
+#' the environment heirarchy.
+#'
+#' @param .data the data to be masked
+#' @param .indices a list of integer vectors for each group
+#' @param .top the top environment for this mask
+#' @param .bot the bottom environment for this mask
+#'
+#' @return some R6 object inheriting from biocmask
+#' @export
+new_biocmask <- function(.data, .indices, .top, .bot, ...) {
+  UseMethod("new_biocmask")
+}
+
+
+#' @export
+new_biocmask.default <- function(.data, .indices, .top, .bot, ...) {
+  biocmask$new(
+    .data = .data, .indices = .indices, .env_bot = .bot, .env_top = .top
+  )
 }
