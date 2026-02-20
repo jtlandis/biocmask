@@ -161,7 +161,7 @@ new_bioc_top_env <- function(..., parent = empty_env()) {
 #' @param parent The parent environment to inherit from. Ideally this is the
 #' environment created by `new_bioc_top_env()`.
 #' @export
-new_bioc_bot_env <- function(..., context = NULL, parent = top_env) {
+new_bioc_bot_env <- function(..., context = NULL, parent = new_bioc_top_env()) {
   if (!is.null(context)) {
     stopifnot(is.character(context), length(context) == 1)
   }

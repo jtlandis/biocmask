@@ -52,10 +52,11 @@
 #' env$Sepal.Width
 #' @noRd
 add_bind <- function(
-    .expr,
-    .env_expr,
-    .env_bind = .env_expr,
-    type = c("standard", "lazy", "active")) {
+  .expr,
+  .env_expr,
+  .env_bind = .env_expr,
+  type = c("standard", "lazy", "active")
+) {
   # type <- match.arg(type, c("standard", "lazy", "active"))
   fun <- switch(type,
     standard = expr(env_bind),
@@ -92,6 +93,19 @@ add_bind <- function(
 
 ## due to challenges in passing BiocCheck, no longer documenting non-exported
 ## objects
+
+
+get_biocmask_ctxs <- function(bot, top) {
+  env <- bot
+  ctxs <- character()
+  while (env != top) {
+    ctx <- env[["biocmask:::ctx"]]
+    if (!is.null(ctx)) {
+      ctxs <- c(ctxs, ctx)
+    }
+  }
+  ctxs
+}
 
 #' @title `biocmask` Data Mask Object
 #' @name biocmask
@@ -152,6 +166,7 @@ biocmask <- R6::R6Class(
       # private$.true_parent_env <- env_parent(.env_top)
       private$.data <- .data
       private$.indices <- .indices
+      private$.ctxs <- get_biocmask_ctxs(private$.bot_env, private$.top_env)
       private$init_current_group_info()
 
       private$init_names()
@@ -270,6 +285,9 @@ biocmask <- R6::R6Class(
     #' @field top_env the top-level environment of the mask
     top_env = function() {
       private$.top_env
+    },
+    ctxs = function() {
+      private$.ctxs
     }
     # true_parent = function() {
     # private$.true_parent_env
@@ -439,6 +457,8 @@ biocmask <- R6::R6Class(
     .ptype = NULL,
     # newly added names
     .added = character(),
+    # all available contexts
+    .ctxs = NULL,
     push = function(name) {
       needs_unbind <- name %in% private$.names
       private$.names <- union(private$.names, name)
