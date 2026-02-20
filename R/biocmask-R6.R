@@ -98,11 +98,12 @@ add_bind <- function(
 get_biocmask_ctxs <- function(bot, top) {
   env <- bot
   ctxs <- character()
-  while (env != top) {
+  while (!identical(env, top)) {
     ctx <- env[["biocmask:::ctx"]]
     if (!is.null(ctx)) {
       ctxs <- c(ctxs, ctx)
     }
+    env <- parent.env(env)
   }
   ctxs
 }
