@@ -1,100 +1,18 @@
-# expand_groups2 <- function(.rows, .cols) {
-#   names(.rows) <- sprintf(".rows::%s", names(.rows))
-#   names(.cols) <- sprintf(".cols::%s", names(.cols))
-#   .nrow <- nrow(.rows)
-#   .ncol <- nrow(.cols)
-#   .rows <- map(.rows, vec_rep, times = .ncol)
-#   .cols <- map(.cols, vec_rep_each, times = .nrow)
-#   out <- c(.rows, .cols)
-#   n <- .nrow * .ncol
-#   out[[".nrows"]] <- map_int(out[[".rows::.indices"]], length)
-#   out[[".ncols"]] <- map_int(out[[".cols::.indices"]], length)
-#   attr(out, "row.names") <- c(NA_integer_, -n)
-#   class(out) <- c("tbl_df", "tbl", "data.frame")
+#' @include utils.R
 
-#   # due to this ordering here, I had introduced an unexpected
-#   # column-wise ordering of assays. I have changed it and commented
-#   # it out and also revered to the original intent of row-wise ordering.
-#   # o <- order(
-#   #   out[[".cols::.indices_group_id"]],
-#   #   out[[".rows::.indices_group_id"]]
-#   # )
-#   # out <- out[o,]
-#   out$.group_id <- seq_len(n)
-#   out
-# }
-
-#' @export
-mat_index <- function(rows_ind, cols_ind, nrows) {
-  shift <- (cols_ind - 1L) * nrows
-  vctrs::vec_rep(rows_ind, length(cols_ind)) +
-    vctrs::vec_rep_each(shift, length(rows_ind))
-}
-
-# is_grouped_rows <- function(.groups) {
-#   !is_empty(.groups$row_groups)
-# }
-
-# is_grouped_cols <- function(.groups) {
-#   !is_empty(.groups$col_groups)
-# }
-
-
-vec_chop_assays <- function(.data, .indices) {
-  map2(
-    as.vector(.indices$rows)@indices,
-    as.vector(.indices$cols)@indices,
-    function(.x, .y, .data) .data[.x, .y, drop = FALSE],
-    .data = .data
+into_dimlist <- function(assay_ind) {
+  list(
+    biocmask::unreplicate(assay_ind$rows),
+    biocmask::unreplicate(assay_ind$cols)
   )
 }
 
-# vec_chop_assays_row <- function(.data, .indices) {
-#   map(as.vector(.indices$rows)@indices,
-#     function(.i, .data) .data[.i, , drop = FALSE],
-#     .data = .data
-#   )
-# }
+chop_assays_outer <- function(obj, .ind) {
+  dimlist <- into_dimlist(.ind)
+  chop_dims_outer(obj, dimlist)
+}
 
-# vec_chop_assays_col <- function(.data, .indices) {
-#   map(as.vector(.indices$cols)@indices,
-#     function(.i, .data) .data[, .i, drop = FALSE],
-#     .data = .data
-#   )
-# }
-
-# chop_dims_with_rep <- function(obj, .dims) {
-#   n <- length(.dims)
-#   nlens <- unname(lengths(.dims))
-#   out_size <- Reduce(`*`, nlens, right = TRUE, accumulate = 1L)
-
-#   times <- 1L
-#   for (i in rev(seq_len(n))) {
-#     dim <- .subset2(.dims, i)
-#     if (is_missing(dim)) {
-#       dim <- list(rlang::missing_arg())
-#     }
-#     size <- nlens[i]
-#     for (j in seq_len(n - i)) {
-#       .dims[[i + j]] <- Replicated(.dims[[i + j]], times = size, each = TRUE)
-#     }
-#     .dims[[i]] <- Replicated(dim, times = times)
-#     times <- out_size[i]
-#   }
-#   dim_args <- lapply(.dims, as.vector) |> lapply(as.list)
-#   dot_args <- rlang::syms(sprintf("..%i", seq_along(dim_args)))
-#   inject(
-#     base::mapply(\(..., obj) obj[!!!dot_args, drop = FALSE],
-#       !!!dim_args,
-#       MoreArgs = list(obj = obj),
-#       SIMPLIFY = FALSE
-#     )
-#   )
-# }
-
-#' @export
 chop_dims_outer <- function(obj, .dims) {
-  # browser()
   # is_missing <- vapply(.dims, rlang::is_missing, FUN.VALUE = logical(1))
   n <- length(.dims)
   nlens <- lengths(.dims)
@@ -138,143 +56,12 @@ chop_dims_outer <- function(obj, .dims) {
 }
 
 #' @export
-chop_mat <- function(obj, ind) {
-  # browser()
-  # vecs <- lapply(ind@indices, function(i, obj) obj[i], obj = obj)
-  vecs <- vctrs::vec_chop(as.vector(obj), indices = ind@indices)
-  .rows <- ind$rows
-  unreplicate(.rows, TRUE) <- lengths(unreplicate(.rows, TRUE)@indices)
-  .cols <- ind$cols
-  unreplicate(.cols, TRUE) <- lengths(unreplicate(.cols, TRUE)@indices)
-  dimnms <- dimnames(obj)
-  if (is.null(dimnms)) {
-    pmap(
-      list(
-        vecs,
-        as.vector(.rows),
-        as.vector(.cols)
-      ),
-      function(data,
-               nrow, ncol) {
-        dim(data) <- c(nrow, ncol)
-        data
-      }
-    )
-  } else {
-    rownm <- ind$rows
-    if (is.null(dimnms[[1L]])) {
-      rownm <- vector("list", length(rownm))
-    } else {
-      unreplicate(rownm) <- bioc_chop(
-        dimnms[[1]],
-        indices = unreplicate(rownm, TRUE)@indices
-      )
-    }
-
-    colnm <- ind$cols
-    if (is.null(dimnms[[2L]])) {
-      colnm <- vector("list", length(colnm))
-    } else {
-      unreplicate(colnm) <- bioc_chop(
-        dimnms[[2]],
-        indices = unreplicate(colnm, TRUE)@indices
-      )
-    }
-    pmap(
-      list(
-        vecs,
-        as.vector(.rows),
-        as.vector(.cols),
-        as.vector(rownm),
-        as.vector(colnm)
-      ),
-      function(data,
-               nrow, ncol,
-               rownm, colnm) {
-        dim(data) <- c(nrow, ncol)
-        dimnames(data) <- list(rownm, colnm)
-        data
-      }
-    )
-  }
+mat_index <- function(rows_ind, cols_ind, nrows) {
+  shift <- (cols_ind - 1L) * nrows
+  vctrs::vec_rep(rows_ind, length(cols_ind)) +
+    vctrs::vec_rep_each(shift, length(rows_ind))
 }
 
-chop_mat2 <- function(obj, ind) {
-  # vecs <- lapply(ind@indices, function(i, obj) obj[i], obj = obj)
-  vctrs::vec_chop(as.vector(obj), indices = ind@indices)
-}
-
-#' @export
-chop_dims_outer2 <- function(obj, .dims) {
-  # is_missing <- vapply(.dims, rlang::is_missing, FUN.VALUE = logical(1))
-  n <- length(.dims)
-  nlens <- lengths(.dims)
-  out_size <- Reduce(`*`, nlens, right = TRUE, accumulate = 1L)
-
-  curr_dim <- n
-  obj_slice <- NULL
-  objs <- out <- vector("list", out_size[[1L]])
-  objs[[1L]] <- obj
-  n_obj <- 1L
-  slice_expr <- expr(.slice)
-  dim_args <- vec_rep(list(rlang::missing_arg()), n)
-  while (curr_dim > 0) {
-    .slices <- .dims[[curr_dim]]
-
-    i_seq <- seq_len(nlens[curr_dim])
-    nn <- length(i_seq)
-    n_out <- out_size[curr_dim]
-    # out_seq <- seq_len(n_out)
-
-    if (!is_missing(.slices)) {
-      dim_args[[curr_dim]] <- slice_expr
-      e <- inject(expr(obj_slice[!!!dim_args, drop = FALSE]))
-      # out <- vector("list", out_size[curr_dim])
-      for (j in seq_len(n_obj)) {
-        obj_slice <- .subset2(objs, j)
-        shift <- (j - 1L) * nn
-        for (i in i_seq) {
-          .slice <- .subset2(.slices, i)
-          out[[shift + i]] <- eval(e)
-        }
-      }
-      dim_args[[curr_dim]] <- missing_arg()
-    }
-
-    n_obj <- n_out
-    curr_dim <- curr_dim - 1L
-    if (curr_dim == 0) {
-      return(out)
-    }
-    # objs[out_seq] <- out[out_seq]
-    #
-    .slices <- .dims[[curr_dim]]
-
-    i_seq <- seq_len(nlens[curr_dim])
-    nn <- length(i_seq)
-    n_out <- out_size[curr_dim]
-    # out_seq <- seq_len(n_out)
-
-    if (!is_missing(.slices)) {
-      dim_args[[curr_dim]] <- slice_expr
-      e <- inject(expr(obj_slice[!!!dim_args, drop = FALSE]))
-      # out <- vector("list", out_size[curr_dim])
-      for (j in seq_len(n_obj)) {
-        obj_slice <- .subset2(out, j)
-        shift <- (j - 1L) * nn
-        for (i in i_seq) {
-          .slice <- .subset2(.slices, i)
-          objs[[shift + i]] <- eval(e)
-        }
-      }
-      dim_args[[curr_dim]] <- missing_arg()
-    }
-
-    n_obj <- n_out
-    curr_dim <- curr_dim - 1L
-  }
-  objs
-}
 
 #' @title `biocmask` for SummarizedExperiment `assays()`
 #' @name BiocDataMask-assays
@@ -354,22 +141,14 @@ biocmask_assay <- R6::R6Class(
           expr(list(!!name))
         })
       } else {
-        type <- paste0(names(S4Vectors::mcols(.indices)), collapse = "")
-        private$.ngroups <- NROW(.indices)
-        fun <- switch(type,
-          rowscols = function(name) {
-            name <- enexpr(name)
-            expr(vec_chop_assays(!!name, .indices))
-          },
-          rows = function(name) {
-            name <- enexpr(name)
-            expr(vec_chop_assays_row(!!name, .indices))
-          },
-          cols = function(name) {
-            name <- enexpr(name)
-            expr(vec_chop_assays_col(!!name, .indices))
-          }
-        )
+        # .indices would have been created by get_group_indices()
+        #
+        # type <- attr(.indices, "type")
+        private$.ngroups <- length(.indices)
+        fun <- function(name) {
+          name <- enexpr(name)
+          expr(chop_assays_outer(!!name, .indices))
+        }
         return(fun)
       }
     },
@@ -430,7 +209,6 @@ into_dimlist <- function(ind) {
 # assay_grps <- expand_groups3(row_grps, col_grps, obj = large_se)
 
 
-
 # large_mat <- SummarizedExperiment::assay(large_se)
 # bench::mark(
 #   chop = biocmask:::chop_mat(large_mat, assay_grps),
@@ -463,35 +241,34 @@ into_dimlist <- function(ind) {
 #   rust_outer = biocmask:::chop_matrix_(small_mat, ind |> into_dimlist())
 # )
 
+# expanded <- expand_groups2(groups$row_groups, groups$col_groups)
+# out <- map2(
+#   expanded[[".rows::.indices"]],
+#   expanded[[".cols::.indices"]],
+#   .f = function(row, col, n) {
+#     mat_index(row, col, nrows = n)
+#   }, n = nrow(obj)
+# )
+# attr(out, "plyxp:::row_chop_ind") <- expanded[[".rows::.indices"]]
+# attr(out, "plyxp:::col_chop_ind") <- expanded[[".cols::.indices"]]
+# attr(out, "type") <- attr(groups, "type")
+
 # if (interactive()) {
 #   # obj <- group_by(plyxp::se_simple, rows(direction), cols(condition))
 #   obj <- dplyr::select(plyxp::se_simple, rows(direction), cols(condition))
 #   row_grps <- SummarizedExperiment::rowData(obj) |> as_index_grouping()
 #   col_grps <- SummarizedExperiment::colData(obj) |> as_index_grouping()
-#   assay_grps <- expand_groups3(row_grps, col_grps, obj = se_simple)
+#   assay_grps <- expand_groups3(row_grps, col_grps, obj = plyxp::se_simple)
 #   top_env <- new_bioc_top_env(unreplicate = unreplicate)
 #   bot_assay_env <- new_bioc_bot_env(context = "assays", parent = top_env)
-#   # expanded <- expand_groups2(groups$row_groups, groups$col_groups)
-#   # out <- map2(
-#   #   expanded[[".rows::.indices"]],
-#   #   expanded[[".cols::.indices"]],
-#   #   .f = function(row, col, n) {
-#   #     mat_index(row, col, nrows = n)
-#   #   }, n = nrow(obj)
-#   # )
-#   # attr(out, "plyxp:::row_chop_ind") <- expanded[[".rows::.indices"]]
-#   # attr(out, "plyxp:::col_chop_ind") <- expanded[[".cols::.indices"]]
-#   # attr(out, "type") <- attr(groups, "type")
+
 #   mask_assay <- biocmask_assay$new(
-#     assays(se_simple),
+#     assays(plyxp::se_simple),
 #     assay_grps,
 #     .nrow = nrow(obj),
 #     .ncol = ncol(obj),
-#     .env_bot = rlang::env(
-#       bot_assay_env,
-#       vec_chop_assays = vec_chop_assays,
-#       vec_chop_assays_col = vec_chop_assays_col,
-#       vec_chop_assays_row = vec_chop_assays_row
+#     .env_bot = rlang::env(bot_assay_env,
+#       chop_assays_outer = chop_assays_outer
 #     ),
 #     .env_top = top_env
 #   )
@@ -504,7 +281,7 @@ into_dimlist <- function(ind) {
 #   )
 
 #   mm <- biocmask_manager$new(
-#     .data = plyxp::se(se_simple),
+#     .data = plyxp::se(plyxp::se_simple),
 #     .masks = list(assays = mask_assay, rows = mask_rows)
 #   )
 
@@ -530,16 +307,24 @@ into_dimlist <- function(ind) {
 #   view_rows_from_assays <- new_view_spec(
 #     ctx = "rows", from = "assays",
 #     .col_ind = unreplicate(.indices$cols),
+#     .col_sizes = vctrs::vec_rep_each(
+#       base::lengths(base::as.list(.col_ind)), .nrow_groups
+#     ),
 #     .ncol_groups = length(.col_ind),
 #     .row_ind = unreplicate(.indices$rows),
 #     .nrow_groups = length(.row_ind),
 #     mapper = ~ ((.x - 1L) %% .nrow_groups) + 1L,
-#     reshape = ~ bioc_rep(.x, times = .ncol_groups)
+#     reshape = ~ bioc_rep(.x, times = .col_sizes[[.i]])
 #   )
 
 #   mm$link_ctx(view_assays_from_rows)
 #   mm$link_ctx(view_rows_from_assays)
 #   mm$link_ctx(new_view_spec("assays", "assays"), "data")
+#   mm$link_ctx(new_view_spec("rows", "rows"), "data")
+
+#   mask <- mm$ctx_mask$environments@env_current_group_info
+#   mask$`biocmask:::ctx:::group_id` <- 5L
+#   mm$views$rows$reshape_access$direction
 
 #   mm$views$rows$asis_access$direction
 
